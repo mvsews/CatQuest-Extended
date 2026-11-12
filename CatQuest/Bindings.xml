@@ -1,0 +1,8 @@
+<Bindings>
+    <Binding name="CATQUEST335_STOP" header="CATQUEST335">
+        CatQuest335.Stop()
+    </Binding>
+    <Binding name="CATQUEST335_NEXT">
+        CatQuest335.Skip()
+    </Binding>
+</Bindings>

@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Lasthavens Addon Manager",
+  "version": "0.6.33",
+  "description": "__MSG_description__",
+  "minimum_chrome_version": "120",
+  "permissions": ["storage", "unlimitedStorage", "alarms"],
+  "host_permissions": [
+    "https://lasthavens.com/*",
+    "https://quester.mvse.ws/*"
+  ],
+  "action": {
+    "default_title": "Менеджер аддонов",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "24": "icons/icon24.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "options_page": "manager.html",
+  "content_scripts": [
+    {
+      "matches": ["https://lasthavens.com/play*"],
+      "js": ["runtime-core.js", "loader.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://lasthavens.com/play*"],
+      "js": ["bridge.js"],
+      "run_at": "document_start",
+      "world": "ISOLATED"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
+  "default_locale": "en"
+}

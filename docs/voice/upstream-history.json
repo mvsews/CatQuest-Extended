@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "project": "CatQuest Voices",
+  "projectUrl": "https://www.curseforge.com/wow/addons/catquest-voices",
+  "license": "CC BY-NC-SA 4.0",
+  "releases": [
+    {
+      "version": "0.7.1",
+      "fileName": "CatQuest_Voices-0.7.1.zip",
+      "checkedAt": "2026-11-12",
+      "sizeBytes": 1279896820,
+      "sha256": "c50420a3dc748df10773da6fb1bf136aef056c5e2bdb6093008b19da1c2963a1",
+      "oggFiles": 11835,
+      "questIds": 4967,
+      "detailFiles": 5543,
+      "completeFiles": 6292
+    },
+    {
+      "version": "1.3.0",
+      "fileId": 9559250,
+      "fileName": "CatQuest_Voices-1.3.0.zip",
+      "downloadUrl": "https://edge.forgecdn.net/files/9559/250/CatQuest_Voices-1.3.0.zip",
+      "lastModified": "2026-11-11T15:22:21Z",
+      "checkedAt": "2026-11-12",
+      "sizeBytes": 1424266180,
+      "sha256": "6b76ee548230538c396780c4e03b7b3fcd18f552f63d5ec035dde6db2c44e3f4",
+      "etag": "\"daa06911474e00ffd44af5dd8fa82ac5-272\"",
+      "oggFiles": 12830,
+      "questIds": 5574,
+      "detailFiles": 6322,
+      "completeFiles": 6508,
+      "genderVariantFiles": 6148,
+      "npcVariantFiles": 120,
+      "deltaFromPrevious": {
+        "addedTrackSignatures": 1003,
+        "removedTrackSignatures": 8,
+        "addedQuestIds": 607,
+        "removedQuestIds": 0,
+        "newIdsInCatQuestExtendedCatalog": 41
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+## Interface: 30300
+## Title: CatQuest Extended
+## Notes: Quest voice-over port and extension for classic WoW clients
+## Author: CatQuest contributors
+## Version: 0.10.51
+## SavedVariables: CatQuest335DB
+## OptionalDeps: CatQuestExtended_Voices
+
+Bindings.xml
+Locales.lua
+Scheduler.lua
+QuestNpcData.lua
+NpcLoreData.lua
+Core.lua
+UI.lua
+Feedback.lua
+StoryData.lua
+QuestGuideData.lua
+StoryTitles_ruRU.lua
+StoryTitles_zhCN.lua
+StoryTitles_zhTW.lua
+StoryTitles_enUS.lua
+Story.lua
+BookData.lua
+PlaceData.lua
+PlaceLore.lua
+Books.lua
+WorldMap.lua
+MinimapButton.lua
+Options.lua

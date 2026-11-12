@@ -1,0 +1,1090 @@
+{
+  "snapshot_date": "2026-11-11",
+  "popularity_snapshot_date": "2026-11-10",
+  "method": "Manual cross-check of the highest Pop chains against player discussions, quest guides and community recommendations. This is qualitative validation, not a representative survey.",
+  "verdicts": [
+    {
+      "zone": 40,
+      "label": "Westfall / The Defias Brotherhood",
+      "quest_ids": [65, 132, 135, 141, 142, 155],
+      "chain_pop_score": 92.59,
+      "max_raw_pop": 185,
+      "pop_trust_weight": 1.0,
+      "verdict": "confirmed_positive",
+      "confidence": "high",
+      "summary": "Players repeatedly name it as an iconic, favorite or best leveling chain; the Deadmines ending is widely remembered.",
+      "sources": [
+        "https://www.reddit.com/r/classicwow/comments/182mwe2",
+        "https://www.reddit.com/r/classicvanillawow/comments/1u9kp4h/your_favourite_quest_from_classicvanilla_wow/",
+        "https://www.reddit.com/r/classicwow/comments/cs94d4/list_of_the_best_questchains_while_leveling/"
+      ]
+    },
+    {
+      "zone": 17,
+      "label": "The Barrens / The Stagnant Oasis",
+      "quest_ids": [870, 877, 880],
+      "chain_pop_score": 90.28,
+      "max_raw_pop": 81,
+      "pop_trust_weight": 0.0,
+      "verdict": "confirmed_memorable_negative",
+      "confidence": "high",
+      "summary": "The high attention is real, but discussions focus on Verog's random spawn, waiting and frustration more than affection for the chain.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=877/the-stagnant-oasis",
+        "https://www.reddit.com/r/classicwow/comments/1huher7/whats_up_with_quests_where_you_have_to_kill_more_than_the_total_available_mobs_on_the_map_in_order_to_complete/",
+        "https://www.reddit.com/r/wowhardcore/comments/1v8vps/verog_the_dervished_is_bugged/"
+      ]
+    },
+    {
+      "zone": 1637,
+      "label": "Orgrimmar / Hidden Enemies",
+      "quest_ids": [5726, 5727, 5729, 5730],
+      "chain_pop_score": 85.82,
+      "max_raw_pop": 80,
+      "pop_trust_weight": 0.6,
+      "verdict": "confirmed_utility_and_memorability",
+      "confidence": "medium",
+      "summary": "Players know and complete it because it opens the Ragefire Chasm route and is a recurring Horde leveling step; the chain is remembered as cramped or frustrating, not primarily as a favorite story.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=5726/hidden-enemies",
+        "https://www.warcrafttavern.com/wow-classic/guides/ragefire-chasm",
+        "https://allthings.how/how-to-complete-hidden-enemies-in-world-of-warcraft-classic/"
+      ]
+    },
+    {
+      "zone": 4080,
+      "label": "Isle of Quel'Danas / Thalorien Dawnseeker",
+      "quest_ids": [24562, 24563],
+      "chain_pop_score": 81.35,
+      "max_raw_pop": 40,
+      "pop_trust_weight": 0.25,
+      "verdict": "insufficient_community_evidence",
+      "confidence": "low",
+      "summary": "The Wowhead signal is good, but the sampled discussions did not establish that players broadly consider this chain a favorite. Keep it Pop-supported until more evidence is collected.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Thalorien_Dawnseeker_%28quest%29"
+      ]
+    },
+    {
+      "zone": 45,
+      "label": "Arathi Highlands / Summoning the Princess",
+      "quest_ids": [642, 651, 652, 653, 656, 687],
+      "chain_pop_score": 77.32,
+      "max_raw_pop": 65,
+      "pop_trust_weight": 0.35,
+      "verdict": "confirmed_polarized",
+      "confidence": "high",
+      "summary": "Players remember the multi-stage elite encounter and talk about it as fun, dangerous or a trap. This is strong memorability, not uniformly positive popularity.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=656/summoning-the-princess",
+        "https://www.reddit.com/r/classicwow/comments/1x31tki/massive_multi_zone_encompassing_quest_chains_especially_ones_involving_dungeons_deserve_better_rewards/",
+        "https://www.reddit.com/r/classicwow/comments/16feqr6/summoning_the_princess_quest_in_arathi/"
+      ]
+    },
+    {
+      "zone": 331,
+      "label": "Ashenvale / Raene's Cleansing",
+      "quest_ids": [991, 1023, 1024, 1026, 1027, 1028, 1029, 1030, 1045, 1046, 1055],
+      "chain_pop_score": 76.96,
+      "max_raw_pop": 57,
+      "pop_trust_weight": 0.5,
+      "verdict": "confirmed_interesting_but_polarized",
+      "confidence": "high",
+      "summary": "Players recommend it as one of the Alliance story chains worth doing, while others remember the length, travel and random drops as frustrating.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=1046/raenes-cleansing",
+        "https://www.reddit.com/r/classicwow/comments/1ph13je/questline_suggestions_for_new_players/",
+        "https://www.reddit.com/r/classicwow/comments/pa5g5i/what_is_your_least_favourite_zone_while_leveling/"
+      ]
+    },
+    {
+      "zone": 267,
+      "label": "Hillsbrad Foothills / Battle of Hillsbrad",
+      "quest_ids": [527, 528, 529, 532, 539, 541, 550],
+      "chain_pop_score": 74.05,
+      "max_raw_pop": 51,
+      "pop_trust_weight": 1.0,
+      "verdict": "confirmed_positive_and_difficult",
+      "confidence": "high",
+      "summary": "The chain is repeatedly named as a favorite or one of the best Classic chains, while its final steps are also remembered as dangerous and group-dependent.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Battle_of_Hillsbrad_quest_chain",
+        "https://www.reddit.com/r/classicvanillawow/comments/1u9kp4h/your_favourite_quest_from_classicvanilla_wow/",
+        "https://www.reddit.com/r/classicwow/comments/1dzljxv/what_are_some_amazing_quest_chains_that_everyone_should_experience_in_classic_tbc_and_wotlk/"
+      ]
+    },
+    {
+      "zone": 14,
+      "label": "Durotar / The Demon Seed",
+      "quest_ids": [806, 809, 823, 827, 828, 829, 924],
+      "chain_pop_score": 73.55,
+      "max_raw_pop": 106,
+      "pop_trust_weight": 0.35,
+      "verdict": "confirmed_route_value_not_fan_favorite",
+      "confidence": "medium",
+      "summary": "The quest is memorable because it closes the Burning Blade route and has a timed objective; community evidence supports deliberate completion, but not broad claims that it is beloved.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=924/the-demon-seed",
+        "https://allthings.how/world-of-warcraft-classic-the-demon-seed-quest-guide/",
+        "https://www.reddit.com/r/classicwow/comments/bzr3ub/are_there_any_zone_guides/"
+      ]
+    },
+    {
+      "zone": 3433,
+      "label": "Ghostlands / The Traitor's Destruction",
+      "quest_ids": [9161, 9162, 9172, 9176, 9167, 9328],
+      "chain_pop_score": 70.51,
+      "max_raw_pop": 65,
+      "pop_trust_weight": 0.35,
+      "verdict": "confirmed_memorable_difficult",
+      "confidence": "medium",
+      "summary": "Players remember it as the culmination of the Ghostlands story, but recent discussions mostly concern the hard elite room and needing help.",
+      "sources": [
+        "https://eu.forums.blizzard.com/en/wow/t/the-traitors-destruction/111445",
+        "https://www.reddit.com/r/wow/comments/1v6x6kn/stuck_to_the_traitors_destruction_quest_in_the/",
+        "https://www.reddit.com/r/classicwow/comments/1ckfyb7/to_the_blood_elf_players_who_went_through_the_ghostlands_do_you_remember_darkhan_the_traitor/"
+      ]
+    },
+    {
+      "zone": 3711,
+      "label": "Sholazar Basin / A Hero's Burden",
+      "quest_ids": [12528, 12530, 12533, 12532, 12531, 12536, 12537, 12539, 12540, 12570, 12571, 12573, 12574, 12575, 12577, 12578, 12580, 12581],
+      "chain_pop_score": 69.61,
+      "max_raw_pop": 74,
+      "pop_trust_weight": 0.4,
+      "verdict": "confirmed_recognizable_not_fan_favorite",
+      "confidence": "medium",
+      "summary": "The quest is frequently looked up because of the Oracles/Frenzyheart choice and the mount-related consequences; that is practical importance more than proof of a favorite story.",
+      "sources": [
+        "https://www.wowhead.com/wotlk/quest=12581/a-heros-burden",
+        "https://www.reddit.com/r/wownoob/comments/y0vxcb/am_i_still_able_to_get_the_green_proto_drake/"
+      ]
+    },
+    {
+      "zone": 67,
+      "label": "Storm Peaks / The Iron Colossus",
+      "quest_ids": [12979, 12980, 12984, 12988, 12993, 12998, 13007],
+      "chain_pop_score": 69.33,
+      "max_raw_pop": 49,
+      "pop_trust_weight": 0.0,
+      "verdict": "attention_may_be_problem_driven",
+      "confidence": "medium",
+      "summary": "The sampled community evidence is about missing vehicles and progression bugs. Treat the Pop value as lookup/issue attention, not as positive recommendation.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/The_Iron_Colossus",
+        "https://www.reddit.com/r/wowclassic/comments/w00uyh/jealous_of_som_enjoyers/"
+      ]
+    },
+    {
+      "zone": 394,
+      "label": "Grizzly Hills / Free at Last",
+      "quest_ids": [11981, 11982, 12070, 11985, 12081, 12093, 12094, 12099],
+      "chain_pop_score": 60.3,
+      "max_raw_pop": 81,
+      "pop_trust_weight": 0.0,
+      "verdict": "lookup_signal_only",
+      "confidence": "low",
+      "summary": "Free at Last is one of the highest individual Pop rows, but the available community evidence is mostly database and walkthrough traffic; do not call it a community favorite yet.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Free_at_Last",
+        "https://www.youtube.com/watch?v=bIJomhCZ0nM"
+      ]
+    },
+    {
+      "zone": 130,
+      "label": "Silverpine Forest / The Weaver",
+      "quest_ids": [477, 478, 481, 482, 479, 480],
+      "chain_pop_score": 60.94,
+      "max_raw_pop": 48,
+      "pop_trust_weight": 0.2,
+      "verdict": "memorable_difficult_not_positive",
+      "confidence": "medium",
+      "summary": "The Weaver is remembered as a sketchy, difficult elite quest; the chain has atmosphere, but the available attention is mostly difficulty and route help.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=480/the-weaver",
+        "https://www.reddit.com/r/wowhardcore/comments/130fgvj/does_anyone_actually_do_the_quest_achievement_the/"
+      ]
+    },
+    {
+      "zone": 46,
+      "label": "Burning Steppes / Broodling Essence",
+      "quest_ids": [4726, 4808, 5522],
+      "chain_pop_score": 74.72,
+      "max_raw_pop": 46,
+      "pop_trust_weight": 0.35,
+      "verdict": "utility_and_interactive_but_not_fan_favorite",
+      "confidence": "medium",
+      "summary": "The device mechanic and long follow-up chain are distinctive, but the signal is closely tied to dungeon routing and instructions for the tiny-range item.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=4726/broodling-essence",
+        "https://eternadex.com/en/questreihen/brennende-steppe/"
+      ]
+    },
+    {
+      "zone": 4,
+      "label": "Blasted Lands / The Stones That Bind Us",
+      "quest_ids": [2784, 2621, 2801, 2681, 2702, 2701, 2721, 2743, 2744, 3627, 3628],
+      "chain_pop_score": 64.22,
+      "max_raw_pop": 44,
+      "pop_trust_weight": 0.5,
+      "verdict": "confirmed_chain_but_not_broad_favorite",
+      "confidence": "medium",
+      "summary": "This is part of the main Blasted Lands chain and has an unusual binding-stone interaction; it is worth keeping as a moderate signal, not treating as a proven favorite.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/The_Stones_That_Bind_Us",
+        "https://www.youtube.com/watch?v=xMXNXWS3kxY"
+      ]
+    },
+    {
+      "zone": 148,
+      "label": "Darkshore / A Lost Master",
+      "quest_ids": [984, 985, 986, 993, 995],
+      "chain_pop_score": 71.63,
+      "max_raw_pop": 42,
+      "pop_trust_weight": 0.3,
+      "verdict": "memorable_but_friction_driven",
+      "confidence": "medium",
+      "summary": "The chain is part of a popular Alliance leveling zone, but the named quest is frequently discussed through death runs, bugs and awkward cave routing.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=993/a-lost-master",
+        "https://www.reddit.com/r/classicwow/comments/1jjhcdu/darkshore_dopamine/"
+      ]
+    },
+    {
+      "zone": 495,
+      "label": "Howling Fjord / We Can Rebuild It",
+      "quest_ids": [11228, 11243, 11244, 11273, 11274, 11276, 11277, 11299, 11300, 11278, 11448, 11474, 11475, 11483, 11485, 11489, 11491, 11494, 11501, 11157, 11187, 11188, 11199, 11202, 11327, 11328, 11330, 11331, 11332, 11248, 11245, 11250, 11231, 11239, 11432],
+      "chain_pop_score": 58.55,
+      "max_raw_pop": 40,
+      "pop_trust_weight": 0.5,
+      "verdict": "interactive_and_utility",
+      "confidence": "low",
+      "summary": "The chain is remembered for the joke/reference and the follow-up Iron Rune Constructs mechanics, but current evidence is weaker than for the Classic favorites.",
+      "sources": [
+        "https://www.wowhead.com/wotlk/quest=11483/we-can-rebuild-it",
+        "https://www.wowhead.com/cata/quest=11483/we-can-rebuild-it"
+      ]
+    },
+    {
+      "zone": 490,
+      "label": "Un'Goro Crater / The Videre Elixir",
+      "quest_ids": [3844, 3845, 3908, 3909, 3912, 3913, 3914, 3941, 3942, 4084, 4005, 3961, 3962],
+      "chain_pop_score": 66.55,
+      "max_raw_pop": 40,
+      "pop_trust_weight": 0.7,
+      "verdict": "confirmed_memorable_chain",
+      "confidence": "medium",
+      "summary": "The Videre Elixir is part of the recognizable Linken chain and is memorable because of the unusual dangerous elixir step; some lookups are still purely practical.",
+      "sources": [
+        "https://elitegrindlab.com/warcraft-forever/quests/the-videre-elixir/",
+        "https://theforeverguides.com/quests/linkens-quest-chain/",
+        "https://www.reddit.com/r/wowhardcore/comments/1i8j7l0/videre_elixir_still_working_as_intended_in_anniversary_servers_soulseeker/"
+      ]
+    },
+    {
+      "zone": 66,
+      "label": "Zul'Drak / Drakuru chain",
+      "quest_ids": [12631, 12637, 12629, 12648, 12661, 12669, 12677, 12676, 12690, 12710],
+      "chain_pop_score": 74.92,
+      "max_raw_pop": 39,
+      "pop_trust_weight": 0.7,
+      "verdict": "confirmed_story_and_utility",
+      "confidence": "medium",
+      "summary": "This is a real multi-step story route around Drakuru and Voltarus, with achievement/progression value; it deserves a strong but not full Pop contribution.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Zul%27Drak_quests",
+        "https://warcraft.wiki.gg/wiki/Fuel_for_the_Fire_%28quest%29",
+        "https://wotlkdb.com/index.php?quest=12669"
+      ]
+    },
+    {
+      "zone": 38,
+      "label": "Loch Modan / In Defense of the King's Lands",
+      "quest_ids": [224, 237, 263, 217],
+      "chain_pop_score": 71.84,
+      "max_raw_pop": 38,
+      "pop_trust_weight": 0.3,
+      "verdict": "starter_chain_with_difficulty_attention",
+      "confidence": "medium",
+      "summary": "The four-step chain is a clear early Alliance route with tougher troggs, but community attention is mostly about spawn competition and danger rather than story enthusiasm.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/In_Defense_of_the_King%27s_Lands",
+        "https://www.reddit.com/r/classicwow/comments/cwpqxl/this_is_how_rivalries_are_started_on_classic_wow/",
+        "https://www.reddit.com/r/HardcoreClassicWoW/comments/15l4dif/first_death_level_16_mage_in_loch_modan_doing_in_defense_of_the_kings_lands/"
+      ]
+    },
+    {
+      "zone": 8,
+      "label": "Swamp of Sorrows / Pool of Tears",
+      "quest_ids": [1424, 1429],
+      "chain_pop_score": 71.3,
+      "max_raw_pop": 36,
+      "pop_trust_weight": 0.0,
+      "verdict": "problem_driven",
+      "confidence": "high",
+      "summary": "The strongest community signal is frustration with underwater navigation and unclear object placement; this should not increase interestingness.",
+      "sources": [
+        "https://www.wowhead.com/classic-ptr/quest=1424/pool-of-tears",
+        "https://www.reddit.com/r/classicwow/comments/17qrl8s/what_is_your_dont_do_that_quest_advice_for_people/"
+      ]
+    },
+    {
+      "zone": 1377,
+      "label": "Silithus / The Spirits of Southwind",
+      "quest_ids": [1125, 1126, 6844],
+      "chain_pop_score": 59.8,
+      "max_raw_pop": 36,
+      "pop_trust_weight": 0.2,
+      "verdict": "niche_and_difficult",
+      "confidence": "low",
+      "summary": "There is a memorable mechanic around the Southwind village and spawns, but the sampled evidence is too thin to call it broadly popular.",
+      "sources": [
+        "https://www.reddit.com/r/wowhardcore/comments/1r8kwjp/small_knowledge_check_in_early_silithus/"
+      ]
+    },
+    {
+      "zone": 85,
+      "label": "Tirisfal Glades / The Prodigal Lich Returns",
+      "quest_ids": [358, 405, 366, 409, 411],
+      "chain_pop_score": 68.03,
+      "max_raw_pop": 35,
+      "pop_trust_weight": 0.5,
+      "verdict": "recognizable_story_chain",
+      "confidence": "medium",
+      "summary": "The chain is a recognizable Horde starting-zone story with the lich and the Undercity follow-up, but the evidence is mostly guides rather than favorite-chain discussions.",
+      "sources": [
+        "https://guildloot.de/en/questreihe/era/411-graverobbers-the-prodigal-lich-returns/",
+        "https://allthings.how/world-of-warcraft-how-to-get-the-lichs-spellbook-for-the-lichs-identity/"
+      ]
+    },
+    {
+      "zone": 11,
+      "label": "Wetlands / The Cursed Crew",
+      "quest_ids": [288, 289, 290, 292, 293],
+      "chain_pop_score": 60.69,
+      "max_raw_pop": 33,
+      "pop_trust_weight": 0.0,
+      "verdict": "problem_driven",
+      "confidence": "medium",
+      "summary": "The chain is memorable, but the available player discussion emphasizes underwater danger and skipping it in Hardcore rather than recommending it as an interesting story.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/The_Cursed_Crew_%28Classic%29",
+        "https://www.reddit.com/r/HardcoreClassicWoW/comments/17s0ide/this_quest_is_proobably_a_hard_skip_rip_42_trollbae/"
+      ]
+    },
+    {
+      "zone": 36,
+      "label": "Alterac Mountains / Dark Council",
+      "quest_ids": [511, 514, 525, 537],
+      "chain_pop_score": 57.11,
+      "max_raw_pop": 32,
+      "pop_trust_weight": 0.25,
+      "verdict": "insufficient_positive_evidence",
+      "confidence": "low",
+      "summary": "The raw signal is too small and the quest name is generic; without direct player recommendations it should not receive a full popularity boost.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=537/dark-council"
+      ]
+    },
+    {
+      "zone": 215,
+      "label": "Mulgore / Rites of the Earthmother",
+      "quest_ids": [767, 771, 772, 773, 775, 776],
+      "chain_pop_score": 64.27,
+      "max_raw_pop": 31,
+      "pop_trust_weight": 0.5,
+      "verdict": "recognizable_starter_story",
+      "confidence": "medium",
+      "summary": "A real Tauren starter-zone ritual chain with a clear progression into Thunder Bluff, but the raw Pop mostly reflects route and leveling-guide usage.",
+      "sources": [
+        "https://foreverupgrades.com/quest.html?id=763",
+        "https://guildloot.de/en/questreihe/era/776-a-humble-task-rites-of-the-earthmother/",
+        "https://www.reddit.com/r/classicwow/comments/1ure5si/lets_talk_about_one_of_the_most_beautiful_zones_a_top-3_zone/"
+      ]
+    },
+    {
+      "zone": 33,
+      "label": "Stranglethorn Vale / Saving Yenniku",
+      "quest_ids": [581, 582, 584, 585, 588, 589, 591, 592],
+      "chain_pop_score": 63.84,
+      "max_raw_pop": 31,
+      "pop_trust_weight": 0.25,
+      "verdict": "memorable_mechanic_but_problem_driven",
+      "confidence": "medium",
+      "summary": "The soul-gem interaction is distinctive, but the strongest available discussion is about bugs, timing and the quest failing to complete.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=592/saving-yenniku",
+        "https://guildloot.de/en/quest/era/592-saving-yenniku/"
+      ]
+    },
+    {
+      "zone": 3523,
+      "label": "Netherstorm / A Not-So-Modest Proposal",
+      "quest_ids": [10270, 10271, 10281, 10272, 10273, 10274],
+      "chain_pop_score": 52.2,
+      "max_raw_pop": 30,
+      "pop_trust_weight": 0.25,
+      "verdict": "guide_and_bug_attention",
+      "confidence": "medium",
+      "summary": "The chain has a clear Consortium route and an interactive teleport-pad objective, but the sampled discussion is dominated by location and bug questions.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/A_Not-So-Modest_Proposal",
+        "https://www.wowhead.com/quest=10270/a-not-so-modest-proposal"
+      ]
+    },
+    {
+      "zone": 406,
+      "label": "Stonetalon Mountains / Goblin Invaders",
+      "quest_ids": [1062, 1063],
+      "chain_pop_score": 69.26,
+      "max_raw_pop": 30,
+      "pop_trust_weight": 0.5,
+      "verdict": "confirmed_route_chain",
+      "confidence": "medium",
+      "summary": "It opens a recognizable Horde chain that continues through Thunder Bluff and Tarren Mill, but the individual quest is mostly a kill-and-return step.",
+      "sources": [
+        "https://guildloot.de/en/questreihe/era/1086-goblin-invaders-the-flying-machine-airport/",
+        "https://warcraft.wiki.gg/wiki/Stonetalon_Mountains_quests"
+      ]
+    },
+    {
+      "zone": 1,
+      "label": "Dun Morogh / Frostmane Hold",
+      "quest_ids": [287, 291],
+      "chain_pop_score": 73.02,
+      "max_raw_pop": 30,
+      "pop_trust_weight": 0.3,
+      "verdict": "starter_exploration_not_story_favorite",
+      "confidence": "medium",
+      "summary": "The cave is a remembered early exploration step, but available evidence treats it as a simple starter quest and walkthrough target rather than a standout story.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=287/frostmane-hold",
+        "https://www.youtube.com/watch?v=acySAlyLeWQ"
+      ]
+    },
+    {
+      "zone": 3483,
+      "label": "Hellfire Peninsula / Disrupt Their Reinforcements",
+      "quest_ids": [9407, 10120, 10289, 10291, 10121, 10123, 10124, 10208, 10129, 10388, 9400, 9401, 9405, 9410, 9406, 9438, 9441, 9442, 9447],
+      "chain_pop_score": 61.57,
+      "max_raw_pop": 28,
+      "pop_trust_weight": 0.2,
+      "verdict": "interactive_but_friction_driven",
+      "confidence": "medium",
+      "summary": "The portal-disruption objective is interactive, but comments focus on the item drop, aggro, wrong portal and bugs; retain only a small positive contribution.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=10208/disrupt-their-reinforcements",
+        "https://www.wowhead.com/ptr-2/quest=10208/disrupt-their-reinforcements"
+      ]
+    },
+    {
+      "zone": 139,
+      "label": "Eastern Plaguelands / Fragments of the Past",
+      "quest_ids": [5246, 5247, 5248],
+      "chain_pop_score": 65.4,
+      "max_raw_pop": 28,
+      "pop_trust_weight": 0.5,
+      "verdict": "long_cross_zone_chain",
+      "confidence": "medium",
+      "summary": "This is part of a longer Highborne/Crystal of Zin-Malor route across several zones and Dire Maul; it has real exploration value, but no strong favorite evidence was found.",
+      "sources": [
+        "https://questing.wiki/wow-forever/quests/5247/",
+        "https://pd.zroot.it/forever/quests/5246"
+      ]
+    },
+    {
+      "zone": 28,
+      "label": "Western Plaguelands / Scarlet Subterfuge",
+      "quest_ids": [5861, 5862, 5944],
+      "chain_pop_score": 73.75,
+      "max_raw_pop": 28,
+      "pop_trust_weight": 0.8,
+      "verdict": "confirmed_story_chain",
+      "confidence": "high",
+      "summary": "The disguise-and-infiltration step is part of the recognizable Tirion/Highlord Taelan story and leads into In Dreams; this Pop signal is more than a simple how-to lookup.",
+      "sources": [
+        "https://database.ravencraft.io/?quest=5862",
+        "https://warcraft.wiki.gg/wiki/Battle_of_Hillsbrad_quest_chain",
+        "https://guildloot.de/en/quest/era/5944-in-dreams/"
+      ]
+    },
+    {
+      "zone": 15,
+      "label": "Dustwallow Marsh / Secondhand Diving Gear",
+      "quest_ids": [11126, 11128, 11133, 11134, 11136, 11137, 11138, 11139, 11140, 11141, 11142, 11222, 11223],
+      "chain_pop_score": 61.45,
+      "max_raw_pop": 27,
+      "pop_trust_weight": 0.1,
+      "verdict": "underwater_and_spawn_friction",
+      "confidence": "high",
+      "summary": "The underwater objective is memorable, but the evidence centers on hidden placement, long respawn and bug reports rather than positive quest appreciation.",
+      "sources": [
+        "https://www.wowhead.com/quest=27236/secondhand-diving-gear",
+        "https://www.emucoach.com/threads/bug-quest-secondhand-diving-gear-dustwallow-marsh.3814/"
+      ]
+    },
+    {
+      "zone": 12,
+      "label": "Elwynn Forest / Jasperlode and starter mines",
+      "quest_ids": [62, 76, 239, 11],
+      "chain_pop_score": 66.27,
+      "max_raw_pop": 27,
+      "pop_trust_weight": 0.25,
+      "verdict": "starter_route_and_cave_attention",
+      "confidence": "medium",
+      "summary": "The mines are memorable early exploration spaces, but the signal is mostly route, cave danger and leveling-guide attention rather than a standout story chain.",
+      "sources": [
+        "https://foreverupgrades.com/quest.html?id=76",
+        "https://www.reddit.com/r/classicwow/comments/1wnkp71/ill_be_the_first_to_admit_some_of_these_quests_humbled_me/",
+        "https://www.reddit.com/r/classicwow/comments/kiwjou/a_spooky_place_visited_by_few_the_deep_end_of_jasperlode_mine_in_elwynn_forest/"
+      ]
+    },
+    {
+      "zone": 4395,
+      "label": "Dalaran / The Sunreaver Plan",
+      "quest_ids": [14457],
+      "chain_pop_score": 76.1,
+      "max_raw_pop": 26,
+      "pop_trust_weight": 0.1,
+      "verdict": "location_and_drop_friction",
+      "confidence": "high",
+      "summary": "The strong signal is almost entirely a one-step location/drop problem in Dalaran; it should not elevate the quest as an interesting story.",
+      "sources": [
+        "https://www.wowhead.com/quest=14457/the-sunreaver-plan"
+      ]
+    },
+    {
+      "zone": 440,
+      "label": "Tanaris / The Scrimshank Redemption",
+      "quest_ids": [992, 82, 10, 110, 113, 162, 4496, 4507, 4508],
+      "chain_pop_score": 60.0,
+      "max_raw_pop": 26,
+      "pop_trust_weight": 0.5,
+      "verdict": "recognized_cross_zone_chain",
+      "confidence": "medium",
+      "summary": "The chain is part of Rise of the Silithid, has a memorable cave search and a recognizable joke title, but the evidence is stronger for route utility than for broad story enthusiasm.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/The_Scrimshank_Redemption",
+        "https://www.wowhead.com/wotlk/quest=10/the-scrimshank-redemption",
+        "https://classicdb.ch/?quest=10"
+      ]
+    },
+    {
+      "zone": 65,
+      "label": "Dragonblight / Wyrmrest and Heated Battle route",
+      "quest_ids": [12055, 12060, 12065, 12083, 12098, 12107, 12119, 12766, 12460, 12416, 12417, 12418, 12768, 12123, 12435],
+      "chain_pop_score": 63.38,
+      "max_raw_pop": 26,
+      "pop_trust_weight": 0.3,
+      "verdict": "zone_story_with_generic_steps",
+      "confidence": "medium",
+      "summary": "The zone route has real Wyrmrest/Scourge story context, but the highest-Pop step is a generic kill objective; keep only a modest popularity contribution.",
+      "sources": [
+        "https://www.wowhead.com/wotlk/quest=12416/heated-battle",
+        "https://warcraft.wiki.gg/wiki/Heated_Battle"
+      ]
+    },
+    {
+      "zone": 16,
+      "label": "Azshara / The Name of the Beast",
+      "quest_ids": [3141, 3508, 3509, 3510, 3511, 3602, 3621],
+      "chain_pop_score": 68.23,
+      "max_raw_pop": 26,
+      "pop_trust_weight": 0.6,
+      "verdict": "confirmed_lore_chain",
+      "confidence": "medium",
+      "summary": "The chain connects Loramus, the Azshara demon story and the Felbane/Azsharite follow-up into the Blasted Lands; it has more narrative value than a normal kill quest.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=3510/the-name-of-the-beast",
+        "https://theforeverguides.com/quests/azshara-quests/",
+        "https://www.wowhead.com/classic/quest=3509/the-name-of-the-beast"
+      ]
+    },
+    {
+      "zone": 493,
+      "label": "Moonglade / A Reliquary of Purity",
+      "quest_ids": [5527, 5526],
+      "chain_pop_score": 68.08,
+      "max_raw_pop": 25,
+      "pop_trust_weight": 0.4,
+      "verdict": "dungeon_and_cross_zone_utility",
+      "confidence": "medium",
+      "summary": "The chain has a real Moonglade–Silithus–Dire Maul route and unusual item handling, but much of its attention comes from dungeon instructions and turn-in pitfalls.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=5527/a-reliquary-of-purity",
+        "https://warcraft.wiki.gg/wiki/Reliquary_of_Purity_%28Classic%29",
+        "https://www.youtube.com/watch?v=WhWdxN4HxiM"
+      ]
+    },
+    {
+      "zone": 210,
+      "label": "Icecrown / Crusader Bridenbrad",
+      "quest_ids": [13068, 13072, 13073, 13074, 13075, 13076, 13077, 13079, 13080, 13081, 13082, 13083],
+      "chain_pop_score": 64.06,
+      "max_raw_pop": 25,
+      "pop_trust_weight": 0.9,
+      "verdict": "confirmed_memorable_story",
+      "confidence": "high",
+      "summary": "The Bridenbrad line is repeatedly remembered as one of the most emotional WotLK quest stories; its Pop deserves a strong positive weight.",
+      "sources": [
+        "https://wotlkdb.com/index.php?quest=13068",
+        "https://www.reddit.com/r/wow/comments/1veleot/what_was_your_favorite_and_most_memorable_quests_and_moments_from_wotlk/",
+        "https://www.youtube.com/watch?v=5mPdLQgmkSI"
+      ]
+    },
+    {
+      "zone": 3521,
+      "label": "Zangarmarsh / Gathering the Reagents",
+      "quest_ids": [9786, 9787, 9801, 9803],
+      "chain_pop_score": 56.63,
+      "max_raw_pop": 22,
+      "pop_trust_weight": 0.15,
+      "verdict": "generic_collection_step",
+      "confidence": "medium",
+      "summary": "The signal is mostly a guide for collecting Sporebat Eyes and Fen Strider Tentacles; the step has little independent story or interaction.",
+      "sources": [
+        "https://www.wowhead.com/quest=9801/gathering-the-reagents"
+      ]
+    },
+    {
+      "zone": 361,
+      "label": "Felwood / A Strange Red Key",
+      "quest_ids": [5202, 5203, 5204, 5385],
+      "chain_pop_score": 62.79,
+      "max_raw_pop": 22,
+      "pop_trust_weight": 0.85,
+      "verdict": "confirmed_story_and_escort_chain",
+      "confidence": "high",
+      "summary": "The red key starts a compact rescue-and-revenge story with an escort through Jaedenar and a clear continuation to Trey Lightforge's remains; the low drop rate adds friction but does not explain all of the interest.",
+      "sources": [
+        "https://classic.warcraftdb.com/data/quest/5202",
+        "https://questing.wiki/wow-forever/quests/5202/",
+        "https://guildloot.de/en/questreihe/era/5385-a-strange-red-key-the-remains-of-trey-lightforge/"
+      ]
+    },
+    {
+      "zone": 41,
+      "label": "Deadwind Pass / Digging Up the Past",
+      "quest_ids": [9680],
+      "chain_pop_score": 71.37,
+      "max_raw_pop": 21,
+      "pop_trust_weight": 0.15,
+      "verdict": "attunement_and_objective_friction",
+      "confidence": "high",
+      "summary": "This is a memorable Karazhan/Nightbane progression step, but the attention is dominated by raid-group restrictions and finding the Charred Bone Fragment rather than by the quest's own story.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=9680/digging-up-the-past",
+        "https://www.lootxphub.com/karazhan-quest-guide-attunement-nightbane-summoning-and-violet-signet-rings/",
+        "https://www.warcrafttavern.com/tbc/guides/the-violet-eye-reputation"
+      ]
+    },
+    {
+      "zone": 3522,
+      "label": "Blade's Edge Mountains / Harvesting the Fel Ammunition",
+      "quest_ids": [10810, 10812, 10819, 10820, 10821, 10910, 10904, 10911, 10912],
+      "chain_pop_score": 56.14,
+      "max_raw_pop": 20,
+      "pop_trust_weight": 0.25,
+      "verdict": "chain_utility_with_generic_collection",
+      "confidence": "medium",
+      "summary": "The step belongs to the Death's Door/Cenarion line and has a fun use of enemy ammunition, but the high signal is still mostly a walkthrough for five cannonballs and the following portal sequence.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=10904/harvesting-the-fel-ammunition",
+        "https://www.wow-pro.com/source-code-blades-edge-mountains-horde/"
+      ]
+    },
+    {
+      "zone": 3430,
+      "label": "Eversong Woods / The Dwarven Spy",
+      "quest_ids": [8482, 8483, 9256, 8892, 9359, 8476],
+      "chain_pop_score": 53.2,
+      "max_raw_pop": 20,
+      "pop_trust_weight": 0.4,
+      "verdict": "interactive_early_zone_story",
+      "confidence": "medium",
+      "summary": "The Incriminating Documents line has a real spy premise and a scripted target who must be followed before becoming attackable; the rest is a short early-zone route rather than a major story arc.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Eversong_Woods_quests",
+        "https://www.wowhead.com/classic/quest=8483/the-dwarven-spy",
+        "https://www.wowhead.com/wotlk/quest=8483/the-dwarven-spy"
+      ]
+    },
+    {
+      "zone": 405,
+      "label": "Desolace / Search for Tyranis",
+      "quest_ids": [1437, 1465, 1438, 1439, 1440],
+      "chain_pop_score": 54.56,
+      "max_raw_pop": 19,
+      "pop_trust_weight": 0.7,
+      "verdict": "confirmed_character_story_and_escort",
+      "confidence": "high",
+      "summary": "The five-part Vahlarriel line has a clear character tragedy, a corruption reveal and an escort conclusion; its moderate weight reflects that it is faction-limited and not broadly named as a top Classic chain.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Desolace_storyline_%28Classic%29",
+        "https://forever-xp.com/quests/1439/",
+        "https://questing.wiki/wow-forever/quests/1439/"
+      ]
+    },
+    {
+      "zone": 357,
+      "label": "Feralas / Delivering the Relic",
+      "quest_ids": [2866, 2867, 3130, 2869, 2870, 2871],
+      "chain_pop_score": 58.55,
+      "max_raw_pop": 19,
+      "pop_trust_weight": 0.45,
+      "verdict": "recognized_ruins_chain",
+      "confidence": "medium",
+      "summary": "The six-step Ruins of Solarsal line has a coherent archaeological theme and a faction-specific payoff, but community attention is mixed with ordinary Feralas routing and reward lookup.",
+      "sources": [
+        "https://guildloot.de/en/quest/era/2871-delivering-the-relic/",
+        "https://pd.zroot.it/forever/quests/2871"
+      ]
+    },
+    {
+      "zone": 3524,
+      "label": "Azuremyst Isle / Totem of Coo",
+      "quest_ids": [9538, 9539, 9540, 9541, 9542, 9544, 9559, 9565, 9570, 9571],
+      "chain_pop_score": 55.5,
+      "max_raw_pop": 18,
+      "pop_trust_weight": 0.65,
+      "verdict": "confirmed_interactive_spirit_chain",
+      "confidence": "high",
+      "summary": "The Akida line is unusually interactive for a starting zone: reading the totem summons a spirit that leads the player onward, with movement buffs and a final prophecy; Pop is partly guide-driven but the mechanics are genuinely distinctive.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=9539/totem-of-coo",
+        "https://www.wowhead.com/tbc/quest=9538/learning-the-language",
+        "https://millz.yolasite.com/resources/allianceguide70.pdf"
+      ]
+    },
+    {
+      "zone": 3519,
+      "label": "Terokkar Forest / What Are These Things?",
+      "quest_ids": [9995, 10448, 9997, 10447, 10006],
+      "chain_pop_score": 61.08,
+      "max_raw_pop": 18,
+      "pop_trust_weight": 0.3,
+      "verdict": "story_branch_with_delivery_step",
+      "confidence": "medium",
+      "summary": "The line reveals the fate of the Cenarion group and leads into the Firewing Point branch, but this particular high-Pop step is only a box delivery and is commonly searched for route details.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=9995/what-are-these-things",
+        "https://www.wowhead.com/tbc/quest=10252/vision-of-the-dead"
+      ]
+    },
+    {
+      "zone": 1638,
+      "label": "Thunder Bluff / Un'Goro Soil",
+      "quest_ids": [3761, 3782, 3786],
+      "chain_pop_score": 57.95,
+      "max_raw_pop": 18,
+      "pop_trust_weight": 0.1,
+      "verdict": "reagent_and_reputation_utility",
+      "confidence": "high",
+      "summary": "The signal is explained by the Morrowgrain/reputation supply loop and by players searching where to turn in soil; the objective itself is a standard collection task with little story.",
+      "sources": [
+        "https://classicdb.com/?quest=3761",
+        "https://pd.zroot.it/era/items/11018",
+        "https://www.reddit.com/r/classicwow/comments/dets7g/"
+      ]
+    },
+    {
+      "zone": 44,
+      "label": "Redridge Mountains / Messenger to Darkshire",
+      "quest_ids": [120, 121, 143, 144, 145, 146],
+      "chain_pop_score": 62.76,
+      "max_raw_pop": 18,
+      "pop_trust_weight": 0.05,
+      "verdict": "travel_and_route_utility",
+      "confidence": "high",
+      "summary": "This six-part line is a memorable mail relay between Redridge, Stormwind, Westfall and Duskwood, but the Pop signal is overwhelmingly route and leveling-guide attention rather than story or interactive appeal.",
+      "sources": [
+        "https://www.60.tools/quests/145-messenger-to-darkshire",
+        "https://classicdb.ch/?quest=145",
+        "https://forever-xp.com/quests/146/"
+      ]
+    },
+    {
+      "zone": 3518,
+      "label": "Nagrand / Vision of the Dead",
+      "quest_ids": [10251, 10252],
+      "chain_pop_score": 65.38,
+      "max_raw_pop": 17,
+      "pop_trust_weight": 0.35,
+      "verdict": "distinctive_reward_with_farming_friction",
+      "confidence": "high",
+      "summary": "The potion permanently opens the dead world around Auchindoun and gives the line a distinctive payoff, but the Pop discussion is heavily driven by rare Aged Clefthoof spawns, drop frustration and soloing advice.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=10252/vision-of-the-dead",
+        "https://www.wowhead.com/ptr/quest=10252/vision-of-the-dead",
+        "https://www.wowhead.com/tbc/item=28664/nitrins-instructions"
+      ]
+    },
+    {
+      "zone": 618,
+      "label": "Winterspring / The Crystal of Zin-Malor",
+      "quest_ids": [5244, 5245, 5252, 5253],
+      "chain_pop_score": 55.02,
+      "max_raw_pop": 17,
+      "pop_trust_weight": 0.65,
+      "verdict": "confirmed_lore_and_unusual_item",
+      "confidence": "medium",
+      "summary": "The Tormented by the Past line has a strong Highborne mystery and an unusual crystal that can actively drain the player, so the signal is more than a location lookup even though the chain is short.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=5253/the-crystal-of-zin-malor",
+        "https://www.wowhead.com/classic-ptr/quest=5246/fragments-of-the-past"
+      ]
+    },
+    {
+      "zone": 400,
+      "label": "Thousand Needles / Goblin Sponsorship",
+      "quest_ids": [1176, 1178, 1180, 1181, 1182, 1183, 1186, 1187, 1188, 1189],
+      "chain_pop_score": 58.54,
+      "max_raw_pop": 17,
+      "pop_trust_weight": 0.55,
+      "verdict": "recognized_long_goblin_chain",
+      "confidence": "medium",
+      "summary": "The chain is long, faction-flavored and contains several distinct goblin engineering beats, but much of its attention comes from leveling routes and the amount of travel rather than from a tightly told story.",
+      "sources": [
+        "https://warcraft.wiki.gg/wiki/Thousand_Needles_quests",
+        "https://questing.wiki/wow-forever/quests/1180/",
+        "https://www.reddit.com/r/wowforever/comments/1x6jj8s/"
+      ]
+    },
+    {
+      "zone": 51,
+      "label": "Searing Gorge / The Torch of Retribution",
+      "quest_ids": [3441, 3442, 3443, 3452, 3453, 3454, 3462, 3463, 3481],
+      "chain_pop_score": 53.76,
+      "max_raw_pop": 17,
+      "pop_trust_weight": 0.45,
+      "verdict": "long_scripted_chain_with_route_utility",
+      "confidence": "medium",
+      "summary": "The Kalaran Windblade line has a long build-up, a scripted torch step and a recognizable Searing Gorge arc, but the signal also reflects route optimization, item handoffs and the later A Taste of Flame branch.",
+      "sources": [
+        "https://eternadex.com/en/quests/3453/",
+        "https://forever-xp.com/quests/3454/",
+        "https://questing.wiki/wow-forever/quests/3453/"
+      ]
+    },
+    {
+      "zone": 47,
+      "label": "The Hinterlands / Rhapsody's Tale",
+      "quest_ids": [1450, 1451, 1452, 1469],
+      "chain_pop_score": 59.5,
+      "max_raw_pop": 17,
+      "pop_trust_weight": 0.6,
+      "verdict": "recognized_cross_zone_exploration_chain",
+      "confidence": "medium",
+      "summary": "The Rhapsody line is a memorable cross-zone search tied to the Atal'ai temple and ends by opening the dungeon route; its travel and guide demand are real, but the chain has a recognizable identity beyond pure lookup friction.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=1469/rhapsodys-tale",
+        "https://questing.wiki/wow-forever/quests/1450/",
+        "https://forever-xp.com/quests/1450/"
+      ]
+    },
+    {
+      "zone": 3,
+      "label": "Badlands / A Sign of Hope and Prospect of Faith",
+      "quest_ids": [720, 723, 724, 725, 726, 762],
+      "chain_pop_score": 58.97,
+      "max_raw_pop": 17,
+      "pop_trust_weight": 0.65,
+      "verdict": "confirmed_dwarf_lore_and_cross_zone_chain",
+      "confidence": "high",
+      "summary": "The nine-step Hammertoe/Explorers' League line combines Uldaman investigation, dwarf history and a final tablet discovery; it is a real story chain, though its Pop is also boosted by dungeon routing.",
+      "sources": [
+        "https://theforeverera.com/en/quests/720/",
+        "https://foreverchanges.pro/quest/723/prospect-of-faith",
+        "https://warcraft.wiki.gg/wiki/A_Sign_of_Hope"
+      ]
+    },
+    {
+      "zone": 3520,
+      "label": "Shadowmoon Valley / The Cipher of Damnation",
+      "quest_ids": [10527, 10528, 10537, 10540, 10541],
+      "chain_pop_score": 54.98,
+      "max_raw_pop": 16,
+      "pop_trust_weight": 0.9,
+      "verdict": "confirmed_long_story_chain",
+      "confidence": "high",
+      "summary": "The Ar'tor branch is part of the long Oronok family story: the player recovers a fragment, learns the son's fate and carries the news back to his father. The later attunement utility adds attention but does not define the whole line.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=10541/the-cipher-of-damnation-the-second-fragment-recovered",
+        "https://guildloot.de/en/quest/tbc/10541-the-cipher-of-damnation-the-second-fragment-recovered/",
+        "https://www.wowhead.com/wotlk/quest=10541/the-cipher-of-damnation-the-second-fragment-recovered"
+      ]
+    },
+    {
+      "zone": 3525,
+      "label": "Zangarmarsh / The Second Sample",
+      "quest_ids": [9581, 9620, 9628, 9584, 9585],
+      "chain_pop_score": 49.89,
+      "max_raw_pop": 15,
+      "pop_trust_weight": 0.2,
+      "verdict": "generic_cenarion_collection_step",
+      "confidence": "medium",
+      "summary": "The Cenarion Expedition context is useful for zone progression, but the high-Pop step is a routine sample collection task and does not independently signal a memorable story.",
+      "sources": [
+        "https://wowclassic.judgehype.com/database/en/quest/9584/the-second-sample/"
+      ]
+    },
+    {
+      "zone": 1537,
+      "label": "Uldaman / The Platinum Discs",
+      "quest_ids": [2439, 2963, 2946],
+      "chain_pop_score": 62.42,
+      "max_raw_pop": 15,
+      "pop_trust_weight": 0.65,
+      "verdict": "confirmed_titan_lore_and_interaction",
+      "confidence": "high",
+      "summary": "The discs line has distinctive Titan lore, an interactive gate sequence at Uldum and a clear reveal that continues beyond the dungeon; many searches are practical, but the underlying chain is genuinely memorable.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=2946/seeing-what-happens",
+        "https://questing.wiki/wow-forever/quests/2439/",
+        "https://wowforeverbuilder.com/quests/zones/the-platinum-discs/"
+      ]
+    },
+    {
+      "zone": 1519,
+      "label": "Stormwind / The Great Masquerade",
+      "quest_ids": [6402, 6403, 6501],
+      "chain_pop_score": 53.47,
+      "max_raw_pop": 15,
+      "pop_trust_weight": 0.85,
+      "verdict": "confirmed_iconic_scripted_story",
+      "confidence": "high",
+      "summary": "The Windsor escort through Stormwind and the Onyxia reveal are an iconic Alliance story beat with a scripted public climax; raid attunement and recurring bug reports explain part of the attention, but not all of it.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=6403/the-great-masquerade",
+        "https://warcraft.wiki.gg/wiki/The_Great_Masquerade_quest_chain",
+        "https://guildloot.de/en/quest/era/6403-the-great-masquerade/"
+      ]
+    },
+    {
+      "zone": 141,
+      "label": "Teldrassil / Crown of the Earth",
+      "quest_ids": [929, 933, 7383, 935],
+      "chain_pop_score": 59.96,
+      "max_raw_pop": 15,
+      "pop_trust_weight": 0.35,
+      "verdict": "recognizable_starter_route",
+      "confidence": "medium",
+      "summary": "Crown of the Earth is the central Teldrassil starter route and has strong zone identity, but its Pop is mostly leveling-route attention around repeated phial errands rather than a standout character story.",
+      "sources": [
+        "https://forever-xp.com/quests/929/",
+        "https://pd.zroot.it/era/quests/928"
+      ]
+    },
+    {
+      "zone": 10,
+      "label": "Desolace / Nothing But The Truth",
+      "quest_ids": [1372, 1383, 1388, 1391],
+      "chain_pop_score": 51.93,
+      "max_raw_pop": 15,
+      "pop_trust_weight": 0.1,
+      "verdict": "spawn_and_drop_friction",
+      "confidence": "high",
+      "summary": "The signal is overwhelmingly about finding the wandering Deepstrider and dealing with awkward drops; the short chain does not provide enough independent story evidence to retain the raw Pop.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=1383/nothing-but-the-truth",
+        "https://questing.wiki/wow-forever/quests/1383/"
+      ]
+    },
+    {
+      "zone": 3537,
+      "label": "Borean Tundra / Farshire investigation",
+      "quest_ids": [11928, 11901, 11902, 11903, 11904, 11962, 11963, 11965],
+      "chain_pop_score": 51.81,
+      "max_raw_pop": 14,
+      "pop_trust_weight": 0.35,
+      "verdict": "zone_investigation_with_route_utility",
+      "confidence": "medium",
+      "summary": "The Farshire and plague-grain investigation gives Borean Tundra a concrete local story and a few interactive objective steps, but the selected quests are also common leveling-route lookups.",
+      "sources": [
+        "https://www.wow-pro.com/source-code-borean-tundra-alliance/",
+        "https://wotlk.ultimowow.com/?quest=11902"
+      ]
+    },
+    {
+      "zone": 1657,
+      "label": "Darnassus / March of the Silithid and Calm Before the Storm",
+      "quest_ids": [4493, 4510],
+      "chain_pop_score": 60.08,
+      "max_raw_pop": 13,
+      "pop_trust_weight": 0.55,
+      "verdict": "confirmed_cross_zone_silithid_investigation",
+      "confidence": "medium",
+      "summary": "The Silithid investigation connects Tanaris, Un'Goro and Darnassus into a meaningful threat arc, ending with the warning that the source lies deeper; the final bank handoff and reputation rewards explain part of the search traffic.",
+      "sources": [
+        "https://classicdb.com/?quest=4493",
+        "https://forever-xp.com/quests/4510/",
+        "https://classicdb.ch/?quest=4510"
+      ]
+    },
+    {
+      "zone": 1497,
+      "label": "Undercity / Seeping Corruption",
+      "quest_ids": [3568, 3569, 3570],
+      "chain_pop_score": 45.09,
+      "max_raw_pop": 9,
+      "pop_trust_weight": 0.4,
+      "verdict": "short_memorable_dark_story",
+      "confidence": "high",
+      "summary": "The three-step Forsaken chemistry line is easy to miss but ends with an unexpectedly bleak moral turn that players explicitly remember; its modest weight reflects the narrow audience and small scope.",
+      "sources": [
+        "https://www.wowhead.com/classic/quest=3570/seeping-corruption",
+        "https://guildloot.de/en/questreihe/era/3570-seeping-corruption/",
+        "https://forever-xp.com/quests/3570/"
+      ]
+    },
+    {
+      "zone": 3487,
+      "label": "Silvermoon City / Allegiance to the Horde",
+      "quest_ids": [9627],
+      "chain_pop_score": 48.02,
+      "max_raw_pop": 7,
+      "pop_trust_weight": 0.2,
+      "verdict": "faction_transition_delivery",
+      "confidence": "medium",
+      "summary": "The quest has faction-lore significance because it formalizes the blood elves' allegiance, but the player action is a short letter delivery and the Pop signal is not evidence of a rich chain.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=9627/allegiance-to-the-horde",
+        "https://www.youtube.com/watch?v=DtGzG3JazxU",
+        "https://www.reddit.com/r/wownoob/comments/fnosni/"
+      ]
+    },
+    {
+      "zone": 3703,
+      "label": "Shattrath City / The Tempest Key",
+      "quest_ids": [10883, 10884],
+      "chain_pop_score": 50.15,
+      "max_raw_pop": 10,
+      "pop_trust_weight": 0.15,
+      "verdict": "raid_attunement_utility",
+      "confidence": "high",
+      "summary": "The Tempest Key is a meaningful progression gate and Trial of the Naaru: Mercy has a clear rescue objective, but the attention is primarily driven by Heroic-dungeon attunement requirements rather than by the two quests' own narrative.",
+      "sources": [
+        "https://www.wowhead.com/tbc/quest=10883/the-tempest-key",
+        "https://www.wowhead.com/tbc/quest=10884/trial-of-the-naaru-mercy",
+        "https://warcraft.wiki.gg/wiki/The_Tempest_Key",
+        "https://www.icy-veins.com/tbc-classic/tempest-keep-attunement"
+      ]
+    },
+    {
+      "zone": 3557,
+      "label": "Ironforge / A Donation of Runecloth",
+      "quest_ids": [10357],
+      "chain_pop_score": 0.0,
+      "max_raw_pop": 0,
+      "pop_trust_weight": 0.0,
+      "verdict": "reputation_turn_in_no_pop_signal",
+      "confidence": "high",
+      "summary": "This is a cloth donation and reputation turn-in unlocked after earlier cloth donations; there is no Wowhead Pop signal in the snapshot and it should not contribute to story interest.",
+      "sources": [
+        "https://wowforever.gg/en/atlas/knowledge/quests/a-donation-of-runecloth-q7824/",
+        "https://github.com/azerothcore/azerothcore-wotlk/issues/9591",
+        "https://classicdb.ch/?quest=7805"
+      ]
+    }
+  ]
+}

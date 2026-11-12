@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+test-tmp/
+
+# Secrets
+.env
+.env.*
+
+# The backend is a separate private repository under backend/.
+backend/
+voice-packs/
+deploy/
+tools/
+tests/
+research/
+!research/
+!research/quest_guides/
+!research/quest_guides/*.py
+!research/quest_guides/*.md
+!research/quest_guides/*.compact
+!research/quest_guides/*.csv
+!research/quest_guides/*.json
+!research/voice_inventory.py
+AGENTS.md
+CatQuest-335-Backend.cmd
+CatQuest-335-Voice-Server.cmd
+
+# Local caches
+wowhead-cache/
+.tmp/
+.tmp-catquest-original/
+.tmp-catquest-world/
+research/quest_guides/wowhead_popularity.compact
+research/quest_guides/wowhead_popularity.csv
+
+# Build outputs (rebuilt by tools/*.ps1)
+/*.zip
+installers/*.zip
+backend/public/*.zip
+backend/quest_texts/
+
+# Original CatQuest voice-pack audio is downloaded separately and must not be
+# committed to the addon repository.
+/CatQuestExtended_Voices/Sounds/
+/docs/places/voice-samples/0-original-narrator.mp3
+/dist/

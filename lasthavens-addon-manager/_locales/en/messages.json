@@ -1,0 +1,284 @@
+{
+  "title": {
+    "message": "Addon manager"
+  },
+  "description": {
+    "message": "Local ZIP addons for Lasthavens 3.3.5a."
+  },
+  "importZip": {
+    "message": "Import ZIP"
+  },
+  "play": {
+    "message": "Open game"
+  },
+  "hint": {
+    "message": "Changes apply after reloading the game page."
+  },
+  "voiceApiTitle": {
+    "message": "Voice-over"
+  },
+  "voiceApiSaved": {
+    "message": "Saved. Reload the game page."
+  },
+  "waiting": {
+    "message": "Waiting for the game"
+  },
+  "storageTitle": {
+    "message": "Storage"
+  },
+  "storageInfo": {
+    "message": "Addon files stay in this Chrome profile. Removing an addon preserves its game settings. Built-in addons are managed in the game library."
+  },
+  "limits": {
+    "message": "Limits: ZIP 128 MB; unpacked archive 256 MB; file 64 MB; library 384 MB."
+  },
+  "reloadInfo": {
+    "message": "Reload the game page when you are ready to interrupt the session."
+  },
+  "empty": {
+    "message": "No local addons. Import a ZIP."
+  },
+  "enabled": {
+    "message": "Enabled"
+  },
+  "disabled": {
+    "message": "Disabled"
+  },
+  "exportZip": {
+    "message": "Export ZIP"
+  },
+  "remove": {
+    "message": "Remove"
+  },
+  "saved": {
+    "message": "Saved. Reload the game to apply changes."
+  },
+  "imported": {
+    "message": "Imported. New addons are disabled by default."
+  },
+  "noVersion": {
+    "message": "No version"
+  },
+  "files": {
+    "message": "files"
+  },
+  "addons": {
+    "message": "addons"
+  },
+  "active": {
+    "message": "enabled"
+  },
+  "dependencies": {
+    "message": "Check required dependencies: {names}. They may be installed in the game library."
+  },
+  "changed": {
+    "message": "Changes pending. Reload the game."
+  },
+  "ready": {
+    "message": "Prepared local addons: {count}"
+  },
+  "loadError": {
+    "message": "Loader error. The game may start without local addons."
+  },
+  "importError": {
+    "message": "Could not import the archive. Technical details:"
+  },
+  "libraryLimit": {
+    "message": "Library exceeds 384 MB."
+  },
+  "interfaceWarning": {
+    "message": "The TOC does not declare Interface 30300. Compatibility is unverified."
+  },
+  "errorPath": {
+    "message": "Unsafe archive path: {detail}"
+  },
+  "errorArchiveSize": {
+    "message": "ZIP exceeds 128 MB."
+  },
+  "errorExpanded": {
+    "message": "Unpacked data exceeds the 64 MB per-file or 256 MB archive limit."
+  },
+  "errorIntegrity": {
+    "message": "File integrity check failed: {detail}"
+  },
+  "errorFolder": {
+    "message": "Invalid or duplicate addon folder: {detail}"
+  },
+  "errorToc": {
+    "message": "Main Folder/Folder.toc is missing."
+  },
+  "errorUnsupported": {
+    "message": "Unsupported ZIP format: encryption, ZIP64, multiple volumes, symbolic links or compression method."
+  },
+  "errorDuplicate": {
+    "message": "Duplicate archive path: {detail}"
+  },
+  "errorZip": {
+    "message": "The ZIP archive is invalid or damaged."
+  },
+  "errorUnexpected": {
+    "message": "The operation failed. Check browser storage space and try again."
+  },
+  "diagTitle": {
+    "message": "Audio delivery diagnostics"
+  },
+  "diagHint": {
+    "message": "Enable CatQuest, enter the game and run /cq probe 606. The game's requests for voice files appear here."
+  },
+  "diagEmpty": {
+    "message": "No events yet."
+  },
+  "diagClear": {
+    "message": "Clear"
+  },
+  "diagCopy": {
+    "message": "Copy log"
+  },
+  "diagCopied": {
+    "message": "Log copied."
+  },
+  "diagNoRead": {
+    "message": "The addon loaded, but the game never requested a voice file. The path is not visible: the Lasthavens file system needs investigation."
+  },
+  "diagSync": {
+    "message": "The game reads audio synchronously. Reads served from cache: {count}."
+  },
+  "diagAsync": {
+    "message": "The game reads audio asynchronously: option A fits."
+  },
+  "voiceLocaleLabel": {
+    "message": "Voice language"
+  },
+  "voiceLocaleAuto": {
+    "message": "Same as in game (/cq lang): {locale}"
+  },
+  "voiceLocaleHint": {
+    "message": "Tracks for this language are voiced on demand: a quest without voice-over is sent to the server when first opened, and the audio arrives in about 30 seconds. Takes effect after reloading the game."
+  },
+  "capacity": {
+    "message": "Voice server: {queue} in queue, {used} of {limit} this hour, one track ≈ {seconds} s, budget covers ≈ {budget} tracks."
+  },
+  "capacityLimited": {
+    "message": "Hourly limit reached, next in {minutes} min."
+  },
+  "capacityOffline": {
+    "message": "Voice server is unavailable."
+  },
+  "capacityOff": {
+    "message": "Generation is off on the server: only ready tracks play."
+  },
+  "updatesTitle": {
+    "message": "Updates"
+  },
+  "earlyUpdatesLabel": {
+    "message": "Get fresh versions before release"
+  },
+  "earlyUpdatesHint": {
+    "message": "Turn on to receive beta addons before the stable release. Off by default."
+  },
+  "updatesChannelStable": {
+    "message": "Channel: stable releases."
+  },
+  "updatesChannelBeta": {
+    "message": "Channel: beta releases."
+  },
+  "updatesCheck": {
+    "message": "Check for updates"
+  },
+  "updatesChecking": {
+    "message": "Checking…"
+  },
+  "updatesChecked": {
+    "message": "Checked: {time}."
+  },
+  "updatesNever": {
+    "message": "Not checked yet."
+  },
+  "updatesUpToDate": {
+    "message": "Extension {version} is up to date."
+  },
+  "updatesOffline": {
+    "message": "Update server unavailable ({error}); will retry later."
+  },
+  "updatesAddonInstalled": {
+    "message": "{name} {version} downloaded from the server and enabled; reload the game page."
+  },
+  "updatesAddonUpdated": {
+    "message": "{name} updated to {version}; reload the game page."
+  },
+  "updatesExtension": {
+    "message": "An extension version from the selected channel is available: {version} (you have {current})."
+  },
+  "updatesHowTo": {
+    "message": "Download the archive, unpack it over the folder you installed the extension from (replacing files), then press \"Restart extension\"."
+  },
+  "updatesDownload": {
+    "message": "Download"
+  },
+  "updatesReload": {
+    "message": "Restart extension"
+  },
+  "telemetryLabel": {
+    "message": "Send statistics, my character and errors"
+  },
+  "telemetryHint": {
+    "message": "Shows who uses the voice-over, what to voice first and where it breaks: a random install number, versions, language, counters, character name and realm, ordered quests and error reports with the last diagnostics events. No IP is stored. Turn it off and the extension sends none of this."
+  },
+  "accountTitle": {
+    "message": "Voice-over account"
+  },
+  "accountLoading": {
+    "message": "Checking the account…"
+  },
+  "accountOffline": {
+    "message": "The account is unavailable. Check the connection and statistics switch."
+  },
+  "accountReady": {
+    "message": "Account {id}; installs: {installs}; characters: {characters}."
+  },
+  "accountNoCharacters": {
+    "message": "none yet"
+  },
+  "accountRecoveryCode": {
+    "message": "Recovery code: "
+  },
+  "accountNoCode": {
+    "message": "generate a new code"
+  },
+  "accountNewCode": {
+    "message": "New recovery code"
+  },
+  "accountCodePlaceholder": {
+    "message": "Code from another device"
+  },
+  "accountLink": {
+    "message": "Link this install"
+  },
+  "accountHint": {
+    "message": "Keep the recovery code safe. After reinstalling the extension, register the new install and enter the code here to restore characters, settings and heard places."
+  },
+  "placesScopeLabel": {
+    "message": "Heard-place memory"
+  },
+  "placesScopeAccount": {
+    "message": "Account: new characters do not repeat"
+  },
+  "placesScopeCharacter": {
+    "message": "Character: each character listens separately"
+  },
+  "placesScopeSaved": {
+    "message": "Mode saved. Reload the game."
+  },
+  "accountCodeSaved": {
+    "message": "A new code was created. Save it somewhere safe."
+  },
+  "accountLinked": {
+    "message": "Install linked to the account. Reload the game page."
+  },
+  "accountLinkFailed": {
+    "message": "Could not link the install. Check the code and connection."
+  },
+  "accountUnavailable": {
+    "message": "The account is unavailable."
+  }
+}

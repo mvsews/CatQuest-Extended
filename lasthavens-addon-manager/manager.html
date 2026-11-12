@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lasthavens Addon Manager</title>
+    <link rel="stylesheet" href="manager.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="topbar">
+          <span class="eyebrow"
+            >LASTHAVENS · WOTLK 3.3.5a <span id="version"></span></span
+          ><select id="language" aria-label="Language"></select>
+        </div>
+        <h1 data-i18n="title"></h1>
+      </header>
+      <section class="toolbar">
+        <label class="primary"
+          ><span data-i18n="importZip"></span
+          ><input
+            id="import"
+            type="file"
+            accept=".zip"
+            multiple
+            hidden /></label
+        ><button id="play" data-i18n="play"></button>
+      </section>
+      <p class="hint" data-i18n="hint"></p>
+      <section class="voice-settings updates">
+        <h2 data-i18n="updatesTitle"></h2>
+        <label class="switch-control early-updates">
+          <input id="early-updates" type="checkbox" />
+          <span class="switch-track" aria-hidden="true"></span>
+          <span class="switch-text" data-i18n="earlyUpdatesLabel"></span>
+        </label>
+        <p class="apply-note" data-i18n="earlyUpdatesHint"></p>
+        <p id="updates-status"></p>
+        <div id="updates-extension" hidden>
+          <p id="updates-extension-text" class="warning"></p>
+          <p id="updates-notes"></p>
+          <p data-i18n="updatesHowTo"></p>
+          <div class="actions">
+            <button id="updates-download" class="primary" data-i18n="updatesDownload"></button
+            ><button id="updates-reload" data-i18n="updatesReload"></button>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="updates-check" data-i18n="updatesCheck"></button>
+        </div>
+      </section>
+      <section class="voice-settings">
+        <h2 data-i18n="voiceApiTitle"></h2>
+        <div class="voice-api-row">
+          <label for="voice-locale" data-i18n="voiceLocaleLabel"></label>
+          <select id="voice-locale"></select>
+        </div>
+        <p data-i18n="voiceLocaleHint"></p>
+        <p id="voice-capacity" class="diag-verdict"></p>
+      </section>
+      <div id="message" role="status" aria-live="polite"></div>
+      <section class="summary">
+        <strong id="count"></strong><span id="status"></span>
+      </section>
+      <div id="list"></div>
+      <section class="diagnostics">
+        <div class="diag-head">
+          <h2 data-i18n="diagTitle"></h2>
+          <div class="diag-actions">
+            <button id="diag-copy" data-i18n="diagCopy"></button
+            ><button id="diag-clear" data-i18n="diagClear"></button>
+          </div>
+        </div>
+        <p data-i18n="diagHint"></p>
+        <p id="diag-verdict" class="diag-verdict" hidden></p>
+        <ol id="diag-log" class="diag-log"></ol>
+      </section>
+      <section class="footer">
+        <h2 data-i18n="storageTitle"></h2>
+        <p data-i18n="storageInfo"></p>
+        <p data-i18n="limits"></p>
+        <p data-i18n="reloadInfo"></p>
+      </section>
+      <section class="footer statistics">
+        <label class="switch telemetry">
+          <input id="telemetry" type="checkbox" />
+          <span data-i18n="telemetryLabel"></span>
+        </label>
+        <p data-i18n="telemetryHint"></p>
+      </section>
+      <details class="footer account">
+        <summary data-i18n="accountTitle"></summary>
+        <div class="account-content">
+          <p id="account-status"></p>
+          <p id="account-code-row" hidden>
+            <span data-i18n="accountRecoveryCode"></span>
+            <code id="account-code"></code>
+          </p>
+          <div class="account-row">
+            <button id="account-recovery" data-i18n="accountNewCode"></button>
+            <input id="account-link-code" maxlength="16" autocomplete="off" data-i18n-placeholder="accountCodePlaceholder" />
+            <button id="account-link" data-i18n="accountLink"></button>
+          </div>
+          <div class="voice-api-row account-memory-row">
+            <label for="places-scope" data-i18n="placesScopeLabel"></label>
+            <select id="places-scope">
+              <option value="account" data-i18n="placesScopeAccount"></option>
+              <option value="character" data-i18n="placesScopeCharacter"></option>
+            </select>
+          </div>
+          <p data-i18n="accountHint"></p>
+        </div>
+      </details>
+    </main>
+    <script type="module" src="manager.js"></script>
+  </body>
+</html>

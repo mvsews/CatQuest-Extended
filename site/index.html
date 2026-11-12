@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Play WoW and listen to the story of the world and quests in magnificent voice acting. CatQuest Extended supports online, hybrid and offline modes for WoW 3.3.5a.">
+  <link rel="canonical" href="https://catquest.mvse.ws/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffe4a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z'/%3E%3Cpath d='M20 3v4M22 5h-4M4 17v2M5 18H3'/%3E%3C/svg%3E" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CatQuest Extended">
+  <meta property="og:url" content="https://catquest.mvse.ws/">
+  <meta property="og:title" content="CatQuest Extended — voiced WoW quests">
+  <meta property="og:description" content="Play WoW and listen to the story of the world and quests in magnificent voice acting. Online, hybrid and offline modes for WoW 3.3.5a.">
+  <meta property="og:image" content="https://catquest.mvse.ws/og/en.png">
+  <meta property="og:image:alt" content="CatQuest Extended quest journal, magical star and voice crystal">
+  <meta property="og:image:width" content="1732">
+  <meta property="og:image:height" content="908">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CatQuest Extended — voiced WoW quests">
+  <meta name="twitter:description" content="Play WoW and listen to the story of the world and quests in magnificent voice acting.">
+  <meta name="twitter:image" content="https://catquest.mvse.ws/og/en.png">
+  <title>CatQuest Extended — voiced WoW quests</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b12;
+      --bg-soft: #111a26;
+      --panel: #1b2633;
+      --panel-soft: #2c3b4d;
+      --text: #f4eddd;
+      --muted: #c0c5cb;
+      --accent: #e1ad4f;
+      --accent-bright: #ffe4a3;
+      --accent-dim: #91672c;
+      --line: #5d6875;
+      --blue: #7ed5ed;
+      --red: #e28a78;
+      --ok: #afe49a;
+      --violet: #b9a7f5;
+      --shadow: rgba(0, 0, 0, .42);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 84% 0%, rgba(48, 106, 143, .48), transparent 31rem),
+        radial-gradient(circle at 7% 42%, rgba(132, 67, 42, .22), transparent 28rem),
+        radial-gradient(circle at 50% 100%, rgba(82, 58, 139, .15), transparent 34rem),
+        linear-gradient(180deg, #111c2a 0%, var(--bg) 48rem);
+      font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .11;
+      background-image: linear-gradient(115deg, transparent 0 49%, rgba(255,255,255,.18) 50%, transparent 51%);
+      background-size: 7px 7px;
+      mix-blend-mode: screen;
+    }
+    a { color: var(--accent); }
+    a:hover { color: var(--accent-bright); }
+    .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid rgba(215, 170, 86, .22);
+      background: rgba(8, 10, 14, .76);
+      backdrop-filter: blur(10px);
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .65;
+    }
+    nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font: 700 1.2rem/1 Georgia, "Times New Roman", serif;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .brand-mark { color: var(--accent); font-size: 1.4em; text-shadow: 0 0 16px rgba(215,170,86,.55); }
+    .header-tools { display: flex; align-items: center; gap: 24px; }
+    .quick-links { display: flex; align-items: center; gap: 17px; }
+    .quick-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .quick-links a:hover { color: var(--accent-bright); }
+    .lang { display: flex; gap: 6px; }
+    .lang button {
+      border: 1px solid rgba(215, 170, 86, .35);
+      border-radius: 4px;
+      color: var(--muted);
+      background: rgba(23, 27, 33, .7);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: .08em;
+      transition: .2s ease;
+      box-shadow: inset 0 1px rgba(255,255,255,.14), 0 3px 0 #080c12, 0 7px 14px rgba(0,0,0,.28);
+    }
+    .lang button.active, .lang button:hover { color: var(--bg); background: linear-gradient(180deg, var(--accent-bright), var(--accent)); border-color: var(--accent-bright); transform: translateY(-1px); }
+    main { padding: 58px 0 82px; }
+    .hero {
+      position: relative;
+      margin: 0 auto;
+      max-width: 920px;
+      overflow: hidden;
+      padding: clamp(32px, 6vw, 72px);
+      border: 1px solid rgba(215, 170, 86, .62);
+      border-radius: 5px;
+      background:
+        linear-gradient(135deg, rgba(40, 52, 66, .94), rgba(14, 20, 29, .98)),
+        radial-gradient(circle at 90% 12%, rgba(225,173,79,.22), transparent 18rem);
+      box-shadow: 0 24px 70px var(--shadow), inset 0 0 0 5px rgba(8,10,14,.35), inset 0 0 42px rgba(0,0,0,.38);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--accent);
+      opacity: .7;
+    }
+    .hero::before { top: 15px; left: 15px; border-right: 0; border-bottom: 0; }
+    .hero::after { right: 15px; bottom: 15px; border-left: 0; border-top: 0; }
+    .kicker {
+      margin: 0 0 16px;
+      color: var(--accent-bright);
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+    .kicker span { color: var(--accent); padding: 0 7px; }
+    h1 {
+      margin: 0 0 16px;
+      color: var(--text);
+      font: 700 clamp(2.7rem, 6vw, 4.8rem)/.98 Georgia, "Times New Roman", serif;
+      letter-spacing: -.045em;
+      text-shadow: 0 3px 0 #000, 0 0 32px rgba(215,170,86,.14);
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 18px;
+      color: var(--accent-bright);
+      font: 700 1.45rem/1.2 Georgia, "Times New Roman", serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    h2::before, h2::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, var(--accent-dim)); }
+    h2::after { background: linear-gradient(90deg, var(--accent-dim), transparent); }
+    h3 { margin: 0 0 9px; color: var(--accent-bright); font: 700 1.12rem/1.2 Georgia, "Times New Roman", serif; }
+    .lead { margin: 0 auto; color: var(--muted); font-size: 1.16rem; max-width: 730px; }
+    .hero { text-align: center; }
+    .hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 28px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border: 1px solid rgba(215,170,86,.42);
+      border-radius: 3px;
+      color: var(--accent-bright);
+      background: rgba(8,10,14,.48);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .tag.blue { border-color: rgba(121,179,200,.5); color: var(--blue); }
+    .tag.red { border-color: rgba(207,118,100,.5); color: var(--red); }
+    .origin-note { margin: 22px 0 0; color: var(--muted); font-size: .92rem; }
+    .origin-note a { color: var(--accent-bright); font-weight: 700; }
+    .compatibility-note { margin: 6px 0 0; color: #858b91; font-size: .75rem; letter-spacing: .025em; }
+    .future-note { margin: 6px auto 0; max-width: 700px; color: #9aa8b4; font-size: .75rem; line-height: 1.5; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 22px 0 0; }
+    .button {
+      position: relative;
+      isolation: isolate;
+      display: inline-block;
+      padding: 12px 18px;
+      border: 1px solid var(--accent-bright);
+      border-radius: 4px;
+      color: var(--bg);
+      background: linear-gradient(180deg, #ffeab2 0%, #e2b44f 48%, #b9782d 100%);
+      box-shadow: inset 0 2px rgba(255,255,255,.46), inset 0 -3px rgba(111,63,17,.55), 0 5px 0 #794b1b, 0 13px 25px rgba(0,0,0,.36);
+      text-decoration: none;
+      font-weight: 800;
+      text-shadow: 0 1px rgba(255,255,255,.25);
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+    .button.secondary { color: var(--text); background: linear-gradient(180deg, #3b5065 0%, #273646 50%, #17222f 100%); border-color: #71869a; box-shadow: inset 0 2px rgba(255,255,255,.18), inset 0 -3px rgba(6,11,18,.55), 0 5px 0 #0b121b, 0 13px 25px rgba(0,0,0,.3); text-shadow: 0 1px rgba(0,0,0,.5); }
+    .button.install-cta { padding: 15px 25px; font-size: 1.05rem; }
+    .button:hover { color: var(--bg); filter: brightness(1.12) saturate(1.08); transform: translateY(-3px); box-shadow: inset 0 2px rgba(255,255,255,.52), inset 0 -3px rgba(111,63,17,.55), 0 7px 0 #794b1b, 0 17px 30px rgba(0,0,0,.4); }
+    .button.secondary:hover { color: var(--text); background: linear-gradient(180deg, #4c6680 0%, #2d4053 50%, #1b2837 100%); box-shadow: inset 0 2px rgba(255,255,255,.23), inset 0 -3px rgba(6,11,18,.55), 0 7px 0 #0b121b, 0 17px 30px rgba(0,0,0,.38); }
+    .button:active { transform: translateY(1px); box-shadow: inset 0 2px rgba(255,255,255,.3), inset 0 -2px rgba(111,63,17,.5), 0 2px 0 #794b1b, 0 7px 15px rgba(0,0,0,.32); }
+    .install-cta .magic-spark { position: absolute; z-index: 2; color: var(--accent-bright); pointer-events: none; filter: drop-shadow(0 0 5px rgba(255,228,163,.95)); text-shadow: 0 0 8px rgba(255,228,163,.95), 0 0 17px rgba(225,173,79,.8); font-size: .98rem; line-height: 1; }
+    .install-cta .spark-a { top: -19px; left: 9%; animation: magic-spark 2.7s ease-in-out infinite; }
+    .install-cta .spark-b { top: -16px; right: 10%; font-size: .82rem; animation: magic-spark 2.7s .8s ease-in-out infinite; }
+    .install-cta .spark-c { right: 3%; bottom: -18px; font-size: .82rem; animation: magic-spark 2.7s 1.45s ease-in-out infinite; }
+    .install-cta .spark-d { left: 5%; bottom: -17px; font-size: .72rem; animation: magic-spark 2.7s 2s ease-in-out infinite; }
+    @keyframes magic-spark {
+      0%, 100% { opacity: .2; transform: translate3d(0, 5px, 0) scale(.45) rotate(0deg); }
+      22% { opacity: 1; }
+      52% { opacity: .75; transform: translate3d(3px, -5px, 0) scale(1) rotate(28deg); }
+      78% { opacity: .2; transform: translate3d(-3px, -12px, 0) scale(.7) rotate(65deg); }
+    }
+    section { margin-top: 58px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .client-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 920px; margin: 0 auto; }
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: 23px 21px 21px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: linear-gradient(145deg, rgba(38,53,69,.96), rgba(19,28,39,.98));
+      box-shadow: inset 0 1px rgba(255,255,255,.06), 0 14px 30px rgba(0,0,0,.24);
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .card::before { content: ""; position: absolute; top: 0; left: 18px; right: 18px; height: 2px; background: var(--accent-dim); }
+    .card:hover { border-color: rgba(215,170,86,.72); transform: translateY(-3px); }
+    .card p, .card li { color: var(--muted); }
+    .card ul { margin: 10px 0 0; padding-left: 20px; }
+    .card-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      margin: 0 0 14px;
+      border: 1px solid rgba(215,170,86,.48);
+      border-radius: 50%;
+      color: var(--accent-bright);
+      background: rgba(8,10,14,.52);
+      box-shadow: 0 0 0 3px rgba(8,10,14,.32), inset 0 0 16px rgba(215,170,86,.12);
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .module-voices .card-icon { color: var(--ok); border-color: rgba(165,207,148,.58); }
+    .module-books .card-icon { color: var(--blue); border-color: rgba(121,179,200,.58); }
+    .module-codex .card-icon { color: var(--accent-bright); }
+    .client-card .card-icon { margin-bottom: 13px; }
+    .client-card.browser .card-icon { color: var(--blue); border-color: rgba(121,179,200,.58); }
+    .client-card.classic .card-icon { color: var(--red); border-color: rgba(207,118,100,.58); }
+    .mode .card-icon { margin-bottom: 13px; }
+    .mode.online .card-icon { color: var(--ok); border-color: rgba(165,207,148,.58); }
+    .mode.offline .card-icon { color: var(--blue); border-color: rgba(121,179,200,.58); }
+    .mode.hybrid .card-icon { color: var(--accent-bright); }
+    .client-card h3 { font-size: 1.35rem; }
+    .client-card.browser::before { background: var(--blue); }
+    .client-card.classic::before { background: var(--accent); }
+    .client-label { margin: -2px 0 13px; color: var(--accent-bright); font-size: .74rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .mode strong { color: var(--ok); }
+    .mode:nth-child(2) strong { color: var(--blue); }
+    .mode:nth-child(3) strong { color: var(--accent-bright); }
+    .mode-badge { display: none; width: fit-content; margin: -2px auto 12px; padding: 4px 10px; border: 1px solid rgba(225,173,79,.68); border-radius: 999px; color: var(--bg); background: linear-gradient(180deg, var(--accent-bright), var(--accent)); box-shadow: inset 0 1px rgba(255,255,255,.45), 0 4px 12px rgba(225,173,79,.16); font-size: .68rem; font-weight: 900; letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; }
+    .mode-badge.is-visible { display: inline-flex; }
+    .install-picker { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 auto 24px; }
+    .install-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid rgba(119,143,163,.42);
+      border-radius: 999px;
+      color: #9da9b4;
+      background: rgba(17,27,38,.68);
+      cursor: pointer;
+      font: inherit;
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      box-shadow: none;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+    .install-tab:hover, .install-tab.active { color: var(--accent-bright); background: rgba(225,173,79,.1); border-color: rgba(225,173,79,.62); transform: none; box-shadow: inset 0 0 0 1px rgba(255,228,163,.08), 0 0 16px rgba(225,173,79,.08); }
+    .install-tab .tab-icon { font-size: 1.05rem; }
+    .install-wizard { max-width: 900px; margin: 0 auto; }
+    .install-progress { display: flex; flex-direction: column; align-items: center; gap: 9px; margin: 0 auto 20px; color: var(--muted); font-size: .84rem; font-weight: 700; }
+    .install-progress-bar { width: min(420px, 100%); height: 4px; overflow: hidden; border: 1px solid rgba(215,170,86,.35); border-radius: 99px; background: rgba(8,10,14,.7); }
+    .install-progress-fill { display: block; width: 0; height: 100%; background: linear-gradient(90deg, var(--blue), var(--accent)); transition: width .2s ease; }
+    .install-panel { display: none; max-width: 820px; margin: 0 auto; }
+    .install-panel.active { display: block; }
+    .wizard-step { display: none; min-height: 225px; padding: 28px 24px; border: 1px solid var(--line); border-radius: 4px; background: linear-gradient(145deg, rgba(38,53,69,.96), rgba(19,28,39,.98)); box-shadow: inset 0 1px rgba(255,255,255,.06), 0 14px 30px rgba(0,0,0,.24); text-align: center; }
+    .wizard-step.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .wizard-step-number { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 13px; border: 1px solid var(--accent); border-radius: 50%; color: var(--bg); background: var(--accent); box-shadow: 0 0 0 3px rgba(8,10,14,.75), 0 0 0 4px rgba(215,170,86,.35); font-weight: 800; }
+    .wizard-step h3 { margin-bottom: 10px; font-size: 1.35rem; }
+    .wizard-step p { max-width: 680px; margin: 0; color: var(--muted); }
+    .wizard-step code { white-space: normal; }
+    .wizard-nav { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+    .wizard-nav button { min-width: 112px; padding: 10px 16px; border: 1px solid #71869a; border-radius: 4px; color: var(--text); background: linear-gradient(180deg, #35495d 0%, #243444 52%, #17222f 100%); cursor: pointer; font: inherit; font-weight: 800; box-shadow: inset 0 2px rgba(255,255,255,.14), inset 0 -3px rgba(6,11,18,.55), 0 4px 0 #0b121b, 0 10px 18px rgba(0,0,0,.28); }
+    .wizard-nav button:hover:not(:disabled) { color: var(--bg); background: linear-gradient(180deg, #ffeab2 0%, #e2b44f 48%, #b9782d 100%); border-color: var(--accent-bright); transform: translateY(-2px); }
+    .wizard-nav button:disabled { cursor: not-allowed; opacity: .38; }
+    .wizard-nav .wizard-next { color: var(--bg); background: linear-gradient(180deg, #ffeab2 0%, #e2b44f 48%, #b9782d 100%); border-color: var(--accent-bright); box-shadow: inset 0 2px rgba(255,255,255,.46), inset 0 -3px rgba(111,63,17,.55), 0 4px 0 #794b1b, 0 10px 18px rgba(0,0,0,.32); }
+    .steps { counter-reset: install; display: grid; gap: 12px; }
+    .step { counter-increment: install; display: grid; grid-template-columns: 36px 1fr; gap: 13px; align-items: start; }
+    .step::before {
+      content: counter(install);
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      color: var(--bg);
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(8,10,14,.75), 0 0 0 4px rgba(215,170,86,.35);
+      font-weight: 800;
+    }
+    .step p { margin: 0; color: var(--muted); }
+    code { color: var(--accent-bright); background: #090b0e; border: 1px solid rgba(215,170,86,.18); border-radius: 3px; padding: 2px 6px; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px 24px; padding-top: 4px; }
+    .links a { text-decoration: none; font-weight: 700; }
+    section > .lang-en > h2, section > .lang-ru > h2 { text-align: center; }
+    section > .lang-en > .lead, section > .lang-ru > .lead { text-align: center; }
+    .links { justify-content: center; }
+    .credits p { max-width: 820px; margin-left: auto; margin-right: auto; color: #858b91; font-size: .86rem; text-align: center; }
+    footer { padding: 24px 0 36px; color: var(--muted); border-top: 1px solid rgba(215,170,86,.24); font-size: .92rem; }
+    section { scroll-margin-top: 92px; }
+    :focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; }
+    [data-lang="en"] .lang-ru, [data-lang="ru"] .lang-en { display: none; }
+
+    /* The landing page is one calm, centered installation flow. */
+    main { padding-top: 24px; }
+    .hero {
+      max-width: 1040px;
+      padding: 26px 20px 18px;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .hero::before, .hero::after { display: none; }
+    .hero-controls { position: absolute; top: 0; right: 0; display: flex; align-items: center; gap: 10px; }
+    .language-label { color: #8998a6; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .hero .lang { gap: 5px; }
+    .hero .lang button { padding: 5px 10px; border-radius: 999px; font-size: .72rem; }
+    .hero .kicker { margin-bottom: 12px; color: var(--blue); letter-spacing: .28em; }
+    .title-line { display: flex; align-items: center; justify-content: center; gap: 14px; }
+    .title-line h1 { margin: 0; }
+    .title-icon { position: relative; display: inline-grid; place-items: center; width: 58px; height: 58px; color: var(--accent-bright); filter: drop-shadow(0 0 12px rgba(255,228,163,.52)); }
+    .title-icon svg { width: 52px; height: 52px; fill: none; stroke: var(--accent-bright); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; animation: title-glow 2.8s ease-in-out infinite; }
+    .title-spark { position: absolute; color: var(--accent-bright); font-size: .9rem; font-style: normal; line-height: 1; text-shadow: 0 0 10px rgba(255,228,163,.95); pointer-events: none; }
+    .title-spark.spark-a { top: -2px; right: -1px; animation: title-spark 2.2s ease-in-out infinite; }
+    .title-spark.spark-b { bottom: 2px; left: -3px; font-size: .7rem; animation: title-spark 2.2s .8s ease-in-out infinite; }
+    @keyframes title-glow { 0%, 100% { opacity: .72; transform: scale(.96) rotate(0deg); } 50% { opacity: 1; transform: scale(1.04) rotate(8deg); } }
+    @keyframes title-spark { 0%, 100% { opacity: .15; transform: translateY(4px) scale(.55) rotate(0deg); } 45% { opacity: 1; transform: translateY(-3px) scale(1) rotate(24deg); } 75% { opacity: .25; transform: translateY(-10px) scale(.65) rotate(55deg); } }
+    .hero .lead { max-width: none; margin-top: 17px; color: #e1e5e8; font-size: clamp(1rem, 2vw, 1.22rem); }
+    .hero .origin-note { margin-top: 15px; }
+    .hero .compatibility-note { margin-top: 8px; }
+    .hero-actions { flex-direction: column; align-items: center; gap: 16px; margin-top: 12px; }
+    .hero-sub-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; }
+    .button-icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .telegram-button { color: #f5fbff !important; background: linear-gradient(180deg, #4b91b7 0%, #2d678c 52%, #1a3f5d 100%) !important; border-color: #91d9ef !important; box-shadow: inset 0 2px rgba(255,255,255,.35), inset 0 -3px rgba(9,30,49,.54), 0 5px 0 #16364d, 0 13px 25px rgba(0,0,0,.32) !important; text-shadow: 0 1px rgba(0,0,0,.45); }
+    .telegram-button:hover { color: #fff !important; background: linear-gradient(180deg, #64b1d3 0%, #397ba2 52%, #225575 100%) !important; }
+    .hero-actions .telegram-button { padding: 7px 12px; color: #9da9b4 !important; background: rgba(17,27,38,.42) !important; border-color: rgba(119,143,163,.34) !important; box-shadow: none !important; text-shadow: none; font-size: .8rem; }
+    .hero-actions .telegram-button:hover { color: var(--accent-bright) !important; background: rgba(225,173,79,.08) !important; border-color: rgba(225,173,79,.48) !important; box-shadow: none !important; transform: none; }
+    .hero-sub-actions .hero-compact-button { padding: 7px 12px; color: #9da9b4 !important; background: rgba(17,27,38,.42) !important; border-color: rgba(119,143,163,.34) !important; box-shadow: none !important; text-shadow: none; font-size: .8rem; }
+    .hero-sub-actions .hero-compact-button:hover { color: var(--accent-bright) !important; background: rgba(225,173,79,.08) !important; border-color: rgba(225,173,79,.48) !important; box-shadow: none !important; transform: none; }
+    section { margin-top: 76px; scroll-margin-top: 28px; }
+    .section-heading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; text-align: center; }
+    .flow-number { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 48px; border: 1px solid rgba(225,173,79,.82); border-radius: 15px; color: var(--accent-bright); background: linear-gradient(145deg, rgba(225,173,79,.2), rgba(225,173,79,.04)); box-shadow: 0 0 24px rgba(225,173,79,.14), inset 0 1px rgba(255,255,255,.18); font: 700 1rem/1 Georgia, serif; }
+    .section-kicker { margin: 0 0 3px; color: var(--blue); font-size: .68rem; font-weight: 800; letter-spacing: .2em; text-align: center; text-transform: uppercase; }
+    .section-heading h2 { margin: 0; text-align: center; text-transform: none; letter-spacing: .01em; }
+    .section-heading h2::before, .section-heading h2::after { display: none; }
+    .grid { gap: 18px; }
+    .module-stack { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; min-width: 0; padding: 10px; border: 1px solid rgba(119,143,163,.28); border-radius: 22px; background: linear-gradient(145deg, rgba(25,39,54,.52), rgba(8,14,23,.56)); box-shadow: inset 0 1px rgba(255,255,255,.06), 0 20px 44px rgba(0,0,0,.2); }
+    .voices-stack { border-color: rgba(165,207,148,.32); background: linear-gradient(145deg, rgba(25,52,48,.48), rgba(8,18,22,.56)); }
+    .books-stack { border-color: rgba(121,179,200,.34); background: linear-gradient(145deg, rgba(25,48,63,.5), rgba(8,16,24,.58)); }
+    .world-stack { border-color: rgba(185,167,245,.36); background: linear-gradient(145deg, rgba(53,43,81,.5), rgba(13,14,28,.58)); }
+    @supports (grid-template-rows: subgrid) {
+      #features .grid { grid-template-rows: auto auto; align-items: stretch; }
+      #features .module-stack { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 14px; }
+      #features .module-stack > .card, #features .module-stack > .sample-player, #features .module-stack > .sample-card { height: 100%; }
+    }
+    .module-stack > .card { min-height: 250px; }
+    .card { padding: 27px 23px 24px; border: 1px solid rgba(119,143,163,.42); border-radius: 16px; background: linear-gradient(145deg, rgba(31,48,66,.68), rgba(10,17,27,.76)); box-shadow: inset 0 1px rgba(255,255,255,.1), 0 18px 42px rgba(0,0,0,.26); text-align: center; backdrop-filter: blur(10px); }
+    .card::before { left: 24px; right: 24px; height: 1px; opacity: .85; }
+    .card::after { content: ""; position: absolute; inset: auto 20% -46px; height: 70px; background: var(--accent); opacity: .04; filter: blur(24px); pointer-events: none; }
+    .card:hover { border-color: rgba(225,173,79,.68); transform: translateY(-5px); box-shadow: inset 0 1px rgba(255,255,255,.14), 0 22px 48px rgba(0,0,0,.34); }
+    .card-icon { width: 54px; height: 54px; margin: 0 auto 16px; border: 1px solid rgba(225,173,79,.58); border-radius: 16px; background: linear-gradient(145deg, rgba(255,228,163,.15), rgba(8,10,14,.24)); box-shadow: 0 0 0 4px rgba(8,10,14,.18), inset 0 0 18px rgba(225,173,79,.12); }
+    .card-icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .card p { margin: 0 auto; max-width: 320px; }
+    .select-card { width: 100%; color: inherit; font: inherit; cursor: pointer; }
+    .select-card .select-hint { display: block; margin-top: 18px; color: #8699a8; font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; opacity: .78; }
+    .select-card.is-selected { border-color: var(--accent); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 0 0 2px rgba(225,173,79,.14), 0 20px 48px rgba(0,0,0,.36), 0 0 30px rgba(225,173,79,.08); }
+    .select-card.is-selected .select-hint { color: var(--accent-bright); }
+    .select-card.is-selected .select-hint::before { content: "✓  "; }
+    .select-card:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 5px; }
+    .select-card.mode-unavailable { opacity: .4; filter: grayscale(.7); cursor: not-allowed; border-color: rgba(119,143,163,.22); }
+    .select-card.mode-unavailable:hover { border-color: rgba(119,143,163,.22); transform: none; box-shadow: inset 0 1px rgba(255,255,255,.1), 0 18px 42px rgba(0,0,0,.26); }
+    .mode-grid .card { min-height: 285px; }
+    .install-picker { margin-top: 6px; }
+    .install-tab .tab-icon { display: inline-grid; place-items: center; width: 20px; height: 20px; }
+    .install-tab .tab-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+    .install-tab.is-disabled { opacity: .4; filter: grayscale(.7); cursor: not-allowed; }
+    .install-tab.is-disabled:hover { color: #8b98a3; background: rgba(17,27,38,.5); border-color: rgba(119,143,163,.28); transform: none; box-shadow: none; }
+    .install-wizard { max-width: 920px; }
+    .wizard-step { border-radius: 16px; background: linear-gradient(145deg, rgba(31,48,66,.68), rgba(10,17,27,.76)); box-shadow: inset 0 1px rgba(255,255,255,.1), 0 18px 42px rgba(0,0,0,.26); }
+    .help-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 24px; }
+    .help-actions .button { min-width: 172px; }
+    .progress-section { max-width: 1000px; margin-left: auto; margin-right: auto; }
+    .progress-intro { max-width: 760px; margin: 0 auto 24px; color: #8f9ba5; font-size: .86rem; line-height: 1.6; text-align: center; }
+    .progress-content { display: flex; flex-direction: column; gap: 18px; }
+    .progress-summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; order: 2; padding: 8px; border: 1px solid rgba(119,143,163,.35); border-radius: 20px; background: linear-gradient(145deg, rgba(31,48,66,.62), rgba(10,17,27,.82)); box-shadow: inset 0 1px rgba(255,255,255,.08), 0 16px 34px rgba(0,0,0,.2); }
+    .progress-stat { position: relative; min-width: 0; padding: 13px 12px 12px; text-align: center; }
+    .progress-stat:not(:last-child) { border-right: 1px solid rgba(119,143,163,.23); }
+    .progress-stat::before { content: ""; display: block; width: 22px; height: 2px; margin: 0 auto 10px; border-radius: 999px; background: rgba(126,213,237,.7); box-shadow: 0 0 10px rgba(126,213,237,.3); }
+    .progress-stat:nth-child(3)::before { background: rgba(240,176,156,.8); box-shadow: 0 0 10px rgba(240,176,156,.25); }
+    .progress-stat:nth-child(4)::before, .progress-stat:nth-child(5)::before { background: rgba(225,173,79,.85); box-shadow: 0 0 10px rgba(225,173,79,.28); }
+    .progress-stat strong { display: block; color: var(--accent-bright); font: 700 1.48rem/1 Georgia, "Times New Roman", serif; white-space: nowrap; }
+    .progress-stat span { display: block; margin-top: 7px; color: #a9b5bf; font-size: .68rem; font-weight: 700; letter-spacing: .025em; line-height: 1.25; }
+    .progress-stat.is-good strong { color: #dfffcf; }
+    .progress-stat.is-missing strong { color: #f0b09c; }
+    .progress-panel { border: 1px solid rgba(119,143,163,.34); border-radius: 16px; background: linear-gradient(145deg, rgba(31,48,66,.62), rgba(10,17,27,.76)); box-shadow: inset 0 1px rgba(255,255,255,.07), 0 14px 32px rgba(0,0,0,.2); }
+    .progress-overview { position: relative; display: grid; gap: 17px; order: 1; overflow: hidden; border-color: rgba(225,173,79,.46); border-radius: 20px; background: linear-gradient(145deg, rgba(37,52,66,.8), rgba(12,19,29,.9)); box-shadow: inset 0 1px rgba(255,255,255,.1), 0 20px 42px rgba(0,0,0,.25); }
+    .progress-overview::before { content: ""; position: absolute; top: 0; left: 14%; right: 14%; height: 2px; border-radius: 0 0 999px 999px; background: linear-gradient(90deg, transparent, #ffe4a3 28%, #6acfe4 72%, transparent); box-shadow: 0 0 18px rgba(225,173,79,.38); }
+    .progress-overview-row { display: grid; gap: 8px; }
+    .progress-overview-row:first-child { gap: 10px; }
+    .progress-overview-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: #dce2e6; font-size: .86rem; font-weight: 750; }
+    .progress-overview-head strong { color: var(--accent-bright); font-size: .82rem; white-space: nowrap; }
+    .progress-overview-head.story strong { color: #b9efff; }
+    .progress-large-track { height: 14px; overflow: hidden; border: 1px solid rgba(225,173,79,.4); border-radius: 999px; background: rgba(8,10,14,.7); box-shadow: inset 0 1px rgba(255,255,255,.06), 0 0 0 3px rgba(8,10,14,.16); }
+    .progress-large-fill { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6acfe4 0%, var(--accent) 72%, #ffe4a3 100%); box-shadow: 0 0 18px rgba(225,173,79,.3); transition: width .45s ease; }
+    .progress-large-fill.story { background: linear-gradient(90deg, #8edcf3, #8e7ee5 72%, #cfc2ff 100%); box-shadow: 0 0 18px rgba(142,126,229,.25); }
+    .progress-live-note { display: flex; align-items: center; justify-content: center; gap: 8px; margin: -2px auto 0; color: #b9efff; font-size: .78rem; line-height: 1.45; text-align: center; }
+    .progress-live-note svg { width: 17px; height: 17px; flex: 0 0 17px; color: var(--accent-bright); filter: drop-shadow(0 0 7px rgba(255,228,163,.45)); }
+    .progress-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; order: 4; }
+    .progress-columns .progress-panel { min-height: 100%; }
+    .progress-panel { padding: 20px; }
+    .progress-overview { padding: 23px 24px 19px; }
+    .progress-panel h3 { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; color: var(--accent-bright); text-align: center; }
+    .progress-panel h3 svg { width: 19px; height: 19px; color: var(--blue); }
+    .coverage-list { display: grid; gap: 13px; }
+    .coverage-row { display: grid; gap: 6px; }
+    .coverage-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: #dce2e6; font-size: .82rem; }
+    .coverage-row-head strong { color: var(--accent-bright); font-size: .76rem; white-space: nowrap; }
+    .coverage-row-meta { color: #8998a6; font-size: .68rem; }
+    .coverage-track { height: 7px; overflow: hidden; border: 1px solid rgba(119,143,163,.32); border-radius: 999px; background: rgba(8,10,14,.62); }
+    .coverage-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6acfe4, var(--accent)); box-shadow: 0 0 12px rgba(126,213,237,.24); }
+    .progress-help { order: 6; border-color: rgba(225,173,79,.46); background: linear-gradient(145deg, rgba(62,49,30,.48), rgba(16,20,25,.8)); }
+    .progress-help h3 { color: #ffe4a3; }
+    .progress-help h3 svg { color: var(--accent); }
+    .help-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; }
+    .help-item { padding: 12px 13px; border: 1px solid rgba(225,173,79,.2); border-radius: 11px; background: rgba(8,10,14,.24); }
+    .help-item-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: #f1dfb0; font-weight: 750; }
+    .help-item-head strong { color: #f0b09c; font-size: .75rem; white-space: nowrap; }
+    .help-item p { margin: 4px 0 0; color: #9eaab4; font-size: .72rem; }
+    .progress-note, .progress-loading, .progress-error { margin: 0 auto; max-width: 820px; color: #8998a6; font-size: .74rem; line-height: 1.55; text-align: center; }
+    .progress-note { order: 7; }
+    .progress-locale-note { order: 5; margin: -3px auto 0; color: #8998a6; font-size: .72rem; line-height: 1.55; text-align: center; }
+    .progress-loading { padding: 18px; }
+    .progress-error { color: #e5a18e; }
+    .progress-note code { font-size: .72rem; }
+    .comparison-card { max-width: 1000px; margin: 0 auto; padding: 10px; border: 1px solid rgba(119,143,163,.35); border-radius: 22px; background: linear-gradient(145deg, rgba(25,39,54,.58), rgba(8,14,23,.7)); box-shadow: inset 0 1px rgba(255,255,255,.07), 0 20px 44px rgba(0,0,0,.22); }
+    .comparison-table-wrap { overflow-x: auto; border-radius: 15px; }
+    .comparison-table { width: 100%; min-width: 680px; border-collapse: separate; border-spacing: 0; color: #d7dde1; }
+    .comparison-table th, .comparison-table td { padding: 14px 18px; border-bottom: 1px solid rgba(119,143,163,.2); vertical-align: middle; }
+    .comparison-table thead th { color: var(--accent-bright); background: rgba(225,173,79,.08); font: 700 1rem/1.2 Georgia, "Times New Roman", serif; text-align: center; }
+    .comparison-table thead th:first-child { color: var(--muted); text-align: left; }
+    .comparison-table thead th:nth-child(2) { color: #e8d7b3; }
+    .comparison-table thead th:nth-child(3) { color: #8edcf3; }
+    .comparison-table thead small { display: block; margin-top: 4px; color: #8998a6; font: 700 .66rem/1.2 system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+    .comparison-table tbody tr:last-child td { border-bottom: 0; }
+    .comparison-table tbody tr:hover td { background: rgba(225,173,79,.045); }
+    .comparison-table td:first-child { width: 58%; color: #e1e5e8; font-weight: 650; }
+    .comparison-table td:not(:first-child) { width: 21%; text-align: center; }
+    .comparison-check { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; font-weight: 900; }
+    .comparison-check.is-yes { color: #dfffcf; background: rgba(94,160,91,.22); box-shadow: inset 0 0 0 1px rgba(165,207,148,.45), 0 0 16px rgba(116,198,108,.1); }
+    .comparison-check.is-no { color: #6e7c88; background: rgba(119,143,163,.08); box-shadow: inset 0 0 0 1px rgba(119,143,163,.18); }
+    .comparison-note { margin: 14px auto 4px; max-width: 850px; color: #8f9ba5; font-size: .76rem; line-height: 1.55; text-align: center; }
+    .roadmap-section { max-width: 1000px; margin-left: auto; margin-right: auto; }
+    .roadmap-intro { max-width: 760px; margin: 0 auto 24px; color: #8f9ba5; font-size: .86rem; line-height: 1.6; text-align: center; }
+    .roadmap-timeline { position: relative; max-width: 900px; margin: 0 auto; padding: 5px 0; list-style: none; }
+    .roadmap-timeline::before { content: ""; position: absolute; top: 23px; bottom: 23px; left: 28px; width: 1px; background: linear-gradient(180deg, rgba(225,173,79,.68), rgba(121,179,200,.44) 54%, rgba(185,167,245,.5)); box-shadow: 0 0 12px rgba(225,173,79,.14); }
+    .roadmap-item { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; align-items: start; }
+    .roadmap-item + .roadmap-item { margin-top: 16px; }
+    .roadmap-marker { position: relative; z-index: 1; display: grid; place-items: center; width: 56px; height: 56px; border: 1px solid rgba(225,173,79,.76); border-radius: 50%; color: var(--accent-bright); background: linear-gradient(145deg, #2b3948 0%, #1c2a38 48%, #111c28 100%); box-shadow: 0 0 0 5px #080e17, 0 0 22px rgba(225,173,79,.15), inset 0 1px rgba(255,255,255,.16); }
+    .roadmap-marker svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .roadmap-item.is-done .roadmap-marker { color: #dfffcf; border-color: rgba(165,207,148,.78); background: linear-gradient(145deg, #2b4b3e 0%, #1c3933 48%, #102623 100%); box-shadow: 0 0 0 5px #080e17, 0 0 22px rgba(116,198,108,.18), inset 0 1px rgba(255,255,255,.16); }
+    .roadmap-item.is-progress .roadmap-marker { color: #8edcf3; border-color: rgba(121,179,200,.8); background: linear-gradient(145deg, #2b4c5b 0%, #1b3745 48%, #0d232f 100%); box-shadow: 0 0 0 5px #080e17, 0 0 22px rgba(121,179,200,.17), inset 0 1px rgba(255,255,255,.16); }
+    .roadmap-item.is-next .roadmap-marker { color: #c5b4ff; border-color: rgba(185,167,245,.78); background: linear-gradient(145deg, #4a4263 0%, #30274d 48%, #1f1835 100%); box-shadow: 0 0 0 5px #080e17, 0 0 22px rgba(185,167,245,.17), inset 0 1px rgba(255,255,255,.16); }
+    .roadmap-card { min-height: 56px; padding: 17px 20px 16px; border: 1px solid rgba(119,143,163,.34); border-radius: 15px; background: linear-gradient(145deg, rgba(31,48,66,.62), rgba(10,17,27,.76)); box-shadow: inset 0 1px rgba(255,255,255,.08), 0 14px 32px rgba(0,0,0,.2); }
+    .roadmap-item.is-done .roadmap-card { border-color: rgba(165,207,148,.34); }
+    .roadmap-item.is-progress .roadmap-card { border-color: rgba(121,179,200,.38); }
+    .roadmap-item.is-next .roadmap-card { border-color: rgba(185,167,245,.38); }
+    .roadmap-card:hover { border-color: rgba(225,173,79,.66); transform: translateY(-2px); }
+    .roadmap-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
+    .roadmap-card h3 { margin: 0; color: #f1dfb0; font: 700 1.08rem/1.25 Georgia, "Times New Roman", serif; }
+    .roadmap-card p { margin: 8px 0 0; color: #c3cbd1; font-size: .88rem; line-height: 1.5; }
+    .roadmap-status { display: inline-flex; align-items: center; min-height: 22px; padding: 3px 9px; border: 1px solid rgba(225,173,79,.38); border-radius: 999px; color: var(--accent-bright); background: rgba(225,173,79,.09); font-size: .64rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    .roadmap-item.is-done .roadmap-status { color: #dfffcf; border-color: rgba(165,207,148,.4); background: rgba(94,160,91,.12); }
+    .roadmap-item.is-progress .roadmap-status { color: #b9efff; border-color: rgba(121,179,200,.42); background: rgba(121,179,200,.1); }
+    .roadmap-item.is-next .roadmap-status { color: #d8ccff; border-color: rgba(185,167,245,.42); background: rgba(185,167,245,.1); }
+    .sample-player, .sample-card { max-width: 390px; margin: 0 auto; padding: 16px; border: 1px solid rgba(121,179,200,.38); border-radius: 12px; background: linear-gradient(145deg, rgba(25,61,76,.52), rgba(8,15,23,.7)); box-shadow: inset 0 1px rgba(255,255,255,.08), 0 12px 28px rgba(0,0,0,.2); text-align: left; }
+    .module-stack .sample-player, .module-stack .sample-card { width: 100%; max-width: none; }
+    .module-stack .sample-player, .module-stack .sample-card { min-height: 190px; }
+    .sample-player.voices-sample { border-color: rgba(165,207,148,.5); background: linear-gradient(145deg, rgba(35,74,59,.58), rgba(8,18,18,.75)); }
+    .sample-player.books-sample { border-color: rgba(121,179,200,.5); background: linear-gradient(145deg, rgba(25,61,76,.58), rgba(8,15,23,.75)); }
+    .sample-card.codex-sample { border-color: rgba(185,167,245,.55); background: linear-gradient(145deg, rgba(66,52,103,.58), rgba(13,15,29,.78)); }
+    .sample-player .sample-label { display: flex; align-items: center; gap: 7px; color: var(--blue); font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .sample-player .sample-label svg { width: 15px; height: 15px; }
+    .sample-player strong { display: block; margin-top: 5px; color: var(--accent-bright); font: 700 1.05rem/1.25 Georgia, "Times New Roman", serif; }
+    .sample-player .sample-quote { margin: 8px 0 0; color: #d7dde1; font-size: .86rem; line-height: 1.45; }
+    .sample-player audio { display: block; width: 100%; height: 38px; margin-top: 18px; }
+    .sample-player .sample-meta { display: block; margin-top: 7px; color: #8998a6; font-size: .7rem; }
+    .sample-card .sample-label { display: flex; align-items: center; gap: 7px; color: var(--violet); font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .sample-card .sample-label svg { width: 15px; height: 15px; }
+    .sample-card strong { display: block; margin-top: 5px; color: var(--accent-bright); font: 700 1.05rem/1.25 Georgia, "Times New Roman", serif; }
+    .sample-card p { margin: 8px 0 0; color: #d7dde1; font-size: .86rem; line-height: 1.45; }
+    .sample-card audio { display: block; width: 100%; height: 38px; margin-top: 18px; }
+    .sample-card .sample-meta { display: block; margin-top: 7px; color: #a99bd5; font-size: .7rem; }
+    .credits { margin-top: 70px; }
+    .footer-contact { display: flex; justify-content: center; margin: 30px 0 4px; }
+    .footer-contact .button { padding: 9px 15px; font-size: .84rem; }
+    footer { text-align: center; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    @media (max-width: 760px) {
+      .grid, .client-grid { grid-template-columns: 1fr; }
+      main { padding-top: 34px; }
+      .hero { padding: 50px 6px 18px; }
+      .hero-controls { top: 5px; right: 6px; }
+      .language-label { display: none; }
+      .title-line { gap: 7px; }
+      .title-icon { width: 42px; height: 42px; }
+      .title-icon svg { width: 40px; height: 40px; }
+      h1 { font-size: clamp(2.5rem, 14vw, 4.3rem); }
+      h2 { font-size: 1.25rem; }
+      .section-heading { gap: 10px; }
+      .flow-number { width: 42px; height: 42px; flex-basis: 42px; border-radius: 12px; }
+      .section-heading h2 { font-size: 1.18rem; }
+      .card { padding-left: 18px; padding-right: 18px; }
+      .comparison-card { padding: 7px; }
+      .comparison-table th, .comparison-table td { padding: 12px 11px; }
+      .comparison-table thead th { font-size: .9rem; }
+      .progress-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .progress-stat:nth-child(2n) { border-right: 0; }
+      .progress-stat:last-child { grid-column: 1 / -1; }
+      .progress-columns, .help-list { grid-template-columns: 1fr; }
+      .progress-stat strong { font-size: 1.45rem; }
+      .progress-overview { padding: 21px 17px 17px; }
+      .roadmap-timeline::before { left: 22px; }
+      .roadmap-item { grid-template-columns: 44px minmax(0, 1fr); gap: 12px; }
+      .roadmap-marker { width: 44px; height: 44px; }
+      .roadmap-marker svg { width: 19px; height: 19px; }
+      .roadmap-card { padding: 15px 15px 14px; }
+      .roadmap-card h3 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="hero lang-en">
+      <div class="hero-controls">
+        <span class="language-label">Language</span>
+        <div class="lang" aria-label="Language">
+          <button type="button" data-set-lang="en" class="active">EN</button>
+          <button type="button" data-set-lang="ru">RU</button>
+        </div>
+      </div>
+      <p class="kicker"><span>✦</span>Community project<span>✦</span></p>
+      <div class="title-line">
+        <span class="title-icon" aria-hidden="true"><i data-lucide="sparkles"></i><span class="title-spark spark-a">✦</span><span class="title-spark spark-b">✧</span></span>
+        <h1>CatQuest Extended</h1>
+      </div>
+      <p class="lead">Play WoW and listen to the story of the world and quests in magnificent voice acting.</p>
+      <p class="origin-note">An unofficial extended continuation of the original <a href="https://www.curseforge.com/wow/addons/catquest" target="_blank" rel="noreferrer">CatQuest by Cathey</a>.</p>
+      <p class="compatibility-note">The current public CatQuest Extended build targets WoW 3.3.5a.</p>
+      <p class="future-note">Cataclysm and Mists of Pandaria, like TBC, can be supported in separate repository branches.</p>
+    </div>
+    <div class="hero lang-ru">
+      <div class="hero-controls">
+        <span class="language-label">Язык</span>
+        <div class="lang" aria-label="Язык">
+          <button type="button" data-set-lang="en">EN</button>
+          <button type="button" data-set-lang="ru" class="active">RU</button>
+        </div>
+      </div>
+      <p class="kicker"><span>✦</span>Проект сообщества<span>✦</span></p>
+      <div class="title-line">
+        <span class="title-icon" aria-hidden="true"><i data-lucide="sparkles"></i><span class="title-spark spark-a">✦</span><span class="title-spark spark-b">✧</span></span>
+        <h1>CatQuest Extended</h1>
+      </div>
+      <p class="lead">Играйте в WoW и слушайте историю мира и квесты в великолепной озвучке.</p>
+      <p class="origin-note">Неофициальная расширенная версия оригинального <a href="https://www.curseforge.com/wow/addons/catquest" target="_blank" rel="noreferrer">CatQuest от Cathey</a>.</p>
+      <p class="compatibility-note">Текущая публичная версия CatQuest Extended рассчитана на WoW 3.3.5a.</p>
+      <p class="future-note">Поддержка Cataclysm и Mists of Pandaria, как и TBC, возможна отдельными ветками в репозитории.</p>
+    </div>
+
+    <div class="actions hero-actions">
+      <a class="button install-cta" href="#features"><span class="magic-spark spark-a" aria-hidden="true">✦</span><span class="magic-spark spark-b" aria-hidden="true">✧</span><span class="magic-spark spark-c" aria-hidden="true">✦</span><span class="magic-spark spark-d" aria-hidden="true">✧</span><i class="button-icon" data-lucide="download" aria-hidden="true"></i><span class="lang-en">Start setup</span><span class="lang-ru">Начать установку</span></a>
+      <div class="hero-sub-actions">
+        <a class="button secondary telegram-button hero-compact-button" href="https://t.me/warcraft_rus_chat" target="_blank" rel="noreferrer"><i class="button-icon" data-lucide="message-circle" aria-hidden="true"></i><span class="lang-en">Telegram chat</span><span class="lang-ru">Telegram-чат</span></a>
+        <a class="button secondary hero-compact-button" href="https://github.com/mvsews/catquest-extended" target="_blank" rel="noreferrer"><i class="button-icon" data-lucide="github" aria-hidden="true"></i><span class="lang-en">GitHub repository</span><span class="lang-ru">Репозиторий GitHub</span></a>
+      </div>
+    </div>
+
+    <section id="features">
+      <div class="lang-en">
+        <div class="section-heading"><h2>What is included</h2></div>
+        <div class="grid">
+          <div class="module-stack voices-stack"><article class="card module-voices"><span class="card-icon" aria-hidden="true"><i data-lucide="mic-vocal"></i></span><h3>Voices</h3><p>Voice the quest text with expressive delivery and voices that feel right for the characters giving the quests.</p></article><div class="sample-player voices-sample"><span class="sample-label"><i data-lucide="mic-vocal"></i>Character sample · Stranglethorn Vale</span><strong>Akiris by the Bundle</strong><p class="sample-quote">“Take this coin and some advice: get off my docks.”</p><audio controls preload="none" src="/api/v1/voice/623/COMPLETE?client=3.3.5a&amp;locale=ruRU"></audio><span class="sample-meta">Original CatQuest voice sample · ruRU</span></div></div>
+          <div class="module-stack books-stack"><article class="card module-books"><span class="card-icon" aria-hidden="true"><i data-lucide="book-open"></i></span><h3>Books</h3><p>Books, letters, plaques and zone lore. Listen to the notes you always meant to read.</p></article><div class="sample-player books-sample"><span class="sample-label"><i data-lucide="map-pin"></i>Stranglethorn Vale · quest 215</span><strong>Jungle Secrets</strong><p class="sample-quote">“There must be another. A traitor.”</p><audio controls preload="none" src="/api/v1/voice/215/COMPLETE?client=3.3.5a&amp;locale=ruRU"></audio><span class="sample-meta">Original CatQuest voice sample · ruRU</span></div></div>
+          <div class="module-stack world-stack"><article class="card module-codex"><span class="card-icon" aria-hidden="true"><i data-lucide="library-big"></i></span><h3>World</h3><p>A guide to places, the history of each location and the characters who shape it.</p></article><div class="sample-card codex-sample"><span class="sample-label"><i data-lucide="map"></i>Story chapter · Stranglethorn Vale</span><strong>Welcome to the Jungle</strong><p>Follow the Nesingwary expedition through a story of quests and characters.</p><audio controls preload="none" src="/api/v1/voice/583/DETAIL?client=3.3.5a&amp;locale=ruRU"></audio><span class="sample-meta">Original CatQuest voice sample · ruRU</span></div></div>
+        </div>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><h2>Что входит</h2></div>
+        <div class="grid">
+          <div class="module-stack voices-stack"><article class="card module-voices"><span class="card-icon" aria-hidden="true"><i data-lucide="mic-vocal"></i></span><h3>Voices</h3><p>Озвучка текстов заданий с интонациями и голосами, похожими на тех, кто даёт квесты.</p></article><div class="sample-player voices-sample"><span class="sample-label"><i data-lucide="mic-vocal"></i>Пример голоса · Тернистая долина</span><strong>Вязанка акириса</strong><p class="sample-quote">«Вот, бери монеты и совет в придачу: убирайся-ка подобру-поздорову.»</p><audio controls preload="none" src="/api/v1/voice/623/COMPLETE?client=3.3.5a&amp;locale=ruRU"></audio><span class="sample-meta">Оригинальная дорожка CatQuest · ruRU</span></div></div>
+          <div class="module-stack books-stack"><article class="card module-books"><span class="card-icon" aria-hidden="true"><i data-lucide="book-open"></i></span><h3>Books</h3><p>Книги, письма, таблички и лор зон. Послушайте записки, которые всегда было лень читать.</p></article><div class="sample-player books-sample"><span class="sample-label"><i data-lucide="map-pin"></i>Тернистая долина · квест 215</span><strong>Тайны джунглей</strong><p class="sample-quote">«Но должен быть ещё кто-то. Предатель.»</p><audio controls preload="none" src="/api/v1/voice/215/COMPLETE?client=3.3.5a&amp;locale=ruRU"></audio><span class="sample-meta">Оригинальная дорожка CatQuest · ruRU</span></div></div>
+          <div class="module-stack world-stack"><article class="card module-codex"><span class="card-icon" aria-hidden="true"><i data-lucide="library-big"></i></span><h3>World</h3><p>Путеводитель по игровым местам с историей локаций и действующими лицами.</p></article><div class="sample-card codex-sample"><span class="sample-label"><i data-lucide="map"></i>Глава истории · Тернистая долина</span><strong>Добро пожаловать в джунгли</strong><p>Путешествие с экспедицией Эрнестуэя: история квестов и действующих лиц.</p><audio controls preload="none" src="/api/v1/voice/583/DETAIL?client=3.3.5a&amp;locale=ruRU"></audio><span class="sample-meta">Оригинальная дорожка CatQuest · ruRU</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="client">
+      <div class="lang-en">
+        <div class="section-heading"><span class="flow-number">01</span><div><p class="section-kicker">Step one</p><h2>Choose your client</h2></div></div>
+        <div class="grid client-grid">
+          <button type="button" class="card select-card client-card browser is-selected" data-client-choice="web" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="monitor-play"></i></span><h3>Lasthavens</h3><p class="client-label">Browser client</p><p>The addon works in Online and Hybrid modes. Install the browser extension to install CatQuest and other addons like a regular client, and give them access to updates and the internet.</p><span class="select-hint">Choose this client</span></button>
+          <button type="button" class="card select-card client-card classic" data-client-choice="classic" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="swords"></i></span><h3>Regular WoW 3.3.5a</h3><p class="client-label">Sirius, Circulus and other classic servers</p><p>Use Offline mode. A regular addon cannot reach the internet by itself, so it needs the local voice pack. For online voices, you can install a separate bridge program.</p><span class="select-hint">Choose this client</span></button>
+        </div>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><span class="flow-number">01</span><div><p class="section-kicker">Шаг первый</p><h2>Выберите клиент</h2></div></div>
+        <div class="grid client-grid">
+          <button type="button" class="card select-card client-card browser is-selected" data-client-choice="web" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="monitor-play"></i></span><h3>Lasthavens</h3><p class="client-label">Браузерный клиент</p><p>Аддон работает в режиме Онлайн и Гибрид. Вы ставите расширение браузера, которое позволяет устанавливать CatQuest и другие аддоны как в обычный клиент, а также даёт им доступ к обновлениям и интернету.</p><span class="select-hint">Выбрать этот клиент</span></button>
+          <button type="button" class="card select-card client-card classic" data-client-choice="classic" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="swords"></i></span><h3>Обычный WoW 3.3.5a</h3><p class="client-label">Sirius, Circulus и другие классические серверы</p><p>Используйте режим без интернета. Обычный аддон сам не может выйти в интернет, поэтому нужен локальный пак озвучки. Для онлайн-озвучки можно установить отдельную программу-прослойку.</p><span class="select-hint">Выбрать этот клиент</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="mode">
+      <div class="lang-en">
+        <div class="section-heading"><span class="flow-number">02</span><div><p class="section-kicker">Step two</p><h2>Choose a voice mode</h2></div></div>
+        <div class="grid mode-grid">
+          <button type="button" class="card select-card mode online is-selected" data-mode-choice="online" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="globe"></i></span><h3>Online</h3><span class="mode-badge is-visible" data-recommended-for="web"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Recommended for Lasthavens.</strong> Needs internet. Install CatQuest and the browser manager. New voices appear as you play.</p><span class="select-hint">Choose this mode</span></button>
+          <button type="button" class="card select-card mode offline" data-mode-choice="offline" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="wifi-off"></i></span><h3>Offline</h3><p><strong>For regular 3.3.5a servers.</strong> No internet needed. Install CatQuest and the local voice pack. Everything is read from your WoW folder, but you will need to update the audio packs yourself as new voices are added.</p><span class="select-hint">Choose this mode</span></button>
+          <button type="button" class="card select-card mode hybrid" data-mode-choice="hybrid" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><h3>Hybrid</h3><span class="mode-badge" data-recommended-for="classic"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Local plus online.</strong> Your local files are used first, and a separate program downloads and voices what you encounter during play.</p><span class="select-hint">Choose this mode</span></button>
+        </div>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><span class="flow-number">02</span><div><p class="section-kicker">Шаг второй</p><h2>Выберите режим озвучки</h2></div></div>
+        <div class="grid mode-grid">
+          <button type="button" class="card select-card mode online is-selected" data-mode-choice="online" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="globe"></i></span><h3>Онлайн</h3><span class="mode-badge is-visible" data-recommended-for="web"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Советуем для Lasthavens.</strong> Нужен интернет. Установите CatQuest и менеджер в браузере. Новая озвучка будет появляться по мере игры.</p><span class="select-hint">Выбрать этот режим</span></button>
+          <button type="button" class="card select-card mode offline" data-mode-choice="offline" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="wifi-off"></i></span><h3>Без интернета</h3><p><strong>Для обычных серверов 3.3.5a.</strong> Интернет не нужен. Установите CatQuest и локальный пак озвучки. Всё читается из папки WoW, но вам придётся самостоятельно обновлять аудиопакеты по мере появления новых озвучек.</p><span class="select-hint">Выбрать этот режим</span></button>
+          <button type="button" class="card select-card mode hybrid" data-mode-choice="hybrid" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><h3>Гибрид</h3><span class="mode-badge" data-recommended-for="classic"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Локальный плюс онлайн.</strong> Сначала используются ваши файлы, а отдельная программа докачивает и озвучивает то, что вы встречаете по ходу игры.</p><span class="select-hint">Выбрать этот режим</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="lang-en">
+        <div class="section-heading"><span class="flow-number">03</span><div><p class="section-kicker">Step three</p><h2>Install CatQuest</h2></div></div>
+        <div class="install-picker" role="tablist" aria-label="Installation mode">
+          <button class="install-tab active" type="button" role="tab" data-install-mode="online" aria-selected="true"><span class="tab-icon" aria-hidden="true"><i data-lucide="globe"></i></span>Web / Lasthavens</button>
+          <button class="install-tab" type="button" role="tab" data-install-mode="hybrid" aria-selected="false"><span class="tab-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span>Hybrid</button>
+          <button class="install-tab" type="button" role="tab" data-install-mode="offline" aria-selected="false"><span class="tab-icon" aria-hidden="true"><i data-lucide="wifi-off"></i></span>Classic / Offline</button>
+        </div>
+        <div class="install-panel active" data-install-panel="online" role="tabpanel">
+          <div class="steps">
+            <div class="step"><p>Download CatQuest here or choose a file from <a href="https://github.com/mvsews/catquest-extended/releases" target="_blank" rel="noreferrer">GitHub Releases</a>.</p></div>
+            <div class="step"><p>Unzip it and copy the <code>CatQuest</code> folder to <code>World of Warcraft/Interface/AddOns/</code>.</p></div>
+            <div class="step"><p>Open the Lasthavens browser manager, connect it to the game and keep <strong>Online</strong> mode selected.</p></div>
+            <div class="step"><p>Start WoW, enable CatQuest in the AddOns list and type <code>/reload</code>. Voices arrive while you play.</p></div>
+          </div>
+        </div>
+        <div class="install-panel" data-install-panel="hybrid" role="tabpanel">
+          <div class="steps">
+            <div class="step"><p>Download CatQuest and the <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices pack</a>. The upstream source and license are documented on <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">CatQuest Voices on CurseForge</a>.</p></div>
+            <div class="step"><p>Unzip both archives and copy the <code>CatQuest</code> and <code>CatQuestExtended_Voices</code> folders to <code>World of Warcraft/Interface/AddOns/</code>.</p></div>
+            <div class="step"><p>Open the Lasthavens browser manager and connect it to the game. Local voices play first; online tracks fill the gaps.</p></div>
+            <div class="step"><p>Start WoW, enable CatQuest in the AddOns list and type <code>/reload</code>.</p></div>
+          </div>
+        </div>
+        <div class="install-panel" data-install-panel="offline" role="tabpanel">
+          <div class="steps">
+            <div class="step"><p>Download CatQuest and the <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices pack</a>. The upstream source and license are documented on <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">CatQuest Voices on CurseForge</a>.</p></div>
+            <div class="step"><p>Unzip both archives and copy the <code>CatQuest</code> and <code>CatQuestExtended_Voices</code> folders to <code>World of Warcraft/Interface/AddOns/</code>.</p></div>
+            <div class="step"><p>Do not open a browser manager. This mode reads the voice files from your WoW folder and works without internet.</p></div>
+            <div class="step"><p>Start WoW, enable CatQuest in the AddOns list and type <code>/reload</code>.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><span class="flow-number">03</span><div><p class="section-kicker">Шаг третий</p><h2>Установите CatQuest</h2></div></div>
+        <div class="install-picker" role="tablist" aria-label="Режим установки">
+          <button class="install-tab active" type="button" role="tab" data-install-mode="online" aria-selected="true"><span class="tab-icon" aria-hidden="true"><i data-lucide="globe"></i></span>Web / Lasthavens</button>
+          <button class="install-tab" type="button" role="tab" data-install-mode="hybrid" aria-selected="false"><span class="tab-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span>Гибрид</button>
+          <button class="install-tab" type="button" role="tab" data-install-mode="offline" aria-selected="false"><span class="tab-icon" aria-hidden="true"><i data-lucide="wifi-off"></i></span>Классика / Офлайн</button>
+        </div>
+        <div class="install-panel active" data-install-panel="online" role="tabpanel">
+          <div class="steps">
+            <div class="step"><p>Скачайте CatQuest здесь или выберите файл в <a href="https://github.com/mvsews/catquest-extended/releases" target="_blank" rel="noreferrer">релизах GitHub</a>.</p></div>
+            <div class="step"><p>Распакуйте архив и скопируйте папку <code>CatQuest</code> в <code>World of Warcraft/Interface/AddOns/</code>.</p></div>
+            <div class="step"><p>Откройте браузерный менеджер Lasthavens, подключите игру и оставьте режим <strong>Онлайн</strong>.</p></div>
+            <div class="step"><p>Запустите WoW, включите CatQuest в списке аддонов и выполните <code>/reload</code>. Озвучка будет подгружаться во время игры.</p></div>
+          </div>
+        </div>
+        <div class="install-panel" data-install-panel="hybrid" role="tabpanel">
+          <div class="steps">
+            <div class="step"><p>Скачайте CatQuest и <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices</a>. Исходный проект и лицензия указаны на <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">странице CatQuest Voices в CurseForge</a>.</p></div>
+            <div class="step"><p>Распакуйте оба архива и скопируйте папки <code>CatQuest</code> и <code>CatQuestExtended_Voices</code> в <code>World of Warcraft/Interface/AddOns/</code>.</p></div>
+            <div class="step"><p>Откройте браузерный менеджер Lasthavens и подключите игру. Сначала используются локальные голоса, а онлайн дополняет недостающие дорожки.</p></div>
+            <div class="step"><p>Запустите WoW, включите CatQuest в списке аддонов и выполните <code>/reload</code>.</p></div>
+          </div>
+        </div>
+        <div class="install-panel" data-install-panel="offline" role="tabpanel">
+          <div class="steps">
+            <div class="step"><p>Скачайте CatQuest и <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices</a>. Исходный проект и лицензия указаны на <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">странице CatQuest Voices в CurseForge</a>.</p></div>
+            <div class="step"><p>Распакуйте оба архива и скопируйте папки <code>CatQuest</code> и <code>CatQuestExtended_Voices</code> в <code>World of Warcraft/Interface/AddOns/</code>.</p></div>
+            <div class="step"><p>Браузерный менеджер не нужен. Этот режим читает файлы озвучки из папки WoW и работает без интернета.</p></div>
+            <div class="step"><p>Запустите WoW, включите CatQuest в списке аддонов и выполните <code>/reload</code>.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparison" class="comparison-section">
+      <div class="lang-en">
+        <div class="section-heading"><span class="flow-number" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><div><p class="section-kicker">At a glance</p><h2>What is the difference?</h2></div></div>
+        <div class="comparison-card">
+          <div class="comparison-table-wrap">
+            <table class="comparison-table" aria-label="CatQuest comparison">
+              <thead><tr><th>Feature</th><th>CatQuest<small>by Cathey</small></th><th>CatQuest Extended<small>community continuation</small></th></tr></thead>
+              <tbody>
+                <tr><td>WoW Forever 1.60.1 · Russian client</td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td></tr>
+                <tr><td>Classic WoW 3.3.5a clients</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Outland and Northrend story content</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Online voices and on-demand tracks</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Hybrid and offline modes for classic clients</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Languages beyond Russian</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Zone, dungeon and raid history for 3.3.5a</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Quests, NPC voices, books, lore and Codex-style journal</td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+                <tr><td>Open community voice-pack registry</td><td><span class="comparison-check is-no" aria-label="Not included">—</span></td><td><span class="comparison-check is-yes" aria-label="Included">✓</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="comparison-note">CatQuest Extended keeps the original idea and adapts it for classic 3.3.5a clients, broader content and community delivery. The projects are independent.</p>
+        </div>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><span class="flow-number" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><div><p class="section-kicker">Коротко о версиях</p><h2>В чём отличие?</h2></div></div>
+        <div class="comparison-card">
+          <div class="comparison-table-wrap">
+            <table class="comparison-table" aria-label="Сравнение CatQuest">
+              <thead><tr><th>Возможность</th><th>CatQuest<small>от Cathey</small></th><th>CatQuest Extended<small>продолжение сообщества</small></th></tr></thead>
+              <tbody>
+                <tr><td>WoW Forever 1.60.1 · русский клиент</td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td></tr>
+                <tr><td>Классические клиенты WoW 3.3.5a</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>История Запределья и Нордскола</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>Онлайн-озвучка и дорожки по запросу</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>Гибридный и офлайн-режимы для классических клиентов</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>Поддержка языков кроме русского</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>Истории мест, подземелий и рейдов 3.3.5a</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>Квесты, голоса NPC, книги, lore и журнал в стиле Codex</td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+                <tr><td>Открытый каталог community voice-packs</td><td><span class="comparison-check is-no" aria-label="Нет">—</span></td><td><span class="comparison-check is-yes" aria-label="Есть">✓</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="comparison-note">CatQuest Extended сохраняет исходную идею и адаптирует её для классических клиентов 3.3.5a, более широкого контента и community-доставки. Проекты независимы.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="roadmap-section">
+      <div class="lang-en">
+        <div class="section-heading"><span class="flow-number" aria-hidden="true"><i data-lucide="route"></i></span><div><p class="section-kicker">Where we are going</p><h2>Roadmap</h2></div></div>
+        <p class="roadmap-intro">A simple public view of what is already here and what we want to build next. Priorities can change as the community grows.</p>
+        <ol class="roadmap-timeline">
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="check"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>CatQuest 3.3.5a foundation</h3><span class="roadmap-status">Done</span></div><p>Classic-client addon structure, quest playback, subtitles and history handling.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="book-open"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Voices, Books, World and Codex</h3><span class="roadmap-status">Done</span></div><p>Quest voices, NPC-aware routing, books, notes, place lore and a Codex-style zone journal.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="layers-3"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Three ways to play</h3><span class="roadmap-status">Done</span></div><p>Online, Hybrid and Offline modes for the supported browser-based and classic-client setups.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="languages"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Multilingual foundation</h3><span class="roadmap-status">Done</span></div><p>Locale-aware content and a foundation for voices beyond Russian.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="users-round"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Community voice-pack registry</h3><span class="roadmap-status">Done</span></div><p>A public place for pack manifests, licensing information and integrity data, with audio delivered separately.</p></div></li>
+          <li class="roadmap-item is-progress"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="map"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>More Outland and Northrend stories</h3><span class="roadmap-status">In progress</span></div><p>Expand zones, quests and characters while keeping the story easy to follow.</p></div></li>
+          <li class="roadmap-item is-progress"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="castle"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>More place and instance lore</h3><span class="roadmap-status">In progress</span></div><p>Continue the first dungeon stories and add more dungeon and raid history.</p></div></li>
+          <li class="roadmap-item is-next"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="git-branch"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Cataclysm and Mists of Pandaria branches</h3><span class="roadmap-status">Next</span></div><p>Like TBC, support future clients as separate repository branches while keeping CatQuest Extended as one project.</p></div></li>
+          <li class="roadmap-item is-next"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="mic-2"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>More community voices and languages</h3><span class="roadmap-status">Next</span></div><p>Welcome additional narrators, voice packs and localization contributors.</p></div></li>
+          <li class="roadmap-item is-next"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="wrench"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Contributor tools</h3><span class="roadmap-status">Next</span></div><p>Improve previews, validation and documentation so a new voice pack is easier to prepare and review.</p></div></li>
+        </ol>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><span class="flow-number" aria-hidden="true"><i data-lucide="route"></i></span><div><p class="section-kicker">Куда мы идём</p><h2>Роадмап</h2></div></div>
+        <p class="roadmap-intro">Короткий публичный обзор того, что уже работает, и того, что мы хотим сделать дальше. Приоритеты могут меняться по мере роста сообщества.</p>
+        <ol class="roadmap-timeline">
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="check"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Основа CatQuest 3.3.5a</h3><span class="roadmap-status">Готово</span></div><p>Структура аддона для классических клиентов, воспроизведение заданий, субтитры и работа с историей.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="book-open"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Voices, Books, World и Codex</h3><span class="roadmap-status">Готово</span></div><p>Озвучка заданий, маршрутизация с учётом NPC, книги, записки, lore мест и журнал зон в стиле Codex.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="layers-3"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Три режима работы</h3><span class="roadmap-status">Готово</span></div><p>Online, Hybrid и Offline для поддерживаемых браузерных и классических клиентов.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="languages"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Мультиязычная основа</h3><span class="roadmap-status">Готово</span></div><p>Контент с учётом локали и основа для добавления голосов не только на русском.</p></div></li>
+          <li class="roadmap-item is-done"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="users-round"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Каталог community voice-packs</h3><span class="roadmap-status">Готово</span></div><p>Публичное место для манифестов, лицензий и данных целостности паков, при этом аудио поставляется отдельно.</p></div></li>
+          <li class="roadmap-item is-progress"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="map"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Больше историй Запределья и Нордскола</h3><span class="roadmap-status">В работе</span></div><p>Расширяем зоны, задания и действующих лиц, сохраняя понятную подачу сюжета.</p></div></li>
+          <li class="roadmap-item is-progress"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="castle"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Больше lore мест и инстансов</h3><span class="roadmap-status">В работе</span></div><p>Продолжаем первые истории подземелий и добавляем историю новых подземелий и рейдов.</p></div></li>
+          <li class="roadmap-item is-next"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="git-branch"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Ветки Cataclysm и Mists of Pandaria</h3><span class="roadmap-status">Дальше</span></div><p>Как и TBC, поддерживать будущие клиенты отдельными ветками репозитория, сохранив CatQuest Extended единым проектом.</p></div></li>
+          <li class="roadmap-item is-next"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="mic-2"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Больше голосов и языков от сообщества</h3><span class="roadmap-status">Дальше</span></div><p>Новые дикторы, voice-packs и участники локализации.</p></div></li>
+          <li class="roadmap-item is-next"><span class="roadmap-marker" aria-hidden="true"><i data-lucide="wrench"></i></span><div class="roadmap-card"><div class="roadmap-card-head"><h3>Инструменты для контрибьюторов</h3><span class="roadmap-status">Дальше</span></div><p>Удобнее предпросмотр, проверка и документация для подготовки и ревью новых voice-packs.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="progress" class="progress-section">
+      <div class="lang-en">
+        <div class="section-heading"><span class="flow-number" aria-hidden="true"><i data-lucide="bar-chart-3"></i></span><div><p class="section-kicker">Project status</p><h2>How much is voiced?</h2></div></div>
+        <p class="progress-intro">A public snapshot of the 3.3.5a quest catalogue: what already has a track, what is still missing and where a new voice or review would help most.</p>
+      </div>
+      <div class="lang-ru">
+        <div class="section-heading"><span class="flow-number" aria-hidden="true"><i data-lucide="bar-chart-3"></i></span><div><p class="section-kicker">Статус проекта</p><h2>Сколько уже озвучено?</h2></div></div>
+        <p class="progress-intro">Публичный снимок каталога заданий 3.3.5a: что уже имеет дорожку, чего пока не хватает и где новый голос или проверка сейчас особенно нужны.</p>
+      </div>
+      <div class="progress-content" data-progress-content hidden>
+        <div class="progress-summary-grid">
+          <article class="progress-stat"><strong data-progress-value="quests">—</strong><span><span class="lang-en">quests in catalogue</span><span class="lang-ru">заданий в каталоге</span></span></article>
+          <article class="progress-stat is-good"><strong data-progress-value="voiced">—</strong><span><span class="lang-en">quests voiced</span><span class="lang-ru">заданий озвучено</span></span></article>
+          <article class="progress-stat is-missing"><strong data-progress-value="missing">—</strong><span><span class="lang-en">still missing</span><span class="lang-ru">пока без дорожки</span></span></article>
+          <article class="progress-stat"><strong data-progress-value="coverage">—</strong><span><span class="lang-en">overall coverage</span><span class="lang-ru">общее покрытие</span></span></article>
+          <article class="progress-stat"><strong data-progress-value="story-lines">—</strong><span><span class="lang-en">story lines complete</span><span class="lang-ru">сюжетных линеек закрыто</span></span></article>
+        </div>
+        <article class="progress-panel progress-overview">
+          <div class="progress-overview-row">
+            <div class="progress-overview-head"><span class="lang-en">Overall quest coverage</span><span class="lang-ru">Общее покрытие заданий</span><strong data-progress-overall-value>—</strong></div>
+            <div class="progress-large-track" aria-hidden="true"><span class="progress-large-fill" data-progress-overall-fill></span></div>
+          </div>
+          <div class="progress-overview-row">
+            <div class="progress-overview-head story"><span class="lang-en">Fully voiced story lines</span><span class="lang-ru">Полностью озвученные сюжетные линейки</span><strong data-progress-story-value>—</strong></div>
+            <div class="progress-large-track" aria-hidden="true"><span class="progress-large-fill story" data-progress-story-fill></span></div>
+          </div>
+          <p class="progress-live-note"><i data-lucide="sparkles" aria-hidden="true"></i><span class="lang-en">In Online and Hybrid modes, a new voice can appear while you play — as soon as you discover a quest that was not voiced yet.</span><span class="lang-ru">В режимах Онлайн и Гибрид новая озвучка может появиться прямо во время игры — когда вы находите ещё не озвученный квест.</span></p>
+        </article>
+        <div class="progress-columns">
+          <article class="progress-panel">
+            <h3><i data-lucide="globe-2" aria-hidden="true"></i><span class="lang-en">By sector</span><span class="lang-ru">По секторам</span></h3>
+            <div class="coverage-list" data-progress-sectors></div>
+          </article>
+          <article class="progress-panel">
+            <h3><i data-lucide="layers-3" aria-hidden="true"></i><span class="lang-en">By category</span><span class="lang-ru">По категориям</span></h3>
+            <div class="coverage-list" data-progress-categories></div>
+          </article>
+        </div>
+        <p class="progress-locale-note" data-progress-locales></p>
+        <article class="progress-panel progress-help">
+          <h3><i data-lucide="scroll-text" aria-hidden="true"></i><span class="lang-en">Where help is needed</span><span class="lang-ru">Где сейчас нужна помощь</span></h3>
+          <div class="help-list" data-progress-help></div>
+        </article>
+        <p class="progress-note"><span class="lang-en">The public page contains aggregate statistics only. The detailed quest-level database remains available in the repository; priority areas come from the reviewed quest-guide queue.</span><span class="lang-ru">На публичной странице только сводная статистика. Подробная база по каждому заданию остаётся доступной в репозитории; приоритет зон взят из проверенной очереди путеводителей.</span></p>
+      </div>
+      <p class="progress-loading" data-progress-loading><span class="lang-en">Loading the latest progress…</span><span class="lang-ru">Загружаем актуальный прогресс…</span></p>
+      <p class="progress-error" data-progress-error hidden><span class="lang-en">The progress snapshot is temporarily unavailable.</span><span class="lang-ru">Снимок прогресса временно недоступен.</span></p>
+    </section>
+
+    <section id="help">
+      <div class="lang-en">
+        <h2>Need help or want to help?</h2>
+        <p class="lead">Ask questions and talk about WoW in Telegram. Find updates and report problems in GitHub.</p>
+      </div>
+      <div class="lang-ru">
+        <h2>Нужна помощь или хотите помочь?</h2>
+        <p class="lead">Задавайте вопросы и общайтесь о WoW в Telegram. Новости и ошибки — в GitHub, а новые записи можно предложить в voice-packs.</p>
+      </div>
+      <div class="help-actions">
+        <a class="button secondary" href="https://github.com/mvsews/catquest-extended" target="_blank" rel="noreferrer"><i class="button-icon" data-lucide="code" aria-hidden="true"></i><span class="lang-en">Main repository</span><span class="lang-ru">Основной репозиторий</span></a>
+        <a class="button secondary" href="https://github.com/mvsews/catquest-voice-packs" target="_blank" rel="noreferrer"><span class="lang-en">Voice packs</span><span class="lang-ru">Голоса и записи</span></a>
+        <a class="button secondary" href="https://github.com/mvsews/catquest-extended/issues" target="_blank" rel="noreferrer"><span class="lang-en">Issues and ideas</span><span class="lang-ru">Ошибки и идеи</span></a>
+      </div>
+    </section>
+
+    <section class="credits">
+      <div class="lang-en">
+        <h2>Credits &amp; design references</h2>
+        <p>The visual language of this page is an original adaptation of classic fantasy game UI ideas: dark iron frames, gold trim, parchment accents and faction-inspired colors. We used these open-source projects as visual references and did not copy Blizzard logos, game artwork or their assets.</p>
+      </div>
+      <div class="lang-ru">
+        <h2>Благодарности и дизайн</h2>
+        <p>Визуальный язык страницы — самостоятельная адаптация идей классического fantasy UI: тёмные металлические рамки, золотая отделка, пергаментные акценты и цвета фракций. Мы использовали эти open-source проекты как визуальные референсы и не копировали логотипы Blizzard, игровую графику или чужие ассеты.</p>
+      </div>
+      <div class="links">
+        <a href="https://www.curseforge.com/wow/addons/catquest" target="_blank" rel="noreferrer"><span class="lang-en">Original CatQuest by Cathey · CurseForge</span><span class="lang-ru">Оригинальный CatQuest от Cathey · CurseForge</span></a>
+        <a href="https://www.warcraftcn.com/" target="_blank" rel="noreferrer">warcraftcn UI components</a>
+        <a href="https://github.com/TheOrcDev/warcraftcn-ui" target="_blank" rel="noreferrer">warcraftcn-ui · MIT</a>
+        <a href="https://github.com/ShakToth/WoW-Warcraft-UI-Obsidian-Theme" target="_blank" rel="noreferrer">WoW Warcraft UI Obsidian Theme · MIT</a>
+        <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide Icons · ISC</a>
+      </div>
+    </section>
+    <div class="footer-contact">
+      <a class="button telegram-button" href="https://t.me/warcraft_rus_chat" target="_blank" rel="noreferrer"><i class="button-icon" data-lucide="message-circle" aria-hidden="true"></i><span class="lang-en">Ask a question in Telegram</span><span class="lang-ru">Задать вопрос в Telegram</span></a>
+    </div>
+  </main>
+
+  <footer><div class="wrap"><span>CatQuest Extended · Community project · </span><a href="https://github.com/mvsews/catquest-extended" target="_blank" rel="noreferrer">GitHub</a><span> · </span><a href="https://t.me/warcraft_rus_chat" target="_blank" rel="noreferrer">Telegram</a></div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js" integrity="sha384-uTYyvsSSUZeaPhb5RbKlQa0zY/WpX/QHfvg2mczXyBQOpkWPEDy9lczyp+w7SKXu" crossorigin="anonymous"></script>
+  <script>
+    const root = document.documentElement;
+    const buttons = document.querySelectorAll('[data-set-lang]');
+    const pageNav = document.querySelector('[data-page-nav]');
+    const installTabs = document.querySelectorAll('[data-install-mode]');
+    const installPanels = document.querySelectorAll('[data-install-panel]');
+    const installWizards = document.querySelectorAll('#install > .lang-en, #install > .lang-ru');
+    const clientChoices = document.querySelectorAll('[data-client-choice]');
+    const modeChoices = document.querySelectorAll('[data-mode-choice]');
+    const recommendationBadges = document.querySelectorAll('[data-recommended-for]');
+    const progressContent = document.querySelector('[data-progress-content]');
+    const progressLoading = document.querySelector('[data-progress-loading]');
+    const progressError = document.querySelector('[data-progress-error]');
+    let progressData = null;
+    const installSteps = {
+      online: {
+        en: [
+          { title: 'Download the two files', body: 'Download the <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">CatQuest addon</a> and the <a data-release-link="extension" href="https://catquest.mvse.ws/downloads/CatQuest-Lasthavens-0.6.31.zip">Chrome extension</a>.' },
+          { title: 'Keep the extension in a permanent folder', body: 'Unzip <code>CatQuest-Lasthavens</code> somewhere permanent. Do not delete or move this folder after installing it.' },
+          { title: 'Open your browser extensions', body: 'Open the extension manager for your browser: <strong>Chrome</strong> — <code>chrome://extensions</code>; <strong>Edge</strong> — <code>edge://extensions</code>; <strong>Brave</strong> — <code>brave://extensions</code>; <strong>Opera</strong> — <code>opera://extensions</code>; <strong>Vivaldi</strong> — <code>vivaldi://extensions</code>; <strong>Yandex Browser</strong> — <code>browser://extensions</code>.' },
+          { title: 'Turn on Developer mode', body: 'Find the <strong>Developer mode</strong> switch in the top-right corner and turn it on.' },
+          { title: 'Load the unpacked extension', body: 'Click <strong>Load unpacked</strong> and select the extracted <code>lasthavens-addon-manager</code> folder.' },
+          { title: 'Open the CatQuest manager', body: 'Click the extension icon in the browser toolbar and open the CatQuest manager.' },
+          { title: 'Import the WoW addon', body: 'In the manager, click <strong>Import ZIP</strong>, choose the CatQuest addon archive and make sure the addon is enabled.' },
+          { title: 'Open the Lasthavens game page', body: 'Open <a href="https://lasthavens.com/play" target="_blank" rel="noreferrer">lasthavens.com/play</a> through the manager and reload the page after the addon is installed or updated.' },
+          { title: 'Start WoW', body: 'Enable CatQuest in the AddOns list and type <code>/reload</code>. Voices arrive while you play.' },
+        ],
+        ru: [
+          { title: 'Скачайте два архива', body: 'Скачайте <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">аддон CatQuest</a> и <a data-release-link="extension" href="https://catquest.mvse.ws/downloads/CatQuest-Lasthavens-0.6.31.zip">Chrome-расширение</a>.' },
+          { title: 'Распакуйте расширение в постоянную папку', body: 'Распакуйте <code>CatQuest-Lasthavens</code> в постоянное место. После установки не удаляйте и не перемещайте эту папку.' },
+          { title: 'Откройте страницу расширений браузера', body: 'Откройте менеджер расширений своего браузера: <strong>Chrome</strong> — <code>chrome://extensions</code>; <strong>Edge</strong> — <code>edge://extensions</code>; <strong>Brave</strong> — <code>brave://extensions</code>; <strong>Opera</strong> — <code>opera://extensions</code>; <strong>Vivaldi</strong> — <code>vivaldi://extensions</code>; <strong>Яндекс Браузер</strong> — <code>browser://extensions</code>.' },
+          { title: 'Включите режим разработчика', body: 'Найдите переключатель <strong>Режим разработчика</strong> в правом верхнем углу и включите его.' },
+          { title: 'Загрузите распакованное расширение', body: 'Нажмите <strong>Загрузить распакованное расширение</strong> и выберите папку <code>lasthavens-addon-manager</code>.' },
+          { title: 'Откройте менеджер CatQuest', body: 'Нажмите на иконку расширений в панели браузера и откройте менеджер CatQuest.' },
+          { title: 'Импортируйте аддон WoW', body: 'В менеджере нажмите <strong>Импорт ZIP</strong>, выберите архив аддона CatQuest и убедитесь, что аддон включён.' },
+          { title: 'Откройте страницу игры Lasthavens', body: 'Откройте через менеджер <a href="https://lasthavens.com/play" target="_blank" rel="noreferrer">lasthavens.com/play</a> и перезагрузите страницу после установки или обновления аддона.' },
+          { title: 'Запустите WoW', body: 'Включите CatQuest в списке аддонов и выполните <code>/reload</code>. Озвучка будет появляться во время игры.' },
+        ],
+      },
+      hybrid: {
+        en: [
+          { title: 'Download the three parts', body: 'Download the <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">CatQuest addon</a>, the <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices pack</a> and the <a data-release-link="extension" href="https://catquest.mvse.ws/downloads/CatQuest-Lasthavens-0.6.31.zip">Chrome extension</a>. The upstream source and license are documented on <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">CatQuest Voices on CurseForge</a>.' },
+          { title: 'Install the two WoW folders', body: 'Copy <code>CatQuest</code> and <code>CatQuestExtended_Voices</code> to <code>World of Warcraft/Interface/AddOns/</code>.' },
+          { title: 'Keep the extension in a permanent folder', body: 'Unzip <code>CatQuest-Lasthavens</code> somewhere permanent. Do not delete or move this folder.' },
+          { title: 'Open your browser extensions', body: 'Open the extension manager for your browser: <strong>Chrome</strong> — <code>chrome://extensions</code>; <strong>Edge</strong> — <code>edge://extensions</code>; <strong>Brave</strong> — <code>brave://extensions</code>; <strong>Opera</strong> — <code>opera://extensions</code>; <strong>Vivaldi</strong> — <code>vivaldi://extensions</code>; <strong>Yandex Browser</strong> — <code>browser://extensions</code>.' },
+          { title: 'Turn on Developer mode', body: 'Find the <strong>Developer mode</strong> switch in the top-right corner and turn it on.' },
+          { title: 'Load the unpacked extension', body: 'Click <strong>Load unpacked</strong> and select the extracted <code>lasthavens-addon-manager</code> folder.' },
+          { title: 'Connect the manager', body: 'Open the manager from the browser extension icon. If it asks for the addon, use <strong>Import ZIP</strong> and choose the CatQuest archive.' },
+          { title: 'Open the Lasthavens game page', body: 'Open <a href="https://lasthavens.com/play" target="_blank" rel="noreferrer">lasthavens.com/play</a> through the manager. Local voices play first; online tracks fill the gaps.' },
+          { title: 'Start WoW', body: 'Enable CatQuest and keep remote audio available when needed, then type <code>/reload</code>.' },
+        ],
+        ru: [
+          { title: 'Скачайте три части', body: 'Скачайте <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">аддон CatQuest</a>, <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices</a> и <a data-release-link="extension" href="https://catquest.mvse.ws/downloads/CatQuest-Lasthavens-0.6.31.zip">Chrome-расширение</a>. Исходный проект и лицензия указаны на <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">странице CatQuest Voices в CurseForge</a>.' },
+          { title: 'Установите две папки WoW', body: 'Скопируйте <code>CatQuest</code> и <code>CatQuestExtended_Voices</code> в <code>World of Warcraft/Interface/AddOns/</code>.' },
+          { title: 'Распакуйте расширение в постоянную папку', body: 'Распакуйте <code>CatQuest-Lasthavens</code> в постоянное место. Не удаляйте и не перемещайте эту папку.' },
+          { title: 'Откройте страницу расширений браузера', body: 'Откройте менеджер расширений своего браузера: <strong>Chrome</strong> — <code>chrome://extensions</code>; <strong>Edge</strong> — <code>edge://extensions</code>; <strong>Brave</strong> — <code>brave://extensions</code>; <strong>Opera</strong> — <code>opera://extensions</code>; <strong>Vivaldi</strong> — <code>vivaldi://extensions</code>; <strong>Яндекс Браузер</strong> — <code>browser://extensions</code>.' },
+          { title: 'Включите режим разработчика', body: 'Найдите переключатель <strong>Режим разработчика</strong> в правом верхнем углу и включите его.' },
+          { title: 'Загрузите распакованное расширение', body: 'Нажмите <strong>Загрузить распакованное расширение</strong> и выберите папку <code>lasthavens-addon-manager</code>.' },
+          { title: 'Подключите менеджер', body: 'Откройте менеджер через иконку расширения. Если он попросит аддон, используйте <strong>Импорт ZIP</strong> и выберите архив CatQuest.' },
+          { title: 'Откройте страницу игры Lasthavens', body: 'Откройте через менеджер <a href="https://lasthavens.com/play" target="_blank" rel="noreferrer">lasthavens.com/play</a>. Сначала работают локальные голоса, онлайн дополняет недостающие дорожки.' },
+          { title: 'Запустите WoW', body: 'Включите CatQuest, оставьте удалённое аудио доступным при необходимости и выполните <code>/reload</code>.' },
+        ],
+      },
+      offline: {
+        en: [
+          { title: 'Download the two addon folders', body: 'Download CatQuest and the <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices pack</a>. The upstream source and license are documented on <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">CatQuest Voices on CurseForge</a>.' },
+          { title: 'Copy both folders to WoW', body: 'Copy <code>CatQuest</code> and <code>CatQuestExtended_Voices</code> to <code>World of Warcraft/Interface/AddOns/</code>.' },
+          { title: 'Start your classic client', body: 'Open Sirius, Circulus or another regular WoW 3.3.5a client. Do not install a browser extension for this mode.' },
+          { title: 'Enable CatQuest and reload', body: 'Enable CatQuest in the AddOns list and type <code>/reload</code>. Everything is read from your local WoW folder.' },
+        ],
+        ru: [
+          { title: 'Скачайте две папки аддонов', body: 'Скачайте CatQuest и <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices</a>. Исходный проект и лицензия указаны на <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">странице CatQuest Voices в CurseForge</a>.' },
+          { title: 'Скопируйте обе папки в WoW', body: 'Скопируйте <code>CatQuest</code> и <code>CatQuestExtended_Voices</code> в <code>World of Warcraft/Interface/AddOns/</code>.' },
+          { title: 'Запустите классический клиент', body: 'Откройте Sirius, Circulus или другой обычный клиент WoW 3.3.5a. Для этого режима Chrome-расширение не нужно.' },
+          { title: 'Включите CatQuest и перезагрузите интерфейс', body: 'Включите CatQuest в списке аддонов и выполните <code>/reload</code>. Всё читается из локальной папки WoW.' },
+        ],
+      },
+    };
+    const classicHybridSteps = {
+      en: [
+        { title: 'Download CatQuest and the local pack', body: 'Download <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">CatQuest</a> and the <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices pack</a>. The upstream source and license are documented on <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">CatQuest Voices on CurseForge</a>. For online tracks, also prepare the separate bridge program for your classic client.' },
+        { title: 'Install the two WoW folders', body: 'Copy <code>CatQuest</code> and <code>CatQuestExtended_Voices</code> to <code>World of Warcraft/Interface/AddOns/</code>.' },
+        { title: 'Start the bridge program', body: 'Install and start the separate bridge program for your classic client. It connects CatQuest to online voices; no Chrome extension or Lasthavens game page is needed.' },
+        { title: 'Start WoW and reload', body: 'Open Sirius, Circulus or another regular WoW 3.3.5a client, enable CatQuest and type <code>/reload</code>. Local voices play first; the bridge fills in missing tracks.' },
+      ],
+      ru: [
+        { title: 'Скачайте CatQuest и локальный пак', body: 'Скачайте <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">CatQuest</a> и <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices</a>. Исходный проект и лицензия указаны на <a href="https://www.curseforge.com/wow/addons/catquest-voices" target="_blank" rel="noreferrer">странице CatQuest Voices в CurseForge</a>. Для онлайн-дорожек также подготовьте отдельную программу-прослойку для классического клиента.' },
+        { title: 'Установите две папки WoW', body: 'Скопируйте <code>CatQuest</code> и <code>CatQuestExtended_Voices</code> в <code>World of Warcraft/Interface/AddOns/</code>.' },
+        { title: 'Запустите программу-прослойку', body: 'Установите и запустите отдельную программу-прослойку для классического клиента. Она связывает CatQuest с онлайн-озвучкой; Chrome-расширение и страница Lasthavens не нужны.' },
+        { title: 'Запустите WoW и перезагрузите интерфейс', body: 'Откройте Sirius, Circulus или другой обычный клиент WoW 3.3.5a, включите CatQuest и выполните <code>/reload</code>. Сначала работают локальные голоса, а прослойка добавляет недостающие дорожки.' },
+      ],
+    };
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>\"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[character]);
+    }
+    function numberText(value) {
+      return new Intl.NumberFormat(root.dataset.lang === 'ru' ? 'ru-RU' : 'en-US').format(Number(value) || 0);
+    }
+    function progressRow(label, row) {
+      const isRu = root.dataset.lang === 'ru';
+      const coverage = Math.max(0, Math.min(100, Number(row.coverage) || 0));
+      const ratio = isRu
+        ? `${numberText(row.voiced)} из ${numberText(row.total)} · осталось ${numberText(row.missing)}`
+        : `${numberText(row.voiced)} of ${numberText(row.total)} · ${numberText(row.missing)} missing`;
+      return `<div class="coverage-row"><div class="coverage-row-head"><span>${escapeHtml(label)}</span><strong>${coverage.toFixed(1)}%</strong></div><div class="coverage-row-meta">${ratio}</div><div class="coverage-track" aria-hidden="true"><span class="coverage-fill" style="width:${coverage}%"></span></div></div>`;
+    }
+    function renderProgress() {
+      if (!progressData) return;
+      const isRu = root.dataset.lang === 'ru';
+      const summary = progressData.summary || {};
+      document.querySelectorAll('[data-progress-value]').forEach((element) => {
+        const key = element.dataset.progressValue;
+        if (key === 'coverage') element.textContent = `${Number(summary.coverage || 0).toFixed(1)}%`;
+        else if (key === 'story-lines') element.textContent = `${numberText(summary.story_lines?.lines_complete)} / ${numberText(summary.story_lines?.lines)}`;
+        else element.textContent = numberText(summary[key]);
+      });
+      const order = ['eastern-kingdoms', 'kalimdor', 'outland', 'northrend', 'unknown'];
+      const sectors = [...(progressData.sectors || [])].filter((row) => row.id !== 'unknown').sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+      const sectorNames = new Map(sectors.map((row) => [row.id, isRu ? row.name_ru : row.name_en]));
+      const zoneNamesRu = {
+        'northrend:495': 'Ревущий фьорд',
+        'outland:3483': 'Полуостров Адского Пламени',
+        'northrend:3711': 'Низина Шолазар',
+        'northrend:65': 'Драконий Погост',
+        'northrend:210': 'Ледяная Корона',
+        'kalimdor:15': 'Болота Пылевых Топей',
+        'northrend:66': "Зул'Драк",
+        'outland:3524': 'Остров Лазурной Дымки'
+      };
+      const sectorsTarget = document.querySelector('[data-progress-sectors]');
+      const categoriesTarget = document.querySelector('[data-progress-categories]');
+      const localesTarget = document.querySelector('[data-progress-locales]');
+      const helpTarget = document.querySelector('[data-progress-help]');
+      const overallFill = document.querySelector('[data-progress-overall-fill]');
+      const overallValue = document.querySelector('[data-progress-overall-value]');
+      const storyFill = document.querySelector('[data-progress-story-fill]');
+      const storyValue = document.querySelector('[data-progress-story-value]');
+      const overallCoverage = Math.max(0, Math.min(100, Number(summary.coverage) || 0));
+      const storyTotal = Number(summary.story_lines?.lines) || 0;
+      const storyComplete = Number(summary.story_lines?.lines_complete) || 0;
+      const storyCoverage = storyTotal ? (storyComplete * 100 / storyTotal) : 0;
+      if (overallFill) overallFill.style.width = `${overallCoverage}%`;
+      if (overallValue) overallValue.textContent = `${overallCoverage.toFixed(1)}%`;
+      if (storyFill) storyFill.style.width = `${storyCoverage}%`;
+      if (storyValue) storyValue.textContent = isRu
+        ? `${numberText(storyComplete)} из ${numberText(storyTotal)} · ${storyCoverage.toFixed(1)}%`
+        : `${numberText(storyComplete)} of ${numberText(storyTotal)} · ${storyCoverage.toFixed(1)}%`;
+      if (sectorsTarget) sectorsTarget.innerHTML = sectors.map((row) => progressRow(isRu ? row.name_ru : row.name_en, row)).join('');
+      if (categoriesTarget) categoriesTarget.innerHTML = (progressData.categories || []).map((row) => progressRow(isRu ? row.name_ru : row.name_en, row)).join('');
+      if (localesTarget) {
+        const localeText = (progressData.locales || []).map((row) => `${escapeHtml(row.id)} · ${numberText(row.quests)}`).join('  ·  ');
+        localesTarget.textContent = isRu ? `Готовые локали по заданиям: ${localeText}` : `Locales with ready quest tracks: ${localeText}`;
+      }
+      if (helpTarget) {
+        const helpRows = (progressData.help?.priority_zones || []).filter((row) => row.missing > 0).slice(0, 6);
+        helpTarget.innerHTML = helpRows.length
+          ? helpRows.map((row) => {
+            const sectorName = sectorNames.get(row.sector_id) || row.sector_id;
+            const zoneName = isRu ? (row.name_ru || zoneNamesRu[row.id] || row.name_en) : row.name_en;
+            const detail = isRu
+              ? `${sectorName} · ${numberText(row.priority_missing)} из ${numberText(row.priority_quests)} приоритетных заданий без дорожки`
+              : `${sectorName} · ${numberText(row.priority_missing)} of ${numberText(row.priority_quests)} priority quests still missing`;
+            return `<div class="help-item"><div class="help-item-head"><span>${escapeHtml(zoneName)}</span><strong>${numberText(row.missing)} ${isRu ? 'нет' : 'missing'}</strong></div><p>${escapeHtml(detail)}</p></div>`;
+          }).join('')
+          : `<p class="progress-note">${isRu ? 'Приоритетная очередь сейчас пуста.' : 'The priority queue is empty right now.'}</p>`;
+      }
+      if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
+    }
+    async function loadProgress() {
+      try {
+        const response = await fetch('/progress.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`progress.json: ${response.status}`);
+        progressData = await response.json();
+        renderProgress();
+        if (progressContent) progressContent.hidden = false;
+        if (progressLoading) progressLoading.hidden = true;
+      } catch (_) {
+        if (progressLoading) progressLoading.hidden = true;
+        if (progressError) progressError.hidden = false;
+      }
+    }
+    function setLang(lang) {
+      root.dataset.lang = lang;
+      if (pageNav) pageNav.setAttribute('aria-label', lang === 'ru' ? 'Навигация по странице' : 'Page navigation');
+      buttons.forEach((button) => {
+        const active = button.dataset.setLang === lang;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      document.documentElement.lang = lang;
+      renderProgress();
+      try { localStorage.setItem('catquest-lang', lang); } catch (_) {}
+    }
+    buttons.forEach((button) => button.addEventListener('click', () => setLang(button.dataset.setLang)));
+    let installMode = 'online';
+    let selectedClient = 'web';
+    let installStep = 0;
+    function stepsFor(mode, lang) {
+      return mode === 'hybrid' && selectedClient === 'classic'
+        ? classicHybridSteps[lang]
+        : installSteps[mode][lang];
+    }
+    function renderInstallPanel(panel) {
+      if (!panel) return;
+      const lang = panel.closest('.lang-ru') ? 'ru' : 'en';
+      const mode = panel.dataset.installPanel;
+      const key = `${selectedClient}:${mode}:${lang}`;
+      if (panel.dataset.stepsKey === key) return;
+      panel.innerHTML = stepsFor(mode, lang).map((step, index) =>
+        `<article class="wizard-step" data-wizard-step="${index}"><span class="wizard-step-number">${index + 1}</span><h3>${step.title}</h3><p>${step.body}</p></article>`,
+      ).join('');
+      panel.dataset.stepsKey = key;
+    }
+    installWizards.forEach((wizard) => {
+      wizard.classList.add('install-wizard');
+      const picker = wizard.querySelector('.install-picker');
+      const firstPanel = wizard.querySelector('.install-panel');
+      if (!picker || !firstPanel) return;
+
+      const progress = document.createElement('div');
+      progress.className = 'install-progress';
+      progress.setAttribute('aria-live', 'polite');
+      progress.innerHTML = '<span></span><div class="install-progress-bar" aria-hidden="true"><span class="install-progress-fill" data-wizard-progress></span></div>';
+      firstPanel.before(progress);
+
+      const navigation = document.createElement('div');
+      navigation.className = 'wizard-nav';
+      navigation.innerHTML = '<button type="button" data-wizard-prev></button><button class="wizard-next" type="button" data-wizard-next></button>';
+      wizard.append(navigation);
+      navigation.querySelector('[data-wizard-prev]').addEventListener('click', () => {
+        if (installStep > 0) {
+          installStep -= 1;
+          renderInstallState();
+        }
+      });
+      navigation.querySelector('[data-wizard-next]').addEventListener('click', () => {
+        const panel = wizard.querySelector(`.install-panel[data-install-panel="${installMode}"]`);
+        const count = panel?.querySelectorAll('[data-wizard-step]').length || 1;
+        if (installStep < count - 1) {
+          installStep += 1;
+          renderInstallState();
+        }
+      });
+    });
+
+    installPanels.forEach((panel) => { panel.dataset.stepsKey = ''; });
+
+    function renderInstallState() {
+      installWizards.forEach((wizard) => {
+        const lang = wizard.classList.contains('lang-ru') ? 'ru' : 'en';
+        const panel = wizard.querySelector(`.install-panel[data-install-panel="${installMode}"]`);
+        renderInstallPanel(panel);
+        const steps = panel?.querySelectorAll('[data-wizard-step]') || [];
+        const current = Math.min(installStep, Math.max(steps.length - 1, 0));
+        wizard.querySelectorAll('.install-panel').forEach((item) => {
+          const active = item === panel;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-hidden', String(!active));
+        });
+        steps.forEach((step, index) => step.classList.toggle('active', index === current));
+        const progressText = wizard.querySelector('.install-progress > span');
+        const progressFill = wizard.querySelector('[data-wizard-progress]');
+        const previous = wizard.querySelector('[data-wizard-prev]');
+        const next = wizard.querySelector('[data-wizard-next]');
+        if (progressText) progressText.textContent = `${lang === 'ru' ? 'Шаг' : 'Step'} ${current + 1} / ${steps.length}`;
+        if (progressFill) progressFill.style.width = `${((current + 1) / Math.max(steps.length, 1)) * 100}%`;
+        if (previous) {
+          previous.disabled = current === 0;
+          previous.textContent = lang === 'ru' ? 'Назад' : 'Back';
+        }
+        if (next) {
+          next.disabled = current === steps.length - 1;
+          next.textContent = current === steps.length - 1 ? (lang === 'ru' ? 'Готово' : 'Done') : (lang === 'ru' ? 'Дальше' : 'Next');
+        }
+      });
+    }
+
+    function setInstallMode(mode) {
+      if (selectedClient === 'classic' && mode === 'online') return;
+      installMode = mode;
+      installStep = 0;
+      installTabs.forEach((tab) => {
+        const active = tab.dataset.installMode === mode;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', String(active));
+        const unavailable = selectedClient === 'classic' && tab.dataset.installMode === 'online';
+        tab.classList.toggle('is-disabled', unavailable);
+        tab.setAttribute('aria-disabled', String(unavailable));
+        tab.title = unavailable
+          ? (tab.closest('.lang-ru') ? 'Для обычного клиента нужна программа-прослойка. Выберите «Гибрид» или «Без интернета».' : 'A regular client needs a bridge program. Choose Hybrid or Offline.')
+          : '';
+      });
+      modeChoices.forEach((choice) => {
+        const active = choice.dataset.modeChoice === mode;
+        choice.classList.toggle('is-selected', active);
+        choice.setAttribute('aria-pressed', String(active));
+        const unavailable = selectedClient === 'classic' && choice.dataset.modeChoice === 'online';
+        choice.classList.toggle('mode-unavailable', unavailable);
+        choice.setAttribute('aria-disabled', String(unavailable));
+        choice.title = unavailable
+          ? (choice.closest('.lang-ru') ? 'Для обычного клиента нужна программа-прослойка. Выберите «Гибрид» или «Без интернета».' : 'A regular client needs a bridge program. Choose Hybrid or Offline.')
+          : '';
+      });
+      recommendationBadges.forEach((badge) => {
+        const visible = badge.dataset.recommendedFor === selectedClient;
+        badge.classList.toggle('is-visible', visible);
+        badge.setAttribute('aria-hidden', String(!visible));
+      });
+      renderInstallState();
+      try { localStorage.setItem('catquest-install-mode', mode); } catch (_) {}
+    }
+    function setClient(client) {
+      selectedClient = client;
+      clientChoices.forEach((choice) => {
+        const active = choice.dataset.clientChoice === client;
+        choice.classList.toggle('is-selected', active);
+        choice.setAttribute('aria-pressed', String(active));
+      });
+      setInstallMode(client === 'classic' ? 'hybrid' : 'online');
+    }
+    clientChoices.forEach((choice) => choice.addEventListener('click', () => {
+      setClient(choice.dataset.clientChoice);
+      document.querySelector('#mode')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+    modeChoices.forEach((choice) => choice.addEventListener('click', () => {
+      if (choice.classList.contains('mode-unavailable')) return;
+      const mode = choice.dataset.modeChoice;
+      const alreadySelected = installMode === mode;
+      setInstallMode(mode);
+      if (alreadySelected) document.querySelector('#install')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+    installTabs.forEach((tab) => tab.addEventListener('click', () => {
+      if (tab.classList.contains('is-disabled')) return;
+      setInstallMode(tab.dataset.installMode);
+    }));
+    try {
+      const saved = localStorage.getItem('catquest-lang');
+      const browser = (navigator.language || navigator.languages?.[0] || '').toLowerCase();
+      const detected = browser === 'ru' || browser.startsWith('ru-') ? 'ru' : 'en';
+      const pathLanguage = /^\/ru(?:\/|$)/.test(location.pathname) ? 'ru' : '';
+      setLang(pathLanguage || (saved === 'ru' || saved === 'en' ? saved : detected));
+    } catch (_) {}
+    try {
+      const savedMode = localStorage.getItem('catquest-install-mode');
+      setInstallMode(['online', 'hybrid', 'offline'].includes(savedMode) ? savedMode : 'online');
+    } catch (_) {
+      setInstallMode('online');
+    }
+    loadProgress();
+    if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
+  </script>
+</body>
+</html>

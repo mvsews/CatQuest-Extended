@@ -1,0 +1,227 @@
+{
+  "title": {
+    "message": "Gerenciador de addons"
+  },
+  "description": {
+    "message": "Addons ZIP locais para Lasthavens 3.3.5a."
+  },
+  "importZip": {
+    "message": "Importar ZIP"
+  },
+  "play": {
+    "message": "Abrir jogo"
+  },
+  "hint": {
+    "message": "As alterações são aplicadas após recarregar a página do jogo."
+  },
+  "voiceApiTitle": {
+    "message": "Dublagem"
+  },
+  "voiceApiSaved": {
+    "message": "Salvo. Recarregue a página do jogo."
+  },
+  "waiting": {
+    "message": "Aguardando o jogo"
+  },
+  "storageTitle": {
+    "message": "Armazenamento"
+  },
+  "storageInfo": {
+    "message": "Os arquivos ficam neste perfil do Chrome. Remover um addon preserva suas configurações no jogo. Os addons integrados são gerenciados na biblioteca do jogo."
+  },
+  "limits": {
+    "message": "Limites: ZIP 128 MB; arquivo descompactado 256 MB; arquivo individual 64 MB; biblioteca 384 MB."
+  },
+  "reloadInfo": {
+    "message": "Recarregue o jogo quando puder interromper a sessão."
+  },
+  "empty": {
+    "message": "Nenhum addon local. Importe um ZIP."
+  },
+  "enabled": {
+    "message": "Ativado"
+  },
+  "disabled": {
+    "message": "Desativado"
+  },
+  "exportZip": {
+    "message": "Exportar ZIP"
+  },
+  "remove": {
+    "message": "Remover"
+  },
+  "saved": {
+    "message": "Salvo. Recarregue o jogo para aplicar as alterações."
+  },
+  "imported": {
+    "message": "Importação concluída. Novos addons ficam desativados."
+  },
+  "noVersion": {
+    "message": "Sem versão"
+  },
+  "files": {
+    "message": "arquivos"
+  },
+  "addons": {
+    "message": "addons"
+  },
+  "active": {
+    "message": "ativados"
+  },
+  "dependencies": {
+    "message": "Verifique as dependências: {names}. Elas podem estar na biblioteca do jogo."
+  },
+  "changed": {
+    "message": "Há alterações pendentes. Recarregue o jogo."
+  },
+  "ready": {
+    "message": "Addons locais preparados: {count}"
+  },
+  "loadError": {
+    "message": "Erro no carregador. O jogo pode iniciar sem addons locais."
+  },
+  "importError": {
+    "message": "Não foi possível importar o arquivo. Detalhes técnicos:"
+  },
+  "libraryLimit": {
+    "message": "A biblioteca excede 384 MB."
+  },
+  "interfaceWarning": {
+    "message": "O TOC não declara Interface 30300. Compatibilidade não verificada."
+  },
+  "errorPath": {
+    "message": "Caminho não permitido no arquivo: {detail}"
+  },
+  "errorArchiveSize": {
+    "message": "O ZIP excede 128 MB."
+  },
+  "errorExpanded": {
+    "message": "O limite de 64 MB por arquivo ou 256 MB descompactados foi excedido."
+  },
+  "errorIntegrity": {
+    "message": "Falha na verificação de integridade: {detail}"
+  },
+  "errorFolder": {
+    "message": "Pasta de addon inválida ou duplicada: {detail}"
+  },
+  "errorToc": {
+    "message": "O arquivo principal Folder/Folder.toc está ausente."
+  },
+  "errorUnsupported": {
+    "message": "ZIP não compatível: criptografia, ZIP64, vários volumes, links ou método de compactação."
+  },
+  "errorDuplicate": {
+    "message": "Caminho duplicado no arquivo: {detail}"
+  },
+  "errorZip": {
+    "message": "O arquivo ZIP é inválido ou está danificado."
+  },
+  "errorUnexpected": {
+    "message": "A operação falhou. Verifique o espaço do navegador e tente novamente."
+  },
+  "diagTitle": {
+    "message": "Diagnóstico de entrega de áudio"
+  },
+  "diagHint": {
+    "message": "Ative o CatQuest, entre no jogo e execute /cq probe 606. As solicitações do jogo para arquivos de voz aparecem aqui."
+  },
+  "diagEmpty": {
+    "message": "Nenhum evento ainda."
+  },
+  "diagClear": {
+    "message": "Limpar"
+  },
+  "diagCopy": {
+    "message": "Copiar registro"
+  },
+  "diagCopied": {
+    "message": "Registro copiado."
+  },
+  "diagNoRead": {
+    "message": "O addon foi carregado, mas o jogo nunca pediu um arquivo de voz. O caminho não está visível: é preciso investigar o sistema de arquivos do Lasthavens."
+  },
+  "diagSync": {
+    "message": "O jogo lê o áudio de forma síncrona. Leituras atendidas pelo cache: {count}."
+  },
+  "diagAsync": {
+    "message": "O jogo lê o áudio de forma assíncrona: a opção A serve."
+  },
+  "voiceLocaleLabel": {
+    "message": "Idioma da voz"
+  },
+  "voiceLocaleAuto": {
+    "message": "Igual ao jogo (/cq lang): {locale}"
+  },
+  "voiceLocaleHint": {
+    "message": "As faixas deste idioma são geradas sob demanda: uma missão sem voz é enviada ao servidor ao ser aberta pela primeira vez e o áudio chega em cerca de 30 segundos. Vale após recarregar o jogo."
+  },
+  "capacity": {
+    "message": "Servidor de voz: {queue} na fila, {used} de {limit} nesta hora, uma faixa ≈ {seconds} s, o orçamento cobre ≈ {budget} faixas."
+  },
+  "capacityLimited": {
+    "message": "Limite por hora atingido, próxima em {minutes} min."
+  },
+  "capacityOffline": {
+    "message": "O servidor de voz está indisponível."
+  },
+  "capacityOff": {
+    "message": "A geração está desligada: só tocam faixas prontas."
+  },
+  "updatesTitle": {
+    "message": "Atualizações"
+  },
+  "earlyUpdatesLabel": {
+    "message": "Receber versões recentes antes do lançamento"
+  },
+  "earlyUpdatesHint": {
+    "message": "Ative para receber addons beta antes da versão estável. Desativado por padrão."
+  },
+  "updatesChannelStable": {
+    "message": "Canal: versões estáveis."
+  },
+  "updatesChannelBeta": {
+    "message": "Canal: versões beta."
+  },
+  "updatesCheck": {
+    "message": "Verificar atualizações"
+  },
+  "updatesChecking": {
+    "message": "Verificando…"
+  },
+  "updatesChecked": {
+    "message": "Verificado: {time}."
+  },
+  "updatesNever": {
+    "message": "Ainda não verificado."
+  },
+  "updatesUpToDate": {
+    "message": "A extensão {version} está atualizada."
+  },
+  "updatesOffline": {
+    "message": "Servidor de atualizações indisponível ({error}); nova tentativa depois."
+  },
+  "updatesAddonInstalled": {
+    "message": "{name} {version} baixado do servidor e ativado; recarregue a página do jogo."
+  },
+  "updatesAddonUpdated": {
+    "message": "{name} atualizado para {version}; recarregue a página do jogo."
+  },
+  "updatesExtension": {
+    "message": "Versão da extensão do canal selecionado disponível: {version} (você tem {current})."
+  },
+  "updatesHowTo": {
+    "message": "Baixe o arquivo, descompacte-o sobre a pasta da extensão (substituindo arquivos) e clique em «Reiniciar extensão»."
+  },
+  "updatesDownload": {
+    "message": "Baixar"
+  },
+  "updatesReload": {
+    "message": "Reiniciar extensão"
+  },
+  "telemetryLabel": {
+    "message": "Enviar estatísticas, meu personagem e erros"
+  },
+  "telemetryHint": {
+    "message": "Mostra quem usa a dublagem, o que dublar primeiro e onde ela falha: um número de instalação aleatório, versões, idioma, contadores, nome do personagem e reino, missões pedidas e relatórios de erro com os últimos eventos de diagnóstico. O IP não é guardado. Desligado, a extensão não envia nada disso."
+  }
+}

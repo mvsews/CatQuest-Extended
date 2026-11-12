@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: CatQuest Companion Bridge
+## Notes: Screen-pixel bridge from CatQuest to CatQuest Client
+## Author: CatQuest contributors
+## Version: 0.1.0
+## Dependencies: CatQuest
+
+Bridge.lua
