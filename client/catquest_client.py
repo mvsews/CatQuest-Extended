@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""CatQuest Client: local and live bridge for ordinary WoW 3.3.5a installs.
+"""CatQuest Client: local and live bridge for WoW and Lasthavens Desktop.
 
 The game client cannot make HTTP requests itself.  ``sync`` turns ready server
-tracks into real files in Interface/AddOns and writes the small Bridge.lua
+tracks into real files in Interface/AddOns (or Lasthavens' userData/AddOns) and writes the small Bridge.lua
 manifest that CatQuest reads on the next /reload.  ``companion`` uses an
 addon-rendered screen-pixel protocol and plays on-demand OGG outside WoW, so
 it does not depend on a PlaySoundFile notification that the client cannot
@@ -12,9 +12,12 @@ provide.
 from __future__ import annotations
 
 import argparse
+import ctypes
+from ctypes import wintypes
 import hashlib
 import io
 import json
+import locale
 import os
 import queue
 import re
@@ -40,6 +43,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 APP_VERSION = "0.1.0"
 DEFAULT_API = "https://quester.mvse.ws"
+SUPPORT_CHAT_URL = "https://t.me/warcraft_rus_chat"
 CLIENT_VERSION = "3.3.5a"
 ADDON_FOLDER = "CatQuest"
 SERVER_FOLDER = "CatQuest335_ServerVoices"
@@ -68,14 +72,373 @@ PIXEL_HEADER = 25
 PIXEL_CHUNK_BYTES = ((PIXEL_COLS * PIXEL_ROWS - PIXEL_HEADER) * 3) // 2
 MAX_COMPANION_CHUNKS = 128
 MAX_COMPANION_PAYLOAD = PIXEL_CHUNK_BYTES * MAX_COMPANION_CHUNKS
+DEFAULT_UPDATE_INTERVAL = 6 * 60 * 60
+CURRENT_ADDONS_DIR: Path | None = None
+
+
+def detect_ui_language() -> str:
+    override = os.environ.get("CATQUEST_LANG", "").strip().lower()
+    if override in {"ru", "en"}:
+        return override
+    locale_name = ""
+    if os.name == "nt":
+        try:
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            get_locale = kernel32.GetUserDefaultLocaleName
+            get_locale.argtypes = [wintypes.LPWSTR, ctypes.c_int]
+            get_locale.restype = ctypes.c_int
+            buffer = ctypes.create_unicode_buffer(85)
+            if get_locale(buffer, len(buffer)):
+                locale_name = buffer.value
+        except (AttributeError, OSError):
+            pass
+    if not locale_name:
+        locale_name = str(locale.getlocale()[0] or os.environ.get("LANG", ""))
+    return "ru" if locale_name.lower().startswith("ru") else "en"
+
+
+UI_LANGUAGE = detect_ui_language()
 
 
 class ClientError(RuntimeError):
     """An expected, user-facing utility error."""
 
 
+class RunningGame:
+    """A detected game window and the addon directory it exposes."""
+
+    __slots__ = ("kind", "pid", "hwnd", "executable", "root", "addons_dir")
+
+    def __init__(
+        self,
+        kind: str,
+        pid: int,
+        hwnd: int,
+        executable: Path,
+        root: Path,
+        addons_dir: Path,
+    ) -> None:
+        self.kind = kind
+        self.pid = pid
+        self.hwnd = hwnd
+        self.executable = executable
+        self.root = root
+        self.addons_dir = addons_dir
+
+
+EN_TEXT = {
+    "не определена": "not detected",
+    "не установлен": "not installed",
+    "авто-режим сейчас поддерживается только в Windows": "automatic mode is currently supported only on Windows",
+    "API URL не должен содержать query или fragment": "the API URL must not contain a query or fragment",
+    "ответ сервера превышает допустимый размер": "the server response is too large",
+    "истёк таймаут запроса к серверу": "the server request timed out",
+    "сервер вернул JSON не-объект": "the server returned a non-object JSON value",
+    "архив аддона слишком большой": "the addon archive is too large",
+    "в архиве слишком много файлов": "the archive contains too many files",
+    "сервер прислал повреждённый ZIP": "the server returned a damaged ZIP archive",
+    "в release нет списка addons": "the release has no addons list",
+    "релиз не содержит аддон CatQuest": "the release does not contain the CatQuest addon",
+    "у CatQuest в release нет версии или URL": "the CatQuest release has no version or URL",
+    "release содержит небезопасный URL аддона": "the release contains an unsafe addon URL",
+    "размер ZIP CatQuest не совпал с release": "the CatQuest ZIP size does not match the release",
+    "SHA-256 ZIP CatQuest не совпал с release": "the CatQuest ZIP SHA-256 does not match the release",
+    "некорректный ID квеста": "invalid quest ID",
+    "тип должен быть DETAIL или COMPLETE": "the type must be DETAIL or COMPLETE",
+    "для Lasthavens нужен --lasthavens-dir": "Lasthavens requires --lasthavens-dir",
+    "режим watch запущен; Ctrl+C для выхода": "watch mode started; press Ctrl+C to exit",
+    "watch остановлен": "watch stopped",
+    "готово. Перезагрузите игру или выполните /reload": "done. Reload the game or run /reload",
+    "готово. Выполните /reload, чтобы WoW увидел новый файл": "done. Run /reload so WoW can see the new file",
+    "авто-гибрид запущен; ожидаю окно WoW или Lasthavens Desktop": "automatic hybrid started; waiting for a WoW or Lasthavens Desktop window",
+    "игра закрыта или свёрнута; жду следующий запуск": "the game was closed or minimized; waiting for the next launch",
+    "игра не найдена; жду запуска...": "no supported game found; waiting for launch...",
+    "CatQuest обновлён; выполните /reload в игре": "CatQuest was updated; run /reload in the game",
+    "воспроизведение остановлено": "playback stopped",
+    "companion остановлен": "companion stopped",
+    "авто-гибрид остановлен": "automatic hybrid stopped",
+    "поддержка": "support",
+    "текущая версия аддона": "current addon version",
+    "корень обычного WoW с Interface\\AddOns": "ordinary WoW root with Interface\\AddOns",
+    "userData Lasthavens Desktop, например %%APPDATA%%\\Lasthavens": "Lasthavens Desktop userData, e.g. %%APPDATA%%\\Lasthavens",
+    "обновить CatQuest и скачать готовые серверные дорожки": "update CatQuest and download ready server tracks",
+    "скачать заново даже файлы того же размера": "download files again even if their size is unchanged",
+    "скачать также книги и лор мест": "also download books and place lore",
+    "ограничить число квестовых дорожек за запуск": "limit the number of quest tracks per run",
+    "запросить одну серверную дорожку и сохранить её локально": "request one server track and save it locally",
+    "сколько секунд ждать генерацию": "how many seconds to wait for generation",
+    "синхронизировать готовые дорожки и читать SavedVariables": "sync ready tracks and read SavedVariables",
+    "запустить живой экранный мост и проигрывать серверную озвучку вне WoW": "start the live screen bridge and play server audio outside WoW",
+    "X области захвата экрана": "X coordinate of the capture area",
+    "Y области захвата экрана": "Y coordinate of the capture area",
+    "размер пиксельной клетки": "pixel cell size",
+    "частота чтения экрана": "screen capture frequency",
+    "автоматически найти запущенный WoW/Lasthavens и запустить Hybrid": "find a running WoW/Lasthavens client and start Hybrid",
+    "ограничить поиск указанной установкой обычного WoW": "limit detection to the specified WoW installation",
+    "интервал поиска игры": "game detection interval",
+    "интервал проверки обновления CatQuest в секундах": "CatQuest update check interval in seconds",
+    "ожидание одного запроса gossip": "wait time for one gossip request",
+}
+
+
+def localize_text(text: str) -> str:
+    if UI_LANGUAGE == "ru":
+        return text
+    if text in EN_TEXT:
+        return EN_TEXT[text]
+    patterns = (
+        (r"^ошибка: (.*)$", lambda m: f"error: {localize_text(m.group(1))}"),
+        (r"^CatQuest (.+) уже актуален$", lambda m: f"CatQuest {m.group(1)} is up to date"),
+        (r"^CatQuest обновлён до (.+) \((\d+) файлов\)$", lambda m: f"CatQuest updated to {m.group(1)} ({m.group(2)} files)"),
+        (r"^некорректный API URL: (.+)$", lambda m: f"invalid API URL: {m.group(1)}"),
+        (r"^сервер недоступен: (.+)$", lambda m: f"server unavailable: {m.group(1)}"),
+        (r"^сервер вернул не JSON \(HTTP (\d+)\)$", lambda m: f"the server returned non-JSON data (HTTP {m.group(1)})"),
+        (r"^сервер ответил HTTP (\d+)$", lambda m: f"the server returned HTTP {m.group(1)}"),
+        (r"^опасный путь в ZIP: (.+)$", lambda m: f"unsafe path in ZIP: {m.group(1)}"),
+        (r"^файл в архиве слишком большой: (.+)$", lambda m: f"a file in the archive is too large: {m.group(1)}"),
+        (r"^дубликат файла в архиве: (.+)$", lambda m: f"duplicate file in the archive: {m.group(1)}"),
+        (r"^в архиве нет (.+)\.toc$", lambda m: f"the archive has no {m.group(1)}.toc"),
+        (r"^не удалось скачать CatQuest: HTTP (\d+)$", lambda m: f"could not download CatQuest: HTTP {m.group(1)}"),
+        (r"^не удалось обновить (.+): файл занят\. Закройте WoW и повторите$", lambda m: f"could not update {m.group(1)}: the file is in use; close WoW and try again"),
+        (r"^SHA-256 ZIP CatQuest не совпал с release$", lambda m: "the CatQuest ZIP SHA-256 does not match the release"),
+        (r"^установлен (.+) \((\d+) файлов\)$", lambda m: f"installed {m.group(1)} ({m.group(2)} files)"),
+        (r"^скачана дорожка (\d+) (.+)$", lambda m: f"downloaded track {m.group(1)} {m.group(2)}"),
+        (r"^пропуск (\d+) (.+): (.+)$", lambda m: f"skipped {m.group(1)} {m.group(2)}: {m.group(3)}"),
+        (r"^дорожка (\d+) (.+) уже готова$", lambda m: f"track {m.group(1)} {m.group(2)} is already ready"),
+        (r"^запрос (\d+) (.+) принят; жду готовность$", lambda m: f"request {m.group(1)} {m.group(2)} accepted; waiting for completion"),
+        (r"^дорожка (\d+) (.+) скачана; нужен /reload$", lambda m: f"track {m.group(1)} {m.group(2)} downloaded; /reload is required"),
+        (r"^сервер завершил запрос статусом (.+)$", lambda m: f"the server finished the request with status {m.group(1)}"),
+        (r"^не найдена папка Interface\\AddOns в (.+)$", lambda m: f"Interface\\AddOns was not found in {m.group(1)}"),
+        (r"^не найдена папка Lasthavens userData: (.+)$", lambda m: f"Lasthavens userData folder was not found: {m.group(1)}"),
+        (r"^не удалось открыть папку AddOns в (.+)$", lambda m: f"could not open the AddOns folder in {m.group(1)}"),
+        (r"^не найдены файлы (.+): (.+)$", lambda m: f"{m.group(1)} files were not found: {m.group(2)}"),
+        (r"^пустой пакет (.+)$", lambda m: f"empty package: {m.group(1)}"),
+        (r"^не удалось открыть аудиоустройство: (.+)$", lambda m: f"could not open the audio device: {m.group(1)}"),
+        (r"^не удалось установить (.+): файл занят или нет прав$", lambda m: f"could not install {m.group(1)}: the file is in use or access was denied"),
+        (r"^запрос (\d+) (.+) не выполнен: (.+)$", lambda m: f"request {m.group(1)} {m.group(2)} failed: {m.group(3)}"),
+        (r"^озвучка не запущена: (.+)$", lambda m: f"voice playback did not start: {m.group(1)}"),
+        (r"^аудиопроигрыватель: (.+)$", lambda m: f"audio player: {m.group(1)}"),
+        (r"^не удалось подготовить (.+): (.+); повтор через 10 с$", lambda m: f"could not prepare {m.group(1)}: {m.group(2)}; retrying in 10 s"),
+        (r"^проверка обновления CatQuest не выполнена: (.+)$", lambda m: f"CatQuest update check failed: {m.group(1)}"),
+        (r"^для квеста (\d+) нет текста или дорожки$", lambda m: f"no text or track is available for quest {m.group(1)}"),
+        (r"^дорожка (\d+) пока не готова; повторите request позже$", lambda m: f"track {m.group(1)} is not ready; run request again later"),
+        (r"^--(.+) должен быть положительным$", lambda m: f"--{m.group(1)} must be positive"),
+        (r"^--cell должен быть от 1 до 32$", lambda m: "--cell must be between 1 and 32"),
+        (r"^--x и --y не могут быть отрицательными$", lambda m: "--x and --y cannot be negative"),
+        (r"^получен запрос: (.+)$", lambda m: f"request received: {m.group(1)}"),
+        (r"^воспроизведение: (.+)$", lambda m: f"playing: {m.group(1)}"),
+        (r"^обнаружен (.+): (.+)$", lambda m: f"detected {m.group(1)}: {m.group(2)}"),
+        (r"^установлен CatQuestCompanion \((\d+) файлов\)$", lambda m: f"CatQuestCompanion installed ({m.group(1)} files)"),
+        (r"^текущая версия аддона: (.+)$", lambda m: f"current addon version: {localize_text(m.group(1))}"),
+        (r"^поддержка: (.+)$", lambda m: f"support: {m.group(1)}"),
+        (r"^Voice API \(по умолчанию (.+)\)$", lambda m: f"Voice API (default: {m.group(1)})"),
+        (r"^язык дорожек, например (.+)$", lambda m: f"track language, e.g. {m.group(1).replace(' или ', ' or ')}"),
+    )
+    for pattern, replacement in patterns:
+        match = re.match(pattern, text)
+        if match:
+            return replacement(match)
+    return text
+
+
 def log(message: str) -> None:
-    print(f"[CatQuest] {message}", flush=True)
+    print(f"[CatQuest] {localize_text(message)}", flush=True)
+
+
+def installed_addon_version(addons_dir: Path | None = None) -> str:
+    directory = addons_dir or CURRENT_ADDONS_DIR
+    if directory is None:
+        return "не определена"
+    try:
+        return addon_version(directory, ADDON_FOLDER) or "не установлен"
+    except (OSError, NameError):
+        return "не определена"
+
+
+def log_error(message: str, addons_dir: Path | None = None) -> None:
+    """Print a recoverable error together with the support chat."""
+
+    log(f"ошибка: {message}")
+    log(f"текущая версия аддона: {installed_addon_version(addons_dir)}")
+    log(f"поддержка: {SUPPORT_CHAT_URL}")
+
+
+def print_fatal_error(message: str, addons_dir: Path | None = None) -> None:
+    error_line = localize_text("ошибка: " + message)
+    version_line = localize_text(
+        "текущая версия аддона: " + installed_addon_version(addons_dir)
+    )
+    support_line = localize_text("поддержка: " + SUPPORT_CHAT_URL)
+    print(f"[CatQuest] {error_line}", file=sys.stderr, flush=True)
+    print(
+        f"[CatQuest] {version_line}",
+        file=sys.stderr,
+        flush=True,
+    )
+    print(f"[CatQuest] {support_line}", file=sys.stderr, flush=True)
+
+
+WOW_PROCESS_NAMES = {
+    "wow.exe",
+    "wow-64.exe",
+    "wowclassic.exe",
+    "wowclassic-64.exe",
+    "turtlewow.exe",
+}
+
+
+if os.name == "nt":
+    _user32 = ctypes.WinDLL("user32", use_last_error=True)
+    _kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    _EnumWindowsProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    _user32.EnumWindows.argtypes = [_EnumWindowsProc, wintypes.LPARAM]
+    _user32.EnumWindows.restype = wintypes.BOOL
+    _user32.GetForegroundWindow.restype = wintypes.HWND
+    _user32.GetWindowThreadProcessId.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.DWORD)]
+    _user32.GetWindowThreadProcessId.restype = wintypes.DWORD
+    _user32.IsWindowVisible.argtypes = [wintypes.HWND]
+    _user32.IsWindowVisible.restype = wintypes.BOOL
+    _user32.IsIconic.argtypes = [wintypes.HWND]
+    _user32.IsIconic.restype = wintypes.BOOL
+    _user32.GetClientRect.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.RECT)]
+    _user32.GetClientRect.restype = wintypes.BOOL
+    _user32.ClientToScreen.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.POINT)]
+    _user32.ClientToScreen.restype = wintypes.BOOL
+    _user32.GetWindowTextLengthW.argtypes = [wintypes.HWND]
+    _user32.GetWindowTextLengthW.restype = ctypes.c_int
+    _user32.GetWindowTextW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
+    _user32.GetWindowTextW.restype = ctypes.c_int
+    _kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    _kernel32.OpenProcess.restype = wintypes.HANDLE
+    _kernel32.QueryFullProcessImageNameW.argtypes = [
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.LPWSTR,
+        ctypes.POINTER(wintypes.DWORD),
+    ]
+    _kernel32.QueryFullProcessImageNameW.restype = wintypes.BOOL
+    _kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    _kernel32.CloseHandle.restype = wintypes.BOOL
+
+
+def _process_executable(pid: int) -> Path | None:
+    """Read a process image path without adding a Windows-only dependency."""
+
+    if os.name != "nt":
+        return None
+    handle = _kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+    if not handle:
+        return None
+    try:
+        buffer = ctypes.create_unicode_buffer(32768)
+        size = wintypes.DWORD(len(buffer))
+        if not _kernel32.QueryFullProcessImageNameW(handle, 0, buffer, ctypes.byref(size)):
+            return None
+        return Path(buffer.value)
+    finally:
+        _kernel32.CloseHandle(handle)
+
+
+def _visible_windows() -> list[tuple[int, int, bool]]:
+    """Return visible, non-minimized top-level windows as hwnd/pid/foreground."""
+
+    if os.name != "nt":
+        return []
+    foreground = int(_user32.GetForegroundWindow() or 0)
+    result: list[tuple[int, int, bool]] = []
+
+    @_EnumWindowsProc
+    def callback(hwnd: int, _lparam: int) -> bool:
+        if not _user32.IsWindowVisible(hwnd) or _user32.IsIconic(hwnd):
+            return True
+        pid = wintypes.DWORD()
+        _user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        if pid.value:
+            result.append((int(hwnd), int(pid.value), int(hwnd) == foreground))
+        return True
+
+    _user32.EnumWindows(callback, 0)
+    return result
+
+
+def _client_rect(hwnd: int) -> tuple[int, int, int, int] | None:
+    """Return the physical client-area rectangle on the desktop."""
+
+    if os.name != "nt":
+        return None
+    rect = wintypes.RECT()
+    point = wintypes.POINT()
+    if not _user32.GetClientRect(hwnd, ctypes.byref(rect)):
+        return None
+    if not _user32.ClientToScreen(hwnd, ctypes.byref(point)):
+        return None
+    width = int(rect.right - rect.left)
+    height = int(rect.bottom - rect.top)
+    if width < PIXEL_COLS * PIXEL_CELL or height < PIXEL_ROWS * PIXEL_CELL:
+        return None
+    return int(point.x), int(point.y), width, height
+
+
+def _wow_root_for_executable(executable: Path) -> Path | None:
+    """Find the nearest ordinary WoW root with an Interface directory."""
+
+    name = executable.name.lower()
+    for candidate in (executable.parent, *executable.parents):
+        addons = candidate / "Interface" / "AddOns"
+        if addons.is_dir():
+            return candidate
+        if name in WOW_PROCESS_NAMES and (candidate / "Interface").is_dir():
+            try:
+                addons.mkdir(exist_ok=True)
+            except OSError:
+                return None
+            return candidate
+    return None
+
+
+def detect_running_game(args: argparse.Namespace) -> RunningGame | None:
+    """Detect the active supported game client on Windows."""
+
+    if os.name != "nt":
+        raise ClientError("авто-режим сейчас поддерживается только в Windows")
+    configured_lh = (
+        Path(args.lasthavens_dir).expanduser().resolve()
+        if args.lasthavens_dir
+        else Path(os.environ.get("APPDATA", "")) / "Lasthavens"
+    )
+    configured_wow = (
+        Path(args.wow_dir).expanduser().resolve() if args.wow_dir else None
+    )
+    candidates: list[tuple[bool, RunningGame]] = []
+    seen_pids: set[int] = set()
+    for hwnd, pid, foreground in _visible_windows():
+        if pid in seen_pids:
+            continue
+        seen_pids.add(pid)
+        executable = _process_executable(pid)
+        if not executable:
+            continue
+        name = executable.name.lower()
+        if name == "lasthavens.exe":
+            root = configured_lh
+            if not root.is_dir() or not (root / "AddOns").is_dir():
+                continue
+            candidate = RunningGame("lasthavens", pid, hwnd, executable, root, root / "AddOns")
+        else:
+            root = _wow_root_for_executable(executable)
+            if not root:
+                continue
+            if configured_wow and root != configured_wow:
+                continue
+            candidate = RunningGame(
+                "wow", pid, hwnd, executable, root, root / "Interface" / "AddOns"
+            )
+        if _client_rect(hwnd) is not None:
+            candidates.append((foreground, candidate))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    return candidates[0][1]
 
 
 def normalize_api(value: str) -> str:
@@ -694,9 +1057,39 @@ def resolve_wow_dir(value: str | None) -> Path:
     return path
 
 
+def resolve_lasthavens_dir(value: str | None) -> Path:
+    """Return an existing Lasthavens userData directory."""
+
+    if not value:
+        raise ClientError("для Lasthavens нужен --lasthavens-dir")
+    path = Path(value).expanduser().resolve()
+    if not path.is_dir():
+        raise ClientError(f"не найдена папка Lasthavens userData: {path}")
+    addons = path / "AddOns"
+    try:
+        addons.mkdir(exist_ok=True)
+    except OSError as error:
+        raise ClientError(f"не удалось открыть папку AddOns в {path}") from error
+    return path
+
+
+def resolve_target_dirs(args: argparse.Namespace) -> tuple[Path, Path]:
+    """Return (install root, addon directory) for WoW or Lasthavens."""
+
+    global CURRENT_ADDONS_DIR
+    if args.lasthavens_dir:
+        root = resolve_lasthavens_dir(args.lasthavens_dir)
+        addons_dir = root / "AddOns"
+        CURRENT_ADDONS_DIR = addons_dir
+        return root, addons_dir
+    root = resolve_wow_dir(args.wow_dir)
+    addons_dir = root / "Interface" / "AddOns"
+    CURRENT_ADDONS_DIR = addons_dir
+    return root, addons_dir
+
+
 def command_sync(args: argparse.Namespace) -> int:
-    wow_dir = resolve_wow_dir(args.wow_dir)
-    addons_dir = wow_dir / "Interface" / "AddOns"
+    _, addons_dir = resolve_target_dirs(args)
     api = Api(args.api, args.timeout)
     if not args.no_addon_update:
         release_addon(api, addons_dir, args.channel, args.force)
@@ -707,10 +1100,10 @@ def command_sync(args: argparse.Namespace) -> int:
 
 
 def command_request(args: argparse.Namespace) -> int:
-    wow_dir = resolve_wow_dir(args.wow_dir)
+    _, addons_dir = resolve_target_dirs(args)
     api = Api(args.api, args.timeout)
     locale = normalize_locale(args.locale)
-    server_dir = wow_dir / "Interface" / "AddOns" / SERVER_FOLDER
+    server_dir = addons_dir / SERVER_FOLDER
     server_dir.mkdir(parents=True, exist_ok=True)
     ok = request_track(api, server_dir, locale, int(args.quest_id), args.quest_type, args.wait)
     if ok:
@@ -721,10 +1114,14 @@ def command_request(args: argparse.Namespace) -> int:
 
 
 def command_watch(args: argparse.Namespace) -> int:
-    wow_dir = resolve_wow_dir(args.wow_dir)
+    if args.lasthavens_dir:
+        raise ClientError(
+            "watch не поддерживается для Lasthavens: Desktop не хранит WoW SavedVariables в WTF"
+        )
+    wow_dir, addons_dir = resolve_target_dirs(args)
     api = Api(args.api, args.timeout)
     locale = normalize_locale(args.locale)
-    server_dir = wow_dir / "Interface" / "AddOns" / SERVER_FOLDER
+    server_dir = addons_dir / SERVER_FOLDER
     state = load_state(server_dir)
     requested = state.setdefault("requested_missing", {})
     log("режим watch запущен; Ctrl+C для выхода")
@@ -741,7 +1138,7 @@ def command_watch(args: argparse.Namespace) -> int:
                         requested[key] = int(time.time())
                         refresh_manifest(api, server_dir, locale, [(quest_id, request_type)])
                 except ClientError as error:
-                    log(f"запрос {quest_id} {request_type} не выполнен: {error}")
+                    log_error(f"запрос {quest_id} {request_type} не выполнен: {error}")
             save_state(server_dir, state)
             time.sleep(max(10.0, args.interval))
     except KeyboardInterrupt:
@@ -769,6 +1166,37 @@ def install_companion_addon(addons_dir: Path) -> int:
         ) from error
     log(f"установлен {COMPANION_FOLDER} ({len(files)} файлов)")
     return len(files)
+
+
+def load_companion_dependencies() -> tuple[Any, Any]:
+    try:
+        import mss
+        import pygame
+    except ImportError as error:
+        raise ClientError(
+            "для companion нужны зависимости: python -m pip install -r client\\requirements.txt"
+        ) from error
+    return mss, pygame
+
+
+def validate_companion_options(args: argparse.Namespace) -> None:
+    if args.cell < 1 or args.cell > 32:
+        raise ClientError("--cell должен быть от 1 до 32")
+    if args.fps <= 0:
+        raise ClientError("--fps должен быть положительным")
+
+
+def prepare_companion_target(
+    api: Api, args: argparse.Namespace, addons_dir: Path
+) -> Path:
+    global CURRENT_ADDONS_DIR
+    CURRENT_ADDONS_DIR = addons_dir
+    if not args.no_addon_update:
+        release_addon(api, addons_dir, args.channel, args.force)
+    install_companion_addon(addons_dir)
+    server_dir = addons_dir / SERVER_FOLDER
+    server_dir.mkdir(parents=True, exist_ok=True)
+    return server_dir
 
 
 def _screen_pixel(frame: Any, x: int, y: int) -> tuple[int, int, int]:
@@ -1076,9 +1504,9 @@ class CompanionPlayer:
                     self.pygame.mixer.music.play()
                 log(f"воспроизведение: {path.name}")
             except ClientError as error:
-                log(f"озвучка не запущена: {error}")
+                log_error(f"озвучка не запущена: {error}", self.server_dir.parent)
             except Exception as error:
-                log(f"ошибка аудиопроигрывателя: {error}")
+                log_error(f"аудиопроигрыватель: {error}", self.server_dir.parent)
 
     def close(self) -> None:
         self.stop_event.set()
@@ -1092,28 +1520,13 @@ class CompanionPlayer:
 
 
 def command_companion(args: argparse.Namespace) -> int:
-    if args.cell < 1 or args.cell > 32:
-        raise ClientError("--cell должен быть от 1 до 32")
+    validate_companion_options(args)
     if args.x < 0 or args.y < 0:
         raise ClientError("--x и --y не могут быть отрицательными")
-    if args.fps <= 0:
-        raise ClientError("--fps должен быть положительным")
-    wow_dir = resolve_wow_dir(args.wow_dir)
-    addons_dir = wow_dir / "Interface" / "AddOns"
+    _, addons_dir = resolve_target_dirs(args)
     api = Api(args.api, args.timeout)
-    if not args.no_addon_update:
-        release_addon(api, addons_dir, args.channel, args.force)
-    install_companion_addon(addons_dir)
-    server_dir = addons_dir / SERVER_FOLDER
-    server_dir.mkdir(parents=True, exist_ok=True)
-
-    try:
-        import mss
-        import pygame
-    except ImportError as error:
-        raise ClientError(
-            "для companion нужны зависимости: python -m pip install -r client\\requirements.txt"
-        ) from error
+    server_dir = prepare_companion_target(api, args, addons_dir)
+    mss, pygame = load_companion_dependencies()
 
     player = CompanionPlayer(api, server_dir, args.timeout, args.wait, pygame)
     player.start()
@@ -1155,34 +1568,157 @@ def command_companion(args: argparse.Namespace) -> int:
         player.close()
 
 
+def command_hybrid(args: argparse.Namespace) -> int:
+    """Wait for a supported game and run the companion against its active window."""
+
+    validate_companion_options(args)
+    if args.poll <= 0:
+        raise ClientError("--poll должен быть положительным")
+    if args.update_interval <= 0:
+        raise ClientError("--update-interval должен быть положительным")
+    api = Api(args.api, args.timeout)
+    mss, pygame = load_companion_dependencies()
+    player: CompanionPlayer | None = None
+    active_key: tuple[str, int, str] | None = None
+    decoder = CompanionDecoder()
+    last_wait_log = 0.0
+    retry_after = 0.0
+    next_update_at = 0.0
+    log("авто-гибрид запущен; ожидаю окно WoW или Lasthavens Desktop")
+    try:
+        with mss.mss() as capture:
+            while True:
+                now = time.monotonic()
+                target = detect_running_game(args)
+                if target is None:
+                    if player is not None:
+                        player.close()
+                        player = None
+                        active_key = None
+                        decoder = CompanionDecoder()
+                        log("игра закрыта или свёрнута; жду следующий запуск")
+                    if now - last_wait_log >= 5.0:
+                        log("игра не найдена; жду запуска...")
+                        last_wait_log = now
+                    time.sleep(max(0.25, args.poll))
+                    continue
+
+                key = (target.kind, target.pid, str(target.root))
+                if key != active_key and now >= retry_after:
+                    if player is not None:
+                        player.close()
+                        player = None
+                    try:
+                        server_dir = prepare_companion_target(api, args, target.addons_dir)
+                        player = CompanionPlayer(api, server_dir, args.timeout, args.wait, pygame)
+                        player.start()
+                    except (ClientError, OSError) as error:
+                        log_error(
+                            f"не удалось подготовить {target.kind}: {error}; повтор через 10 с",
+                            target.addons_dir,
+                        )
+                        retry_after = now + 10.0
+                        time.sleep(1.0)
+                        continue
+                    active_key = key
+                    decoder = CompanionDecoder()
+                    next_update_at = (
+                        float("inf")
+                        if args.no_addon_update
+                        else now + args.update_interval
+                    )
+                    label = "Lasthavens Desktop" if target.kind == "lasthavens" else "обычный WoW"
+                    log(f"обнаружен {label}: {target.executable}")
+
+                if player is None:
+                    time.sleep(0.25)
+                    continue
+                if now >= next_update_at:
+                    try:
+                        changed = release_addon(
+                            api, target.addons_dir, args.channel, args.force
+                        )
+                        install_companion_addon(target.addons_dir)
+                        if changed:
+                            log("CatQuest обновлён; выполните /reload в игре")
+                    except (ClientError, OSError) as error:
+                        log_error(
+                            f"проверка обновления CatQuest не выполнена: {error}",
+                            target.addons_dir,
+                        )
+                    finally:
+                        next_update_at = now + args.update_interval
+                bounds = _client_rect(target.hwnd)
+                if bounds is None:
+                    time.sleep(0.25)
+                    continue
+                left, top, _, _ = bounds
+                monitor = {
+                    "left": left,
+                    "top": top,
+                    "width": PIXEL_COLS * args.cell,
+                    "height": PIXEL_ROWS * args.cell,
+                }
+                frame = capture.grab(monitor)
+                payload = decoder.push(frame, args.cell)
+                if payload is not None:
+                    message = parse_companion_payload(payload)
+                    if message and message["kind"] == "stop":
+                        player.stop()
+                        log("воспроизведение остановлено")
+                    elif message:
+                        player.enqueue(message)
+                        label = (
+                            f'{message["quest_id"]} {message["quest_type"]}'
+                            if message["kind"] == "quest"
+                            else message["title"]
+                        )
+                        log(f"получен запрос: {label}")
+                time.sleep(1.0 / max(10.0, min(120.0, args.fps)))
+    except KeyboardInterrupt:
+        log("авто-гибрид остановлен")
+        return 0
+    finally:
+        if player is not None:
+            player.close()
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--version", action="version", version=f"CatQuest Client {APP_VERSION}")
     sub = parser.add_subparsers(dest="command", required=True)
 
     def common(command: argparse.ArgumentParser) -> None:
-        command.add_argument("--wow-dir", required=True, help="корень обычного WoW с Interface\\AddOns")
-        command.add_argument("--api", default=DEFAULT_API, help=f"Voice API (по умолчанию {DEFAULT_API})")
-        command.add_argument("--locale", default="ruRU", help="язык дорожек, например ruRU или enUS")
+        target = command.add_mutually_exclusive_group(required=True)
+        target.add_argument(
+            "--wow-dir",
+            help=localize_text("корень обычного WoW с Interface\\AddOns"),
+        )
+        target.add_argument(
+            "--lasthavens-dir",
+            help=localize_text("userData Lasthavens Desktop, например %%APPDATA%%\\Lasthavens"),
+        )
+        command.add_argument("--api", default=DEFAULT_API, help=localize_text(f"Voice API (по умолчанию {DEFAULT_API})"))
+        command.add_argument("--locale", default="ruRU", help=localize_text("язык дорожек, например ruRU или enUS"))
         command.add_argument("--timeout", type=float, default=30.0)
 
-    sync = sub.add_parser("sync", help="обновить CatQuest и скачать готовые серверные дорожки")
+    sync = sub.add_parser("sync", help=localize_text("обновить CatQuest и скачать готовые серверные дорожки"))
     common(sync)
     sync.add_argument("--channel", choices=("stable", "beta"), default="stable")
-    sync.add_argument("--force", action="store_true", help="скачать заново даже файлы того же размера")
-    sync.add_argument("--books", action="store_true", help="скачать также книги и лор мест")
-    sync.add_argument("--limit", type=int, help="ограничить число квестовых дорожек за запуск")
+    sync.add_argument("--force", action="store_true", help=localize_text("скачать заново даже файлы того же размера"))
+    sync.add_argument("--books", action="store_true", help=localize_text("скачать также книги и лор мест"))
+    sync.add_argument("--limit", type=int, help=localize_text("ограничить число квестовых дорожек за запуск"))
     sync.add_argument("--no-addon-update", action="store_true")
     sync.set_defaults(handler=command_sync)
 
-    request = sub.add_parser("request", help="запросить одну серверную дорожку и сохранить её локально")
+    request = sub.add_parser("request", help=localize_text("запросить одну серверную дорожку и сохранить её локально"))
     common(request)
     request.add_argument("quest_id", type=int)
     request.add_argument("quest_type", choices=("DETAIL", "COMPLETE"))
-    request.add_argument("--wait", type=float, default=180.0, help="сколько секунд ждать генерацию")
+    request.add_argument("--wait", type=float, default=180.0, help=localize_text("сколько секунд ждать генерацию"))
     request.set_defaults(handler=command_request)
 
-    watch = sub.add_parser("watch", help="синхронизировать готовые дорожки и читать SavedVariables")
+    watch = sub.add_parser("watch", help=localize_text("синхронизировать готовые дорожки и читать SavedVariables"))
     common(watch)
     watch.add_argument("--books", action="store_true")
     watch.add_argument("--limit", type=int)
@@ -1192,18 +1728,50 @@ def build_parser() -> argparse.ArgumentParser:
 
     companion = sub.add_parser(
         "companion",
-        help="запустить живой экранный мост и проигрывать серверную озвучку вне WoW",
+        help=localize_text("запустить живой экранный мост и проигрывать серверную озвучку вне WoW"),
     )
     common(companion)
     companion.add_argument("--channel", choices=("stable", "beta"), default="stable")
     companion.add_argument("--force", action="store_true")
     companion.add_argument("--no-addon-update", action="store_true")
-    companion.add_argument("--wait", type=float, default=20.0, help="ожидание одного запроса gossip")
-    companion.add_argument("--x", type=int, default=0, help="X области захвата экрана")
-    companion.add_argument("--y", type=int, default=0, help="Y области захвата экрана")
-    companion.add_argument("--cell", type=int, default=PIXEL_CELL, help="размер пиксельной клетки")
-    companion.add_argument("--fps", type=float, default=60.0, help="частота чтения экрана")
+    companion.add_argument("--wait", type=float, default=20.0, help=localize_text("ожидание одного запроса gossip"))
+    companion.add_argument("--x", type=int, default=0, help=localize_text("X области захвата экрана"))
+    companion.add_argument("--y", type=int, default=0, help=localize_text("Y области захвата экрана"))
+    companion.add_argument("--cell", type=int, default=PIXEL_CELL, help=localize_text("размер пиксельной клетки"))
+    companion.add_argument("--fps", type=float, default=60.0, help=localize_text("частота чтения экрана"))
     companion.set_defaults(handler=command_companion)
+
+    hybrid = sub.add_parser(
+        "hybrid",
+        aliases=["auto"],
+        help=localize_text("автоматически найти запущенный WoW/Lasthavens и запустить Hybrid"),
+    )
+    target = hybrid.add_mutually_exclusive_group()
+    target.add_argument(
+        "--wow-dir",
+        help=localize_text("ограничить поиск указанной установкой обычного WoW"),
+    )
+    target.add_argument(
+        "--lasthavens-dir",
+        help=localize_text("userData Lasthavens Desktop, например %%APPDATA%%\\Lasthavens"),
+    )
+    hybrid.add_argument("--api", default=DEFAULT_API, help=localize_text(f"Voice API (по умолчанию {DEFAULT_API})"))
+    hybrid.add_argument("--locale", default="ruRU", help=localize_text("язык дорожек, например ruRU или enUS"))
+    hybrid.add_argument("--timeout", type=float, default=30.0)
+    hybrid.add_argument("--channel", choices=("stable", "beta"), default="stable")
+    hybrid.add_argument("--force", action="store_true")
+    hybrid.add_argument("--no-addon-update", action="store_true")
+    hybrid.add_argument("--wait", type=float, default=20.0, help=localize_text("ожидание одного запроса gossip"))
+    hybrid.add_argument("--cell", type=int, default=PIXEL_CELL, help=localize_text("размер пиксельной клетки"))
+    hybrid.add_argument("--fps", type=float, default=60.0, help=localize_text("частота чтения экрана"))
+    hybrid.add_argument("--poll", type=float, default=1.0, help=localize_text("интервал поиска игры"))
+    hybrid.add_argument(
+        "--update-interval",
+        type=float,
+        default=DEFAULT_UPDATE_INTERVAL,
+        help=localize_text("интервал проверки обновления CatQuest в секундах"),
+    )
+    hybrid.set_defaults(handler=command_hybrid)
     return parser
 
 
@@ -1212,11 +1780,14 @@ def main(argv: list[str] | None = None) -> int:
         args = build_parser().parse_args(argv)
         return int(args.handler(args))
     except ClientError as error:
-        print(f"[CatQuest] ошибка: {error}", file=sys.stderr)
+        print_fatal_error(str(error))
         return 1
     except KeyboardInterrupt:
         print("\n[CatQuest] остановлено", file=sys.stderr)
         return 130
+    except Exception as error:
+        print_fatal_error(f"непредвиденная ошибка: {error}")
+        return 1
 
 
 if __name__ == "__main__":

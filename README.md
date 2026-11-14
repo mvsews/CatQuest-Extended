@@ -100,6 +100,8 @@ area, requests the track from the Voice API, and plays it through `pygame`. If
 WoW is already running, run `/reload` after the first installation; use `--x`
 and `--y` for a windowed client.
 
+For a one-click Windows setup, download the [standalone CatQuest Hybrid client](https://quester.mvse.ws/downloads/CatQuest-Hybrid-Windows.zip), unpack it and run `CatQuest-Hybrid.exe`. Python and pip are bundled; it detects WoW or Lasthavens Desktop and installs or updates the addon automatically.
+
 Community packs can add more voices without changing the CatQuest core addon.
 
 ## Build from source

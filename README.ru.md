@@ -103,6 +103,20 @@ python -m pip install -r client\requirements.txt
 `pygame`. После установки в уже запущенной игре выполните `/reload`; для
 оконного режима задайте координаты через `--x` и `--y`.
 
+Для пользователя скачайте готовый [CatQuest Hybrid для Windows](https://quester.mvse.ws/downloads/CatQuest-Hybrid-Windows.zip), распакуйте архив и запустите `CatQuest-Hybrid.exe`.
+
+Python и `pip` не нужны: они уже встроены в exe. Рядом с exe можно оставить
+`CatQuest-Hybrid.cmd` — он запускает тот же standalone-клиент.
+
+Он ждёт обычный WoW или Lasthavens Desktop, определяет активное окно и сам
+переключается при закрытии или смене клиента. При запуске и затем раз в шесть
+часов он проверяет обновление `CatQuest`; после обновления в игре нужен `/reload`.
+
+Для Windows Desktop-клиента Lasthavens установите приложение по
+[официальной инструкции](https://lasthavens.com/guides/windows-desktop-app),
+затем запустите `CatQuest-Hybrid.exe`. Он сам найдёт `Lasthavens.exe`, установит аддоны в
+`%APPDATA%\Lasthavens\AddOns` и будет обновлять `CatQuest`.
+
 Community voice-packs могут добавлять новые голоса без изменения ядра CatQuest.
 
 ## Сборка из исходников
@@ -127,7 +141,7 @@ Compress-Archive -Path lasthavens-addon-manager `
   -DestinationPath dist/CatQuest-Addon-Manager.zip -Force
 
 # Консольная прослойка для обычного WoW (нужен Python 3.10+)
-Compress-Archive -Path CatQuest-Client.cmd,client `
+Compress-Archive -Path CatQuest-Client.cmd,CatQuest-Hybrid.cmd,client `
   -DestinationPath dist/CatQuest-Client.zip -Force
 ```
 

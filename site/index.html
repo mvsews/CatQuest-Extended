@@ -232,7 +232,7 @@
     }
     section { margin-top: 58px; }
     .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .client-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 920px; margin: 0 auto; }
+    .client-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 1120px; margin: 0 auto; }
     .card {
       position: relative;
       overflow: hidden;
@@ -266,6 +266,7 @@
     .module-codex .card-icon { color: var(--accent-bright); }
     .client-card .card-icon { margin-bottom: 13px; }
     .client-card.browser .card-icon { color: var(--blue); border-color: rgba(121,179,200,.58); }
+    .client-card.desktop .card-icon { color: var(--ok); border-color: rgba(165,207,148,.58); }
     .client-card.classic .card-icon { color: var(--red); border-color: rgba(207,118,100,.58); }
     .mode .card-icon { margin-bottom: 13px; }
     .mode.online .card-icon { color: var(--ok); border-color: rgba(165,207,148,.58); }
@@ -273,6 +274,7 @@
     .mode.hybrid .card-icon { color: var(--accent-bright); }
     .client-card h3 { font-size: 1.35rem; }
     .client-card.browser::before { background: var(--blue); }
+    .client-card.desktop::before { background: var(--ok); }
     .client-card.classic::before { background: var(--accent); }
     .client-label { margin: -2px 0 13px; color: var(--accent-bright); font-size: .74rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .mode strong { color: var(--ok); }
@@ -648,14 +650,16 @@
       <div class="lang-en">
         <div class="section-heading"><span class="flow-number">01</span><div><p class="section-kicker">Step one</p><h2>Choose your client</h2></div></div>
         <div class="grid client-grid">
-          <button type="button" class="card select-card client-card browser is-selected" data-client-choice="web" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="monitor-play"></i></span><h3>Lasthavens</h3><p class="client-label">Browser client</p><p>The addon works in Online and Hybrid modes. Install the browser extension to install CatQuest and other addons like a regular client, and give them access to updates and the internet.</p><span class="select-hint">Choose this client</span></button>
+          <button type="button" class="card select-card client-card browser is-selected" data-client-choice="web" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="globe"></i></span><h3>Lasthavens</h3><p class="client-label">Browser client</p><p>The browser version works with the Online manager and Hybrid browser mode.</p><span class="select-hint">Choose this client</span></button>
+          <button type="button" class="card select-card client-card desktop" data-client-choice="desktop" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="monitor-down"></i></span><h3>Lasthavens</h3><p class="client-label">Windows Desktop</p><p>Use the native Windows app. Hybrid runs through the CatQuest companion and updates the addon automatically.</p><span class="select-hint">Choose this client</span></button>
           <button type="button" class="card select-card client-card classic" data-client-choice="classic" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="swords"></i></span><h3>Regular WoW 3.3.5a</h3><p class="client-label">Sirius, Circulus and other classic servers</p><p>Use Offline mode. A regular addon cannot reach the internet by itself, so it needs the local voice pack. For online voices, you can install a separate bridge program.</p><span class="select-hint">Choose this client</span></button>
         </div>
       </div>
       <div class="lang-ru">
         <div class="section-heading"><span class="flow-number">01</span><div><p class="section-kicker">Шаг первый</p><h2>Выберите клиент</h2></div></div>
         <div class="grid client-grid">
-          <button type="button" class="card select-card client-card browser is-selected" data-client-choice="web" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="monitor-play"></i></span><h3>Lasthavens</h3><p class="client-label">Браузерный клиент</p><p>Аддон работает в режиме Онлайн и Гибрид. Вы ставите расширение браузера, которое позволяет устанавливать CatQuest и другие аддоны как в обычный клиент, а также даёт им доступ к обновлениям и интернету.</p><span class="select-hint">Выбрать этот клиент</span></button>
+          <button type="button" class="card select-card client-card browser is-selected" data-client-choice="web" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="globe"></i></span><h3>Lasthavens</h3><p class="client-label">Браузерный клиент</p><p>Браузерная версия работает с менеджером Онлайн и браузерным режимом Гибрид.</p><span class="select-hint">Выбрать этот клиент</span></button>
+          <button type="button" class="card select-card client-card desktop" data-client-choice="desktop" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="monitor-down"></i></span><h3>Lasthavens</h3><p class="client-label">Windows Desktop</p><p>Используйте нативное приложение Windows. Гибрид запускает companion и сам обновляет аддон.</p><span class="select-hint">Выбрать этот клиент</span></button>
           <button type="button" class="card select-card client-card classic" data-client-choice="classic" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="swords"></i></span><h3>Обычный WoW 3.3.5a</h3><p class="client-label">Sirius, Circulus и другие классические серверы</p><p>Используйте режим без интернета. Обычный аддон сам не может выйти в интернет, поэтому нужен локальный пак озвучки. Для онлайн-озвучки можно установить отдельную программу-прослойку.</p><span class="select-hint">Выбрать этот клиент</span></button>
         </div>
       </div>
@@ -667,7 +671,7 @@
         <div class="grid mode-grid">
           <button type="button" class="card select-card mode online is-selected" data-mode-choice="online" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="globe"></i></span><h3>Online</h3><span class="mode-badge is-visible" data-recommended-for="web"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Recommended for Lasthavens.</strong> Needs internet. Install CatQuest and the browser manager. New voices appear as you play.</p><span class="select-hint">Choose this mode</span></button>
           <button type="button" class="card select-card mode offline" data-mode-choice="offline" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="wifi-off"></i></span><h3>Offline</h3><p><strong>For regular 3.3.5a servers.</strong> No internet needed. Install CatQuest and the local voice pack. Everything is read from your WoW folder, but you will need to update the audio packs yourself as new voices are added.</p><span class="select-hint">Choose this mode</span></button>
-          <button type="button" class="card select-card mode hybrid" data-mode-choice="hybrid" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><h3>Hybrid</h3><span class="mode-badge" data-recommended-for="classic"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Local plus online.</strong> Your local files are used first, and a separate program downloads and voices what you encounter during play.</p><span class="select-hint">Choose this mode</span></button>
+          <button type="button" class="card select-card mode hybrid" data-mode-choice="hybrid" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><h3>Hybrid</h3><span class="mode-badge" data-recommended-for="classic desktop"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Local plus online.</strong> Your local files are used first, and a separate program downloads and voices what you encounter during play.</p><span class="select-hint">Choose this mode</span></button>
         </div>
       </div>
       <div class="lang-ru">
@@ -675,7 +679,7 @@
         <div class="grid mode-grid">
           <button type="button" class="card select-card mode online is-selected" data-mode-choice="online" aria-pressed="true"><span class="card-icon" aria-hidden="true"><i data-lucide="globe"></i></span><h3>Онлайн</h3><span class="mode-badge is-visible" data-recommended-for="web"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Советуем для Lasthavens.</strong> Нужен интернет. Установите CatQuest и менеджер в браузере. Новая озвучка будет появляться по мере игры.</p><span class="select-hint">Выбрать этот режим</span></button>
           <button type="button" class="card select-card mode offline" data-mode-choice="offline" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="wifi-off"></i></span><h3>Без интернета</h3><p><strong>Для обычных серверов 3.3.5a.</strong> Интернет не нужен. Установите CatQuest и локальный пак озвучки. Всё читается из папки WoW, но вам придётся самостоятельно обновлять аудиопакеты по мере появления новых озвучек.</p><span class="select-hint">Выбрать этот режим</span></button>
-          <button type="button" class="card select-card mode hybrid" data-mode-choice="hybrid" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><h3>Гибрид</h3><span class="mode-badge" data-recommended-for="classic"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Локальный плюс онлайн.</strong> Сначала используются ваши файлы, а отдельная программа докачивает и озвучивает то, что вы встречаете по ходу игры.</p><span class="select-hint">Выбрать этот режим</span></button>
+          <button type="button" class="card select-card mode hybrid" data-mode-choice="hybrid" aria-pressed="false"><span class="card-icon" aria-hidden="true"><i data-lucide="arrow-left-right"></i></span><h3>Гибрид</h3><span class="mode-badge" data-recommended-for="classic desktop"><span class="lang-en">Recommended</span><span class="lang-ru">Рекомендуем</span></span><p><strong>Локальный плюс онлайн.</strong> Сначала используются ваши файлы, а отдельная программа докачивает и озвучивает то, что вы встречаете по ходу игры.</p><span class="select-hint">Выбрать этот режим</span></button>
         </div>
       </div>
     </section>
@@ -1010,6 +1014,38 @@
         { title: 'Запустите WoW и перезагрузите интерфейс', body: 'Откройте Sirius, Circulus или другой обычный клиент WoW 3.3.5a, включите CatQuest и выполните <code>/reload</code>. Сначала работают локальные голоса, а прослойка добавляет недостающие дорожки.' },
       ],
     };
+    const desktopSteps = {
+      hybrid: {
+        en: [
+          { title: 'Install Lasthavens Desktop first', body: 'Follow the <a href="https://lasthavens.com/guides/windows-desktop-app" target="_blank" rel="noreferrer">official Lasthavens Windows Desktop guide</a> to download the app, install it and sign in. That guide also explains how to open its AddOns folder.' },
+          { title: 'Download the standalone Hybrid client', body: 'Download <a href="https://quester.mvse.ws/downloads/CatQuest-Hybrid-Windows.zip">CatQuest Hybrid for Windows</a>, unpack it and keep the files together. Python and pip are already bundled.' },
+          { title: 'Start the one-click helper', body: 'Run <code>CatQuest-Hybrid.exe</code>. It waits for WoW or Lasthavens Desktop, finds the active client and installs or updates CatQuest automatically.' },
+          { title: 'Start Lasthavens Desktop', body: 'Launch Lasthavens Desktop. The helper detects it and uses <code>%APPDATA%\\Lasthavens\\AddOns</code>; no browser extension is needed.' },
+          { title: 'Reload after installation', body: 'When the helper reports that CatQuest is ready or updated, use the Lasthavens <strong>AddOns → Reload game</strong> command.' },
+        ],
+        ru: [
+          { title: 'Сначала установите Lasthavens Desktop', body: 'Пройдите <a href="https://lasthavens.com/guides/windows-desktop-app" target="_blank" rel="noreferrer">официальную инструкцию Lasthavens Windows Desktop</a>: скачайте приложение, установите его и войдите в аккаунт. Там же показано, как открыть папку AddOns.' },
+          { title: 'Скачайте готовый Hybrid-клиент', body: 'Скачайте <a href="https://quester.mvse.ws/downloads/CatQuest-Hybrid-Windows.zip">CatQuest Hybrid для Windows</a>, распакуйте архив и держите файлы вместе. Python и pip уже встроены.' },
+          { title: 'Запустите помощник одной кнопкой', body: 'Запустите <code>CatQuest-Hybrid.exe</code>. Он ждёт WoW или Lasthavens Desktop, находит активный клиент и сам устанавливает или обновляет CatQuest.' },
+          { title: 'Запустите Lasthavens Desktop', body: 'Откройте Lasthavens Desktop. Помощник обнаружит его и будет использовать <code>%APPDATA%\\Lasthavens\\AddOns</code>; браузерное расширение не нужно.' },
+          { title: 'Перезагрузите игру после установки', body: 'Когда помощник сообщит, что CatQuest готов или обновлён, используйте в Lasthavens команду <strong>AddOns → Reload game</strong>.' },
+        ],
+      },
+      offline: {
+        en: [
+          { title: 'Install Lasthavens Desktop first', body: 'Follow the <a href="https://lasthavens.com/guides/windows-desktop-app" target="_blank" rel="noreferrer">official Lasthavens Windows Desktop guide</a> to download the app, install it and sign in. That guide also explains how to open its AddOns folder.' },
+          { title: 'Download the addon folders', body: 'Download <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">CatQuest</a> and the <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices pack</a>.' },
+          { title: 'Copy them to Lasthavens', body: 'Copy <code>CatQuest</code> and <code>CatQuestExtended_Voices</code> to <code>%APPDATA%\\Lasthavens\\AddOns\\</code>.' },
+          { title: 'Start the game and reload', body: 'Launch Lasthavens Desktop, enable CatQuest if needed and use <strong>AddOns → Reload game</strong>. This mode does not need the browser extension or the helper.' },
+        ],
+        ru: [
+          { title: 'Сначала установите Lasthavens Desktop', body: 'Пройдите <a href="https://lasthavens.com/guides/windows-desktop-app" target="_blank" rel="noreferrer">официальную инструкцию Lasthavens Windows Desktop</a>: скачайте приложение, установите его и войдите в аккаунт. Там же показано, как открыть папку AddOns.' },
+          { title: 'Скачайте папки аддонов', body: 'Скачайте <a data-release-link="addon" href="https://catquest.mvse.ws/downloads/CatQuest-0.10.35.zip">CatQuest</a> и <a href="https://catquest.mvse.ws/downloads/CatQuestExtended_Voices.zip">CatQuest Extended Voices</a>.' },
+          { title: 'Скопируйте их в Lasthavens', body: 'Скопируйте папки <code>CatQuest</code> и <code>CatQuestExtended_Voices</code> в <code>%APPDATA%\\Lasthavens\\AddOns\\</code>.' },
+          { title: 'Запустите игру и перезагрузите её', body: 'Откройте Lasthavens Desktop, при необходимости включите CatQuest и используйте <strong>AddOns → Reload game</strong>. Браузерное расширение и помощник для этого режима не нужны.' },
+        ],
+      },
+    };
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>\"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[character]);
     }
@@ -1116,9 +1152,9 @@
     let selectedClient = 'web';
     let installStep = 0;
     function stepsFor(mode, lang) {
-      return mode === 'hybrid' && selectedClient === 'classic'
-        ? classicHybridSteps[lang]
-        : installSteps[mode][lang];
+      if (selectedClient === 'classic' && mode === 'hybrid') return classicHybridSteps[lang];
+      if (selectedClient === 'desktop') return desktopSteps[mode][lang];
+      return installSteps[mode][lang];
     }
     function renderInstallPanel(panel) {
       if (!panel) return;
@@ -1196,33 +1232,33 @@
     }
 
     function setInstallMode(mode) {
-      if (selectedClient === 'classic' && mode === 'online') return;
+      if ((selectedClient === 'classic' || selectedClient === 'desktop') && mode === 'online') return;
       installMode = mode;
       installStep = 0;
       installTabs.forEach((tab) => {
         const active = tab.dataset.installMode === mode;
         tab.classList.toggle('active', active);
         tab.setAttribute('aria-selected', String(active));
-        const unavailable = selectedClient === 'classic' && tab.dataset.installMode === 'online';
+        const unavailable = (selectedClient === 'classic' || selectedClient === 'desktop') && tab.dataset.installMode === 'online';
         tab.classList.toggle('is-disabled', unavailable);
         tab.setAttribute('aria-disabled', String(unavailable));
         tab.title = unavailable
-          ? (tab.closest('.lang-ru') ? 'Для обычного клиента нужна программа-прослойка. Выберите «Гибрид» или «Без интернета».' : 'A regular client needs a bridge program. Choose Hybrid or Offline.')
+          ? (tab.closest('.lang-ru') ? 'Для выбранного клиента режим Онлайн доступен в браузере. Выберите «Гибрид» или «Без интернета».' : 'Online mode is available in the browser client. Choose Hybrid or Offline for this client.')
           : '';
       });
       modeChoices.forEach((choice) => {
         const active = choice.dataset.modeChoice === mode;
         choice.classList.toggle('is-selected', active);
         choice.setAttribute('aria-pressed', String(active));
-        const unavailable = selectedClient === 'classic' && choice.dataset.modeChoice === 'online';
+        const unavailable = (selectedClient === 'classic' || selectedClient === 'desktop') && choice.dataset.modeChoice === 'online';
         choice.classList.toggle('mode-unavailable', unavailable);
         choice.setAttribute('aria-disabled', String(unavailable));
         choice.title = unavailable
-          ? (choice.closest('.lang-ru') ? 'Для обычного клиента нужна программа-прослойка. Выберите «Гибрид» или «Без интернета».' : 'A regular client needs a bridge program. Choose Hybrid or Offline.')
+          ? (choice.closest('.lang-ru') ? 'Для выбранного клиента режим Онлайн доступен в браузере. Выберите «Гибрид» или «Без интернета».' : 'Online mode is available in the browser client. Choose Hybrid or Offline for this client.')
           : '';
       });
       recommendationBadges.forEach((badge) => {
-        const visible = badge.dataset.recommendedFor === selectedClient;
+        const visible = badge.dataset.recommendedFor.split(/\s+/).includes(selectedClient);
         badge.classList.toggle('is-visible', visible);
         badge.setAttribute('aria-hidden', String(!visible));
       });
@@ -1236,7 +1272,7 @@
         choice.classList.toggle('is-selected', active);
         choice.setAttribute('aria-pressed', String(active));
       });
-      setInstallMode(client === 'classic' ? 'hybrid' : 'online');
+      setInstallMode(client === 'classic' || client === 'desktop' ? 'hybrid' : 'online');
     }
     clientChoices.forEach((choice) => choice.addEventListener('click', () => {
       setClient(choice.dataset.clientChoice);

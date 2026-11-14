@@ -1,12 +1,17 @@
 # CatQuest Client
 
-Консольная прослойка для обычного WoW 3.3.5a без Lasthavens. Она скачивает
+Консольная прослойка для обычного WoW 3.3.5a и Lasthavens Desktop. Она скачивает
 обновления `CatQuest`, готовые дорожки Voice API и кладёт их в настоящий
-`Interface\AddOns\CatQuest335_ServerVoices`. Затем создаётся `Bridge.lua`,
+`Interface\AddOns\CatQuest335_ServerVoices` или в `Lasthavens\AddOns\CatQuest335_ServerVoices`.
+Затем создаётся `Bridge.lua`,
 который сообщает аддону, какие локальные серверные дорожки уже доступны.
 
 Для `sync`, `request` и `watch` нужен Python 3.10 или новее; внешние библиотеки
 для них не требуются.
+
+Сообщения утилиты автоматически выбираются по языку Windows: для `ru-*` —
+русский, для остальных систем — английский. Для проверки можно временно задать
+`CATQUEST_LANG=ru` или `CATQUEST_LANG=en`.
 
 ## Быстрый запуск
 
@@ -24,6 +29,54 @@
 
 После завершения закройте/перезапустите игру или выполните `/reload`.
 Утилита обновляет только аддоны и не трогает `WTF`/SavedVariables.
+
+## Lasthavens Desktop
+
+Electron-клиент сам подхватывает локальные аддоны из
+`%APPDATA%\Lasthavens\AddOns`. Поэтому базовый `CatQuest` и локальный
+voice-pack можно скопировать туда вручную — отдельная утилита для этого не
+нужна. Для серверного кэша или live-озвучки используйте тот же клиент с
+`--lasthavens-dir`:
+
+Для готового запуска скачайте [CatQuest Hybrid для Windows](https://quester.mvse.ws/downloads/CatQuest-Hybrid-Windows.zip), распакуйте архив и запустите `CatQuest-Hybrid.exe`. Python и `pip` не нужны: они уже встроены в exe.
+
+Если запускаете клиент из исходников, для серверного кэша или live-озвучки
+используйте Python 3.10+ и зависимости из `client/requirements.txt`:
+
+```powershell
+.\CatQuest-Client.cmd sync `
+  --lasthavens-dir "$env:APPDATA\Lasthavens"
+
+python -m pip install -r client\requirements.txt
+.\CatQuest-Client.cmd companion `
+  --lasthavens-dir "$env:APPDATA\Lasthavens" `
+  --no-addon-update --x 0 --y 0
+```
+
+`--x` и `--y` — координаты левого верхнего угла окна Lasthavens на рабочем
+столе. Для этого режима `watch` не используется: Desktop не создаёт обычные
+WoW `WTF`/SavedVariables. После установки или обновления аддона перезагрузите
+игру через меню `AddOns` → `Reload game`.
+
+## Один запуск для любого клиента
+
+Для пользователя можно использовать `CatQuest-Hybrid.cmd`. Он не требует
+пути к игре: ждёт запуск обычного WoW или Lasthavens Desktop, определяет
+активное окно и сам выбирает папку аддонов. Если игру закрыть, клиент ждёт
+следующий запуск; при переключении между клиентами он переподключается сам.
+При запуске и затем раз в шесть часов он проверяет обновление `CatQuest`; после
+обновления в игре нужен `/reload`.
+
+```powershell
+.\CatQuest-Hybrid.cmd
+```
+
+Если одновременно запущены оба клиента, выбирается тот, чьё окно сейчас
+активно. Для диагностики можно ограничить поиск:
+
+```powershell
+.\CatQuest-Hybrid.cmd --lasthavens-dir "$env:APPDATA\Lasthavens"
+```
 
 ## Дорожка по запросу
 

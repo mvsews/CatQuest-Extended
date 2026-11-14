@@ -1,0 +1,21 @@
+CatQuest Hybrid для Windows
+===========================
+
+1. Установите Lasthavens Desktop по официальной инструкции:
+   https://lasthavens.com/guides/windows-desktop-app
+2. Распакуйте этот архив в удобную папку.
+3. Запустите CatQuest-Hybrid.exe.
+
+Программа сама ждёт обычный WoW или Lasthavens Desktop, определяет активное
+окно, устанавливает/обновляет CatQuest и запускает Hybrid. Python и pip не
+нужны: они уже встроены в exe.
+
+После установки или обновления аддона выполните в игре /reload. При ошибке
+сохраните текст окна и обратитесь в Telegram: https://t.me/warcraft_rus_chat
+
+English
+-------
+
+Install Lasthavens Desktop using the official guide, unpack this archive and
+run CatQuest-Hybrid.exe. Python and pip are not required: they are bundled in
+the executable. After an addon update, reload the game with /reload.
