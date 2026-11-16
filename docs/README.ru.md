@@ -11,6 +11,9 @@ backend. Операционные материалы хранятся в при�
 - [Как работает Hybrid-режим](HYBRID-MODE.ru.md)
 - [Лор мест](PLACES-LORE-GUIDE.ru.md)
 - [План мест и инстансов](PLACES-INSTANCES-PLAN.ru.md)
+- [Функции оригинального CatQuest 1.1.2 и перенос на 3.3.5a](ORIGINAL-1.1.2-FEATURES.ru.md)
+- [Мастер подземелий: поведение и проверка](DUNGEON-MASTER.ru.md)
+- [Покрытие сценариев Мастера](DUNGEON-COVERAGE.ru.md)
 - [Версии контента мест](PLACES-CONTENT-VERSIONS.ru.md)
 - [Лицензии и сторонние материалы](../THIRD_PARTY.md)
 - [Спецификация community voice-pack](VOICE-PACK-SPEC.md)
@@ -28,3 +31,6 @@ backend. Операционные материалы хранятся в при�
 
 Исходный код addon/frontend находится в публичном репозитории. Backend и
 операционные настройки публиковать не нужно.
+## Отладка
+
+Копируемый игровой отчёт: настройки CatQuest → **Отладка**, либо `/cq debug`. Инструкция и этапы диагностики: [DEBUGGING.ru.md](DEBUGGING.ru.md).

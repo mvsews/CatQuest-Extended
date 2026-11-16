@@ -1,0 +1,2420 @@
+{
+  "checked_date": "2026-11-14",
+  "timezone": "Asia/Shanghai",
+  "attribution": "Cathey / daniilcathey, CatQuest Voices and CatQuest Books",
+  "source_data_license": "CC BY-NC-SA 4.0",
+  "note": "Internal voice labels, not API voice IDs. No actual ElevenLabs voice ID or access was established.",
+  "packages": [
+    {
+      "name": "CatQuest Voices",
+      "version": "1.3.0",
+      "source_url": "https://www.curseforge.com/wow/addons/catquest-voices",
+      "index_member": "CatQuest_Voices/index.json",
+      "index_sha256": "c8d2279f3d474b68457e9504a8b9db48855aebcd5d315fed301f9c32b0f2c64c",
+      "distinct_labels": 154,
+      "model_tags": {
+        "eleven_v4": 9648
+      }
+    },
+    {
+      "name": "CatQuest Books",
+      "version": "1.2.0",
+      "source_url": "https://www.curseforge.com/wow/addons/catquest-books",
+      "index_member": "CatQuest_Books/index_books.json",
+      "index_sha256": "9ed150d28f1e1f7003ba8ce7ac324b46e4d68e268a422b25af9a56bfbb8d58be",
+      "distinct_labels": 32,
+      "model_tags": {
+        "eleven_v4": 3272
+      }
+    }
+  ],
+  "voices": [
+    {
+      "catquest_voice_label": "bloodelf-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 32,
+          "example": {
+            "key": "271",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "3dedbd2c",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "bloodelf-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 56,
+          "example": {
+            "key": "891",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "e4da015e",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "child-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 18,
+          "example": {
+            "key": "3741",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "child-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 38,
+          "example": {
+            "key": "84",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "child-orc-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "97453",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/anachronos",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 33,
+          "example": {
+            "key": "8303",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/ancient",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 39,
+          "example": {
+            "key": "275",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "64be8481",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/avatar_f",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "98341",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/baine",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 10,
+          "example": {
+            "key": "745",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/banshee",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 28,
+          "example": {
+            "key": "149",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/bolvar",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 20,
+          "example": {
+            "key": "93963",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "033b6750",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/chromie",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 12,
+          "example": {
+            "key": "4971",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/dragon",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 18,
+          "example": {
+            "key": "3373",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/dreadlord",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "7623",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "1fa3e3d1",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/dryad",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 9,
+          "example": {
+            "key": "458",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/falstad",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "1449",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "78f200ab",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/furbolg",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 56,
+          "example": {
+            "key": "1030",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 9,
+          "example": {
+            "key": "8ebd722e",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/gnoll",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "94961",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/grayson",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "103",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/hamuul",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 14,
+          "example": {
+            "key": "886",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/keeper",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 10,
+          "example": {
+            "key": "1056",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/lostone",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 15,
+          "example": {
+            "key": "1389",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/malfurion",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "8733",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/myzrael",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 7,
+          "example": {
+            "key": "653",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/naga",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "8599",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/nathanos",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 19,
+          "example": {
+            "key": "5961",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/ogre",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 23,
+          "example": {
+            "key": "1318",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "3568e860",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/remulos",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 10,
+          "example": {
+            "key": "7066",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/rexxar",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "6567",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/satyr",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "488",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/saurfang",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "7784",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/tooga",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "1560",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/torta",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "1560",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "creature/valthalak",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "8995",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 28,
+          "example": {
+            "key": "310",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 9,
+          "example": {
+            "key": "ab962a02",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-female#33",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 56,
+          "example": {
+            "key": "305",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-female#34",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 57,
+          "example": {
+            "key": "314",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-female#95",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "418",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 963,
+          "example": {
+            "key": "161",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 123,
+          "example": {
+            "key": "21e505d9",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-male#100",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 18,
+          "example": {
+            "key": "1138",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-male#177",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 12,
+          "example": {
+            "key": "96393",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-male#98",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "97894",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "dwarf-male#99",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 9,
+          "example": {
+            "key": "982",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "elemental-earth",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 10,
+          "example": {
+            "key": "1517",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "elemental-fire",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "87491",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "elemental-golem",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "92698",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "elemental-water",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "96",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "elemental-water-lord",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 17,
+          "example": {
+            "key": "6393",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "gnome-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 77,
+          "example": {
+            "key": "2040",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "gnome-female#39",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "91725",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "gnome-female#41",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 21,
+          "example": {
+            "key": "1879",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "gnome-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 299,
+          "example": {
+            "key": "412",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 39,
+          "example": {
+            "key": "46680378",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "gnome-male#178",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "2929",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 26,
+          "example": {
+            "key": "8365",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "ca0340f7",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-female#63",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 49,
+          "example": {
+            "key": "3921",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 345,
+          "example": {
+            "key": "834",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 13,
+          "example": {
+            "key": "849f0d12",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-male#108",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 40,
+          "example": {
+            "key": "705",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-male#109",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 10,
+          "example": {
+            "key": "5943",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-male#110",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 31,
+          "example": {
+            "key": "2842",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-male#180",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 11,
+          "example": {
+            "key": "601",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "goblin-male#65",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 15,
+          "example": {
+            "key": "3923",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 207,
+          "example": {
+            "key": "36",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 38,
+          "example": {
+            "key": "8748d684",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female#111",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 12,
+          "example": {
+            "key": "332",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female#112",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 8,
+          "example": {
+            "key": "91745",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female#113",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "95161",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female#167",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "1267",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female#45",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 114,
+          "example": {
+            "key": "59",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-female#47",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 166,
+          "example": {
+            "key": "22",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1096,
+          "example": {
+            "key": "5",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 252,
+          "example": {
+            "key": "2889aba4",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-male#116",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 13,
+          "example": {
+            "key": "6261",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-male#170",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "293",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-male#48",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 8,
+          "example": {
+            "key": "c2fde3ef",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "human-male#50",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 298,
+          "example": {
+            "key": "65",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/13697",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "7044",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/13717",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "7067",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "d93cc924",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/14731",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "7840",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/16016",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 24,
+          "example": {
+            "key": "8929",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/2425",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 11,
+          "example": {
+            "key": "1978",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/271613",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "5481",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/2766",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "663",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/3057",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "775",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/3391",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 10,
+          "example": {
+            "key": "887",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/3430",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 13,
+          "example": {
+            "key": "878",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/3516",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 15,
+          "example": {
+            "key": "935",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/3901",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "1021",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/3916",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 8,
+          "example": {
+            "key": "1024",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/4046",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "1063",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/4500",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "1171",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/4501",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 7,
+          "example": {
+            "key": "1171",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/4502",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "1168",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/4503",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "1177",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/4983",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "1273",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/5087",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "1321",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/5397",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 15,
+          "example": {
+            "key": "1382",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/5398",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 42,
+          "example": {
+            "key": "1369",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/sylvanas",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "95803",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "named/thrall",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 28,
+          "example": {
+            "key": "5726",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "1f3ddf10",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "narrator",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 910,
+          "example": {
+            "key": "2",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 2593,
+          "example": {
+            "key": "f71f25ed",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 79,
+          "example": {
+            "key": "490",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 16,
+          "example": {
+            "key": "e782a01f",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-female#119",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "87288",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-female#173",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "98065",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-female#51",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 119,
+          "example": {
+            "key": "487",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-female#52",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 134,
+          "example": {
+            "key": "28",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-female#53",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 89,
+          "example": {
+            "key": "1582",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 40,
+          "example": {
+            "key": "475",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 26,
+          "example": {
+            "key": "6c9fdadd",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-male#120",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "6344",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-male#121",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "2159",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-male#54",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 229,
+          "example": {
+            "key": "26",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-male#55",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 118,
+          "example": {
+            "key": "458",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "nightelf-male#59",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 101,
+          "example": {
+            "key": "26",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 59,
+          "example": {
+            "key": "220",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 7,
+          "example": {
+            "key": "3d924b80",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-female#124",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 11,
+          "example": {
+            "key": "5927",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-female#57",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 13,
+          "example": {
+            "key": "172",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-female#58",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 57,
+          "example": {
+            "key": "8590",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 468,
+          "example": {
+            "key": "216",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 29,
+          "example": {
+            "key": "3ef8b786",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-male#126",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 13,
+          "example": {
+            "key": "6365",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-male#127",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "97242",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "orc-male#60",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 240,
+          "example": {
+            "key": "498",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "quilboar-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "93604",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "0c0ce4b6",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 111,
+          "example": {
+            "key": "264",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "e61ad97c",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-female#141",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 5,
+          "example": {
+            "key": "95314",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-female#143",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "97203",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-female#79",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 48,
+          "example": {
+            "key": "1881",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-female#80",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 43,
+          "example": {
+            "key": "8",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 260,
+          "example": {
+            "key": "365",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 20,
+          "example": {
+            "key": "6b4464fe",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-male#144",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "7321",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-male#145",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "6322",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-male#146",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "97953",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-male#82",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 183,
+          "example": {
+            "key": "99",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "scourge-male#83",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 89,
+          "example": {
+            "key": "8",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "skyborne-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 136,
+          "example": {
+            "key": "91861",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 1,
+          "example": {
+            "key": "dc423fca",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "skyborne-female#3773",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 26,
+          "example": {
+            "key": "92460",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "skyborne-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 132,
+          "example": {
+            "key": "92460",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 12,
+          "example": {
+            "key": "fce0d734",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "skyborne-male#3775",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "97964",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "succubus-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "4201",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 112,
+          "example": {
+            "key": "2",
+            "stage": "COMPLETE"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 7,
+          "example": {
+            "key": "88bcc8b2",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-female#71",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 79,
+          "example": {
+            "key": "63",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-female#72",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 16,
+          "example": {
+            "key": "1656",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 238,
+          "example": {
+            "key": "742",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 23,
+          "example": {
+            "key": "22b3a6f2",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-male#132",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 21,
+          "example": {
+            "key": "1656",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-male#133",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "6362",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-male#67",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 81,
+          "example": {
+            "key": "27",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "tauren-male#68",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 146,
+          "example": {
+            "key": "744",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-female",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 20,
+          "example": {
+            "key": "5648",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "5b6cfa38",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-female#135",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "6142",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-female#136",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 2,
+          "example": {
+            "key": "7844",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-female#137",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 6,
+          "example": {
+            "key": "9320",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-female#73",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 24,
+          "example": {
+            "key": "3086",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-female#75",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 32,
+          "example": {
+            "key": "3082",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-male",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 138,
+          "example": {
+            "key": "790",
+            "stage": "DETAIL"
+          }
+        },
+        "CatQuest Books 1.2.0": {
+          "indexed_entries": 9,
+          "example": {
+            "key": "6424f0f1",
+            "stage": "PAGE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-male#138",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 4,
+          "example": {
+            "key": "7815",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-male#139",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 7,
+          "example": {
+            "key": "7842",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-male#140",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 3,
+          "example": {
+            "key": "8196",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-male#77",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 164,
+          "example": {
+            "key": "805",
+            "stage": "COMPLETE"
+          }
+        }
+      }
+    },
+    {
+      "catquest_voice_label": "troll-male#78",
+      "elevenlabs_voice_id": null,
+      "identification_status": "unresolved",
+      "packages": {
+        "CatQuest Voices 1.3.0": {
+          "indexed_entries": 48,
+          "example": {
+            "key": "786",
+            "stage": "DETAIL"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,10 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Lasthavens Addon Manager",
-  "version": "0.6.33",
+  "version": "0.6.74",
   "description": "__MSG_description__",
   "minimum_chrome_version": "120",
-  "permissions": ["storage", "unlimitedStorage", "alarms"],
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "alarms"
+  ],
   "host_permissions": [
     "https://lasthavens.com/*",
     "https://quester.mvse.ws/*"
@@ -25,18 +29,30 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "background": { "service_worker": "background.js", "type": "module" },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
   "options_page": "manager.html",
   "content_scripts": [
     {
-      "matches": ["https://lasthavens.com/play*"],
-      "js": ["runtime-core.js", "loader.js"],
+      "matches": [
+        "https://lasthavens.com/play*"
+      ],
+      "js": [
+        "runtime-core.js",
+        "loader.js"
+      ],
       "run_at": "document_start",
       "world": "MAIN"
     },
     {
-      "matches": ["https://lasthavens.com/play*"],
-      "js": ["bridge.js"],
+      "matches": [
+        "https://lasthavens.com/play*"
+      ],
+      "js": [
+        "bridge.js"
+      ],
       "run_at": "document_start",
       "world": "ISOLATED"
     }
@@ -44,5 +60,16 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none'"
   },
-  "default_locale": "en"
+  "default_locale": "en",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "vendor/catquest-ready.ttf",
+        "vendor/catquest-ready.json"
+      ],
+      "matches": [
+        "https://lasthavens.com/*"
+      ]
+    }
+  ]
 }

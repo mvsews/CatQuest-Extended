@@ -1,0 +1,205 @@
+[
+  {
+    "npc_id": 14887,
+    "name": "Йсонда",
+    "zone": "Фералас",
+    "source": "https://warcraft.wiki.gg/wiki/Ysondre_%28Classic%29",
+    "quest_source": null
+  },
+  {
+    "npc_id": 14888,
+    "name": "Летон",
+    "zone": "Внутренние земли",
+    "source": "https://warcraft.wiki.gg/wiki/Lethon",
+    "quest_source": null
+  },
+  {
+    "npc_id": 14889,
+    "name": "Эмерисс",
+    "zone": "Сумеречный лес",
+    "source": "https://warcraft.wiki.gg/wiki/Emeriss",
+    "quest_source": null
+  },
+  {
+    "npc_id": 14890,
+    "name": "Таэрар",
+    "zone": "Ясеневый лес",
+    "source": "https://warcraft.wiki.gg/wiki/Taerar_%28Classic%29",
+    "quest_source": null
+  },
+  {
+    "npc_id": 17057,
+    "name": "Свирепая Черноскребка",
+    "zone": "Полуостров Адского Пламени",
+    "source": "https://www.wowhead.com/wotlk/npc=17057",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=9466"
+  },
+  {
+    "npc_id": 17711,
+    "name": "Судьболом",
+    "zone": "Долина Призрачной Луны",
+    "source": "https://warcraft.wiki.gg/wiki/Doomwalker",
+    "quest_source": null
+  },
+  {
+    "npc_id": 18257,
+    "name": "Потрошительница",
+    "zone": "Награнд",
+    "source": "https://wotlk.evowow.com/?npc=18257",
+    "quest_source": "https://www.wowhead.com/tbc/ru/quest=9856"
+  },
+  {
+    "npc_id": 18258,
+    "name": "Хол'стяк",
+    "zone": "Награнд",
+    "source": "https://www.wowhead.com/tbc/ru/npc=18258",
+    "quest_source": "https://www.wowhead.com/tbc/ru/quest=9859"
+  },
+  {
+    "npc_id": 18259,
+    "name": "Бантар",
+    "zone": "Награнд",
+    "source": "https://www.wowhead.com/tbc/npc=18259",
+    "quest_source": "https://www.wowhead.com/tbc/ru/quest=9851"
+  },
+  {
+    "npc_id": 18280,
+    "name": "Спорокрыл",
+    "zone": "Зангартопь",
+    "source": "https://www.wowhead.com/wotlk/npc=18280",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=9901"
+  },
+  {
+    "npc_id": 18281,
+    "name": "Топехлыст",
+    "zone": "Зангартопь",
+    "source": "https://www.wowhead.com/wotlk/npc=18281",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=9895"
+  },
+  {
+    "npc_id": 18285,
+    "name": "\"Граф\" Унгула",
+    "zone": "Зангартопь",
+    "source": "https://www.wowhead.com/wotlk/npc=18285",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=9911"
+  },
+  {
+    "npc_id": 18290,
+    "name": "Клыкач",
+    "zone": "Награнд",
+    "source": "https://www.wowhead.com/wotlk/npc=18290",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=9852"
+  },
+  {
+    "npc_id": 18411,
+    "name": "Дурн Ненасытный",
+    "zone": "Награнд",
+    "source": "https://warcraft.wiki.gg/wiki/Durn",
+    "quest_source": "https://wotlkdb.com/index.php?quest=9937"
+  },
+  {
+    "npc_id": 18648,
+    "name": "Камневзор",
+    "zone": "Лес Тероккар",
+    "source": "https://warcraft.wiki.gg/wiki/Stonegazer",
+    "quest_source": "https://www.wowhead.com/tbc/quest=10020/a-cure-for-zahlia"
+  },
+  {
+    "npc_id": 18683,
+    "name": "Войдхантер Яр",
+    "zone": "Награнд",
+    "source": "https://warcraft.wiki.gg/wiki/Voidhunter_Yar",
+    "quest_source": null
+  },
+  {
+    "npc_id": 18707,
+    "name": "Торгос",
+    "zone": "Лес Тероккар",
+    "source": "https://www.wowhead.com/wotlk/npc=18707",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10035"
+  },
+  {
+    "npc_id": 18728,
+    "name": "Владыка судеб Каззак",
+    "zone": "Полуостров Адского Пламени",
+    "source": "https://warcraft.wiki.gg/wiki/Doom_Lord_Kazzak",
+    "quest_source": null
+  },
+  {
+    "npc_id": 19191,
+    "name": "Араззиус Безжалостный",
+    "zone": "Полуостров Адского Пламени",
+    "source": "https://www.wowhead.com/wotlk/npc=19191",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10136"
+  },
+  {
+    "npc_id": 19554,
+    "name": "Пространствус Всепоглощающий",
+    "zone": "Пустоверть",
+    "source": "https://www.wowhead.com/wotlk/npc=19554",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10437"
+  },
+  {
+    "npc_id": 19851,
+    "name": "Негатрон",
+    "zone": "Пустоверть",
+    "source": "https://www.wowhead.com/wotlk/npc=19851",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10248"
+  },
+  {
+    "npc_id": 20132,
+    "name": "Сокретар",
+    "zone": "Пустоверть",
+    "source": "https://www.wowhead.com/wotlk/npc=20132",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10407"
+  },
+  {
+    "npc_id": 20216,
+    "name": "Груллок",
+    "zone": "Острогорье",
+    "source": "https://www.wowhead.com/wotlk/npc=20216",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10995"
+  },
+  {
+    "npc_id": 20477,
+    "name": "Жутеклешень",
+    "zone": "Зангартопь",
+    "source": "https://www.wowhead.com/wotlk/npc=20477",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=9902"
+  },
+  {
+    "npc_id": 20555,
+    "name": "Гок",
+    "zone": "Острогорье",
+    "source": "https://www.wowhead.com/wotlk/npc=20555",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10742"
+  },
+  {
+    "npc_id": 20600,
+    "name": "Маггок",
+    "zone": "Острогорье",
+    "source": "https://www.wowhead.com/wotlk/npc=20600",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10996"
+  },
+  {
+    "npc_id": 21102,
+    "name": "Уварос",
+    "zone": "Долина Призрачной Луны",
+    "source": "https://www.wowhead.com/wotlk/npc=21102",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10647"
+  },
+  {
+    "npc_id": 21315,
+    "name": "Руул Светокрад",
+    "zone": "Долина Призрачной Луны",
+    "source": "https://www.wowhead.com/wotlk/npc=21315",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=10578"
+  },
+  {
+    "npc_id": 21838,
+    "name": "Терокк",
+    "zone": "Лес Тероккар",
+    "source": "https://www.wowhead.com/wotlk/npc=21838",
+    "quest_source": "https://www.wowhead.com/wotlk/ru/quest=11073"
+  }
+]

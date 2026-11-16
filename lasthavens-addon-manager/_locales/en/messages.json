@@ -107,6 +107,9 @@
   "errorToc": {
     "message": "Main Folder/Folder.toc is missing."
   },
+  "errorExtensionZip": {
+    "message": "This is the Chrome extension ZIP. Import CatQuest-*.zip here; install CatQuest-Lasthavens-*.zip in Chrome separately."
+  },
   "errorUnsupported": {
     "message": "Unsupported ZIP format: encryption, ZIP64, multiple volumes, symbolic links or compression method."
   },

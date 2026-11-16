@@ -21,11 +21,23 @@ scroll:SetScrollChild(content)
 
 local title = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 title:SetPoint("TOPLEFT", 16, -12)
-title:SetText("CatQuest " .. tostring(ns.VERSION or ""))
+local addonVersion = ns.VERSION
+if GetAddOnMetadata then
+    local ok, tocVersion = pcall(GetAddOnMetadata, "CatQuest", "Version")
+    if ok and tocVersion and tocVersion ~= "" then
+        addonVersion = tocVersion
+    end
+end
+title:SetText("CatQuest " .. tostring(addonVersion or ""))
 
 local description = content:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 description:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6)
 description:SetText(L.OPT_DESC)
+
+local debug = CreateFrame("Button", "CatQuest335OptionDebug", content, "UIPanelButtonTemplate")
+debug:SetWidth(115); debug:SetHeight(22); debug:SetPoint("TOPRIGHT", -16, -10)
+debug:SetText(L.DEBUG_BUTTON)
+debug:SetScript("OnClick", function() if ns.OpenDebug then ns.OpenDebug() end end)
 
 local controls = {}
 
@@ -57,7 +69,7 @@ end
 local function AddSlider(key, label, anchor, low, high, step, format, onChange)
     local name = "CatQuest335Option_" .. key
     local slider = CreateFrame("Slider", name, content, "OptionsSliderTemplate")
-    slider:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 4, -22)
+    slider:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -22)
     slider:SetWidth(200)
     slider:SetMinMaxValues(low, high)
     slider:SetValueStep(step)
@@ -66,17 +78,20 @@ local function AddSlider(key, label, anchor, low, high, step, format, onChange)
     local function Label(value)
         _G[name .. "Text"]:SetText(label .. ": " .. string.format(format, value))
     end
+    local refreshing = false
     slider:SetScript("OnValueChanged", function(_, value)
         -- Snap to the step and drop float noise (24 * 0.05 = 1.2000000000000002).
         value = tonumber(string.format("%.4f", math.floor(value / step + 0.5) * step))
         ns.db[key] = value
         Label(value)
-        if onChange then
+        if onChange and not refreshing then
             onChange(value)
         end
     end)
     slider.refresh = function()
+        refreshing = true
         slider:SetValue(tonumber(ns.db[key]) or low)
+        refreshing = false
         Label(tonumber(ns.db[key]) or low)
     end
     controls[#controls + 1] = slider
@@ -85,7 +100,10 @@ end
 
 local function AddDropDown(name, label, anchor, values, current, onSelect)
     local caption = content:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    caption:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 4, -10)
+    -- The 3.3.5 dropdown template draws its visible box 20 px right of
+    -- the frame origin. Keep the frame origin on the list's left edge so
+    -- following controls do not drift left after every dropdown.
+    caption:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 20, -10)
     caption:SetText(label)
     local dropdown = CreateFrame("Frame", name, content, "UIDropDownMenuTemplate")
     dropdown:SetPoint("TOPLEFT", caption, "BOTTOMLEFT", -20, -2)
@@ -154,8 +172,12 @@ local turnin = AddCheck("turnin", L.OPT_TURNIN, npcTrigger)
 local books = AddCheck("books", L.OPT_BOOKS, turnin)
 local bookPages = AddCheck("bookPages", L.OPT_BOOK_PAGES, books)
 local remote = AddCheck("remoteEnabled", L.OPT_REMOTE, bookPages)
+local remoteRetry = AddCheck("remoteAutoRetry", L.OPT_REMOTE_RETRY, remote)
+local requestPanel = AddCheck("requestPanel", L.OPT_REQUEST_PANEL, remoteRetry, function()
+    if ns.AnnounceSettings then ns.AnnounceSettings() end
+end)
 
-local how = Header(L.OPT_SECTION_HOW, remote, 0, -8)
+local how = Header(L.OPT_SECTION_HOW, requestPanel, 0, -8)
 local queue = AddCheck("queue", L.OPT_QUEUE, how)
 local afterAccept = AddCheck("readAfterAccept", L.OPT_AFTER_ACCEPT, queue)
 local greetDelay = AddCheck("greetDelay", L.OPT_GREET_DELAY, afterAccept)
@@ -184,12 +206,15 @@ local uiLanguage = AddDropDown("CatQuest335UILanguageDropDown", L.OPT_UI_LANGUAG
     function() return ns.UIChoice() end,
     function(value) ns.SetUILanguage(value) end)
 
-local lore = Header(L.OPT_SECTION_BOOKS, uiLanguage, 20, -8)
+local lore = Header(L.OPT_SECTION_BOOKS, uiLanguage, 0, -8)
 local places = AddCheck("places", L.OPT_PLACES, lore)
+local dungeonMaster = AddCheck("dungeonMaster", L.OPT_DUNGEON_MASTER, places, function()
+    if ns.DungeonSettingsChanged then ns.DungeonSettingsChanged() end
+end)
 local resetPlaces = CreateFrame("Button", "CatQuest335OptionResetPlaces", content, "UIPanelButtonTemplate")
 resetPlaces:SetWidth(240)
 resetPlaces:SetHeight(22)
-resetPlaces:SetPoint("TOPLEFT", places, "BOTTOMLEFT", -4, -4)
+resetPlaces:SetPoint("TOPLEFT", dungeonMaster, "BOTTOMLEFT", 0, -4)
 resetPlaces:SetText(L.OPT_RESET_PLACES)
 resetPlaces:SetScript("OnClick", function()
     if ns.ResetPlaces then
@@ -203,9 +228,12 @@ local minimap = AddCheck("minimap", L.OPT_MINIMAP, resetPlaces, function()
 end)
 local minimapLocked = AddCheck("minimapLocked", L.OPT_MINIMAP_LOCKED, minimap)
 local storyQuestTitles = AddCheck("storyQuestTitles", L.OPT_STORY_QUEST_TITLES, minimapLocked)
+local questRatings = AddCheck("questRatings", L.OPT_QUEST_RATINGS, storyQuestTitles, function(on)
+    if ns.SetQuestRatingPrompts then ns.SetQuestRatingPrompts(on) end
+end)
 
 local window = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-window:SetPoint("TOPLEFT", storyQuestTitles, "BOTTOMLEFT", 0, -10)
+window:SetPoint("TOPLEFT", questRatings, "BOTTOMLEFT", 0, -10)
 window:SetText(L.OPT_SECTION_WINDOW)
 local headCheck = AddCheck("head", L.OPT_HEAD, window, function(on)
     if not on and ns.HideHead then
@@ -216,10 +244,22 @@ local subtitles = AddCheck("showSubtitle", L.OPT_SUBTITLES, headCheck)
 local compact = AddCheck("compact", L.OPT_COMPACT, subtitles, ApplyWindow)
 local locked = AddCheck("headLocked", L.OPT_HEAD_LOCKED, compact)
 local scale = AddSlider("scale", L.OPT_SCALE, locked, 0.6, 1.5, 0.05, "%.2f", ApplyWindow)
+local strata = {
+    { value = "below-bags", text = L.OPT_LAYER_BELOW_BAGS },
+    { value = "HIGH", text = L.OPT_LAYER_HIGH },
+    { value = "DIALOG", text = L.OPT_LAYER_DIALOG },
+    { value = "FULLSCREEN_DIALOG", text = L.OPT_LAYER_FULLSCREEN },
+}
+local layer = AddDropDown("CatQuest335WindowLayerDropDown", L.OPT_LAYER, scale, strata,
+    function() return ns.db.headStrata or "below-bags" end,
+    function(value)
+        ns.db.headStrata = value
+        ApplyWindow()
+    end)
 local reset = CreateFrame("Button", "CatQuest335OptionResetWindow", content, "UIPanelButtonTemplate")
 reset:SetWidth(200)
 reset:SetHeight(22)
-reset:SetPoint("TOPLEFT", scale, "BOTTOMLEFT", -4, -16)
+reset:SetPoint("TOPLEFT", layer, "BOTTOMLEFT", 0, -16)
 reset:SetText(L.OPT_RESET_WINDOW)
 reset:SetScript("OnClick", function()
     if ns.ResetWindowPosition then
@@ -230,23 +270,28 @@ end)
 local sound = Header(L.OPT_SECTION_SOUND, reset, 0, -10)
 local channels = {
     { value = "SFX", text = L.OPT_CHANNEL_SFX },
+    { value = "Music", text = L.OPT_CHANNEL_MUSIC },
     { value = "Master", text = L.OPT_CHANNEL_MASTER },
     { value = "Ambience", text = L.OPT_CHANNEL_AMBIENCE },
 }
 local channel = AddDropDown("CatQuest335ChannelDropDown", L.OPT_CHANNEL, sound, channels,
-    function() return ns.db.volumeChannel or "SFX" end,
-    function(value) ns.db.volumeChannel = value end)
+    function() return ns.db.volumeChannel or "Music" end,
+    function(value)
+        if ns.Stop then ns.Stop(true) end
+        ns.db.volumeChannel = value
+        if ns.AnnounceSettings then
+            ns.AnnounceSettings()
+        end
+    end)
 local duck = AddSlider("duck", L.OPT_DUCK, channel, 0, 100, 10, "%d", function()
     if ns.AnnounceSettings then
         ns.AnnounceSettings()
     end
 end)
-duck:ClearAllPoints()
-duck:SetPoint("TOPLEFT", channel, "BOTTOMLEFT", 24, -22)
 local gap = AddSlider("trackGap", L.OPT_GAP, duck, 0, 5, 0.5, "%.1f")
 local background = AddCheck("keepInBackground", L.OPT_BACKGROUND, gap)
 background:ClearAllPoints()
-background:SetPoint("TOPLEFT", gap, "BOTTOMLEFT", -4, -18)
+background:SetPoint("TOPLEFT", gap, "BOTTOMLEFT", 0, -18)
 
 -- The scrolling area is exactly as tall as the list.
 local function FitContent()

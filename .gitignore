@@ -32,6 +32,7 @@ wowhead-cache/
 .tmp/
 .tmp-catquest-original/
 .tmp-catquest-world/
+DEPLOYMENT.local.md
 research/quest_guides/wowhead_popularity.compact
 research/quest_guides/wowhead_popularity.csv
 

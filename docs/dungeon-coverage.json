@@ -1,0 +1,2389 @@
+{
+  "source": "CatQuest Books & Lore 1.2.0 / file 9568747",
+  "npc_source": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/master/data/sql/base/db_world/instance_encounters.sql",
+  "maps": {
+    "33": {
+      "name": "Крепость Темного Клыка",
+      "events": 32,
+      "bosses": [
+        {
+          "id": 2748,
+          "npcs": [
+            3914
+          ],
+          "name": "Rethilgore",
+          "required": null,
+          "token": "rethilgore",
+          "names335": [
+            "Rethilgore"
+          ]
+        },
+        {
+          "id": 2749,
+          "npcs": [
+            3886
+          ],
+          "name": "Razorclaw the Butcher",
+          "required": null,
+          "token": "razorclaw",
+          "names335": [
+            "Razorclaw the Butcher"
+          ]
+        },
+        {
+          "id": 2750,
+          "npcs": [
+            3887
+          ],
+          "name": "Baron Silverlaine",
+          "required": null,
+          "token": "silverlaine",
+          "names335": [
+            "Baron Silverlaine"
+          ]
+        },
+        {
+          "id": 2751,
+          "npcs": [
+            4278
+          ],
+          "name": "Commander Springvale",
+          "required": null,
+          "token": "springvale",
+          "names335": [
+            "Commander Springvale"
+          ]
+        },
+        {
+          "id": 2752,
+          "npcs": [
+            4279
+          ],
+          "name": "Odo the Blindwatcher",
+          "required": null,
+          "token": "odo",
+          "names335": [
+            "Odo the Blindwatcher"
+          ]
+        },
+        {
+          "id": 2753,
+          "npcs": [
+            4274
+          ],
+          "name": "Fenrus the Devourer",
+          "required": null,
+          "token": "fenrus",
+          "names335": [
+            "Fenrus the Devourer"
+          ]
+        },
+        {
+          "id": 2754,
+          "npcs": [
+            3927
+          ],
+          "name": "Wolf Master Nandos",
+          "required": null,
+          "token": "nandos",
+          "names335": [
+            "Wolf Master Nandos"
+          ]
+        },
+        {
+          "id": 2755,
+          "npcs": [
+            4275
+          ],
+          "name": "Archmage Arugal",
+          "required": null,
+          "token": "arugal",
+          "names335": [
+            "Archmage Arugal"
+          ]
+        }
+      ]
+    },
+    "34": {
+      "name": "Тюрьма Штормграда",
+      "events": 15,
+      "bosses": [
+        {
+          "id": 2756,
+          "npcs": [
+            1696
+          ],
+          "name": "Targorr the Dread",
+          "required": null,
+          "token": "targorr",
+          "names335": [
+            "Targorr the Dread"
+          ]
+        },
+        {
+          "id": 2757,
+          "npcs": [
+            1666
+          ],
+          "name": "Kam Deepfury",
+          "required": null,
+          "token": "kam",
+          "names335": [
+            "Kam Deepfury"
+          ]
+        },
+        {
+          "id": 2758,
+          "npcs": [
+            1717
+          ],
+          "name": "Hamhock",
+          "required": null,
+          "token": "hamhock",
+          "names335": [
+            "Hamhock"
+          ]
+        },
+        {
+          "id": 2759,
+          "npcs": [
+            1663
+          ],
+          "name": "Dextren Ward",
+          "required": null,
+          "token": "dextren",
+          "names335": [
+            "Dextren Ward"
+          ]
+        },
+        {
+          "id": 2760,
+          "npcs": [
+            1716
+          ],
+          "name": "Bazil Thredd",
+          "required": null,
+          "token": "bazil",
+          "names335": [
+            "Bazil Thredd"
+          ]
+        }
+      ]
+    },
+    "36": {
+      "name": "Мертвые копи",
+      "events": 31,
+      "bosses": [
+        {
+          "id": 2741,
+          "npcs": [
+            644
+          ],
+          "name": "Rhahk'zor",
+          "required": null,
+          "token": "rhahkzor",
+          "names335": [
+            "Rhahk'Zor"
+          ]
+        },
+        {
+          "id": 2742,
+          "npcs": [
+            642,
+            643
+          ],
+          "name": "Sneed",
+          "required": [
+            643
+          ],
+          "token": "sneed",
+          "names335": [
+            "Sneed's Shredder",
+            "Sneed"
+          ]
+        },
+        {
+          "id": 3676,
+          "npcs": [
+            3586
+          ],
+          "name": "johnson",
+          "required": null,
+          "token": "johnson",
+          "names335": [
+            "Miner Johnson"
+          ]
+        },
+        {
+          "id": 2743,
+          "npcs": [
+            1763
+          ],
+          "name": "Gilnid",
+          "required": null,
+          "token": "gilnid",
+          "names335": [
+            "Gilnid"
+          ]
+        },
+        {
+          "id": 2744,
+          "npcs": [
+            647
+          ],
+          "name": "Captain Greenskin",
+          "required": null,
+          "token": "greenskin",
+          "names335": [
+            "Captain Greenskin"
+          ]
+        },
+        {
+          "id": 2745,
+          "npcs": [
+            646
+          ],
+          "name": "Mr. Smite",
+          "required": null,
+          "token": "smite",
+          "names335": [
+            "Mr. Smite"
+          ]
+        },
+        {
+          "id": 2746,
+          "npcs": [
+            645
+          ],
+          "name": "Cookie",
+          "required": null,
+          "token": "cookie",
+          "names335": [
+            "Cookie"
+          ]
+        },
+        {
+          "id": 2747,
+          "npcs": [
+            639
+          ],
+          "name": "Edwin VanCleef",
+          "required": null,
+          "token": "vancleef",
+          "names335": [
+            "Edwin VanCleef"
+          ]
+        }
+      ]
+    },
+    "43": {
+      "name": "Пещеры Стенаний",
+      "events": 26,
+      "bosses": [
+        {
+          "id": 585,
+          "npcs": [
+            3671
+          ],
+          "name": "Lady Anacondra",
+          "required": null,
+          "token": "anacondra",
+          "names335": [
+            "Lady Anacondra"
+          ]
+        },
+        {
+          "id": 586,
+          "npcs": [
+            3669
+          ],
+          "name": "Lord Cobrahn",
+          "required": null,
+          "token": "cobrahn",
+          "names335": [
+            "Lord Cobrahn"
+          ]
+        },
+        {
+          "id": 587,
+          "npcs": [
+            3653
+          ],
+          "name": "Kresh",
+          "required": null,
+          "token": "kresh",
+          "names335": [
+            "Kresh"
+          ]
+        },
+        {
+          "id": 588,
+          "npcs": [
+            3670
+          ],
+          "name": "Lord Pythas",
+          "required": null,
+          "token": "pythas",
+          "names335": [
+            "Lord Pythas"
+          ]
+        },
+        {
+          "id": 589,
+          "npcs": [
+            3674
+          ],
+          "name": "Skum",
+          "required": null,
+          "token": "skum",
+          "names335": [
+            "Skum"
+          ]
+        },
+        {
+          "id": 590,
+          "npcs": [
+            3673
+          ],
+          "name": "Lord Serpentis",
+          "required": null,
+          "token": "serpentis",
+          "names335": [
+            "Lord Serpentis"
+          ]
+        },
+        {
+          "id": 591,
+          "npcs": [
+            5775
+          ],
+          "name": "Verdan the Everliving",
+          "required": null,
+          "token": "verdan",
+          "names335": [
+            "Verdan the Everliving"
+          ]
+        },
+        {
+          "id": 592,
+          "npcs": [
+            3654
+          ],
+          "name": "Mutanus the Devourer",
+          "required": null,
+          "token": "mutanus",
+          "names335": [
+            "Mutanus the Devourer"
+          ]
+        }
+      ]
+    },
+    "47": {
+      "name": "Лабиринты Иглошкурых",
+      "events": 24,
+      "bosses": [
+        {
+          "id": 2773,
+          "npcs": [
+            6168
+          ],
+          "name": "Roogug",
+          "required": null,
+          "token": "roogug",
+          "names335": [
+            "Roogug"
+          ]
+        },
+        {
+          "id": 2774,
+          "npcs": [
+            4424
+          ],
+          "name": "Aggem Thorncurse",
+          "required": null,
+          "token": "aggem",
+          "names335": [
+            "Aggem Thorncurse"
+          ]
+        },
+        {
+          "id": 2775,
+          "npcs": [
+            4428
+          ],
+          "name": "Death Speaker Jargba",
+          "required": null,
+          "token": "jargba",
+          "names335": [
+            "Death Speaker Jargba"
+          ]
+        },
+        {
+          "id": 2776,
+          "npcs": [
+            4420
+          ],
+          "name": "Overlord Ramtusk",
+          "required": null,
+          "token": "ramtusk",
+          "names335": [
+            "Overlord Ramtusk"
+          ]
+        },
+        {
+          "id": 2777,
+          "npcs": [
+            4422
+          ],
+          "name": "Agathelos the Raging",
+          "required": null,
+          "token": "agathelos",
+          "names335": [
+            "Agathelos the Raging"
+          ]
+        },
+        {
+          "id": 2778,
+          "npcs": [
+            4421
+          ],
+          "name": "Charlga Razorflank",
+          "required": null,
+          "token": "charlga",
+          "names335": [
+            "Charlga Razorflank"
+          ]
+        }
+      ]
+    },
+    "48": {
+      "name": "Непроглядная Пучина",
+      "events": 26,
+      "bosses": [
+        {
+          "id": 2916,
+          "npcs": [
+            4887
+          ],
+          "name": "Ghamoo-ra",
+          "required": null,
+          "token": "ghamoo",
+          "names335": [
+            "Ghamoo-ra"
+          ]
+        },
+        {
+          "id": 2915,
+          "npcs": [
+            4831
+          ],
+          "name": "Lady Sarevess",
+          "required": null,
+          "token": "sarevess",
+          "names335": [
+            "Lady Sarevess"
+          ]
+        },
+        {
+          "id": 2914,
+          "npcs": [
+            6243
+          ],
+          "name": "Gelihast",
+          "required": null,
+          "token": "gelihast",
+          "names335": [
+            "Gelihast"
+          ]
+        },
+        {
+          "id": 2913,
+          "npcs": [
+            12902
+          ],
+          "name": "Lorgus Jett",
+          "required": null,
+          "token": "lorgus",
+          "names335": [
+            "Lorgus Jett"
+          ]
+        },
+        {
+          "id": 2912,
+          "npcs": [
+            4830
+          ],
+          "name": "Old Serra'kis",
+          "required": null,
+          "token": "serrakis",
+          "names335": [
+            "Old Serra'kis"
+          ]
+        },
+        {
+          "id": 2911,
+          "npcs": [
+            4832
+          ],
+          "name": "Twilight Lord Kelris",
+          "required": null,
+          "token": "kelris",
+          "names335": [
+            "Twilight Lord Kelris"
+          ]
+        },
+        {
+          "id": 2910,
+          "npcs": [
+            4829
+          ],
+          "name": "Aku'mai",
+          "required": null,
+          "token": "akumai",
+          "names335": [
+            "Aku'mai"
+          ]
+        }
+      ]
+    },
+    "70": {
+      "name": "Ульдаман",
+      "events": 34,
+      "bosses": [
+        {
+          "id": 547,
+          "npcs": [
+            6910
+          ],
+          "name": "Revelosh",
+          "required": null,
+          "token": "revelosh",
+          "names335": [
+            "Revelosh"
+          ]
+        },
+        {
+          "id": 548,
+          "npcs": [
+            6906,
+            6907,
+            6908
+          ],
+          "name": "dwarves",
+          "required": [
+            6906,
+            6907,
+            6908
+          ],
+          "token": "dwarves",
+          "names335": [
+            "Baelog",
+            "Eric \\\"The Swift\\\"",
+            "Olaf"
+          ]
+        },
+        {
+          "id": 549,
+          "npcs": [
+            7228
+          ],
+          "name": "Ironaya",
+          "required": null,
+          "token": "ironaya",
+          "names335": [
+            "Ironaya"
+          ]
+        },
+        {
+          "id": 1887,
+          "npcs": [
+            7023
+          ],
+          "name": "obsidian",
+          "required": null,
+          "token": "obsidian",
+          "names335": [
+            "Obsidian Sentinel"
+          ]
+        },
+        {
+          "id": 551,
+          "npcs": [
+            7206
+          ],
+          "name": "Ancient Stone Keeper",
+          "required": null,
+          "token": "keeper",
+          "names335": [
+            "Ancient Stone Keeper"
+          ]
+        },
+        {
+          "id": 552,
+          "npcs": [
+            7291
+          ],
+          "name": "Galgann Firehammer",
+          "required": null,
+          "token": "galgann",
+          "names335": [
+            "Galgann Firehammer"
+          ]
+        },
+        {
+          "id": 553,
+          "npcs": [
+            4854
+          ],
+          "name": "Grimlok",
+          "required": null,
+          "token": "grimlok",
+          "names335": [
+            "Grimlok"
+          ]
+        },
+        {
+          "id": 554,
+          "npcs": [
+            2748
+          ],
+          "name": "Archaedas",
+          "required": null,
+          "token": "archaedas",
+          "names335": [
+            "Archaedas"
+          ]
+        }
+      ]
+    },
+    "90": {
+      "name": "Гномреган",
+      "events": 25,
+      "bosses": [
+        {
+          "id": 2768,
+          "npcs": [
+            7361
+          ],
+          "name": "Grubbis",
+          "required": null,
+          "token": "grubbis",
+          "names335": [
+            "Grubbis"
+          ]
+        },
+        {
+          "id": 2769,
+          "npcs": [
+            7079
+          ],
+          "name": "Viscous Fallout",
+          "required": null,
+          "token": "fallout",
+          "names335": [
+            "Viscous Fallout"
+          ]
+        },
+        {
+          "id": 2770,
+          "npcs": [
+            6235
+          ],
+          "name": "Electrocutioner 6000",
+          "required": null,
+          "token": "electro",
+          "names335": [
+            "Electrocutioner 6000"
+          ]
+        },
+        {
+          "id": 2771,
+          "npcs": [
+            6229
+          ],
+          "name": "Crowd Pummeler 9-60",
+          "required": null,
+          "token": "pummeler",
+          "names335": [
+            "Crowd Pummeler 9-60"
+          ]
+        },
+        {
+          "id": 2772,
+          "npcs": [
+            7800
+          ],
+          "name": "Mekgineer Thermaplugg",
+          "required": null,
+          "token": "therma",
+          "names335": [
+            "Mekgineer Thermaplugg"
+          ]
+        }
+      ]
+    },
+    "109": {
+      "name": "Затонувший храм",
+      "events": 28,
+      "bosses": [
+        {
+          "id": 3583,
+          "npcs": [
+            8443
+          ],
+          "name": "Avatar of Hakkar",
+          "required": null,
+          "token": "avatar",
+          "names335": [
+            "Avatar of Hakkar"
+          ]
+        },
+        {
+          "id": 3582,
+          "npcs": [
+            8580
+          ],
+          "name": "Atal'alarion",
+          "required": null,
+          "token": "atal",
+          "names335": [
+            "Atal'alarion"
+          ]
+        },
+        {
+          "id": 3589,
+          "npcs": [
+            5710,
+            5711
+          ],
+          "name": "jammalan",
+          "required": [
+            5710,
+            5711
+          ],
+          "token": "jammalan",
+          "names335": [
+            "Jammal'an the Prophet",
+            "Ogom the Wretched"
+          ]
+        },
+        {
+          "id": 3588,
+          "npcs": [
+            5721
+          ],
+          "name": "Dreamscythe",
+          "required": null,
+          "token": "dreamscythe",
+          "names335": [
+            "Dreamscythe"
+          ]
+        },
+        {
+          "id": 3587,
+          "npcs": [
+            5720
+          ],
+          "name": "Weaver",
+          "required": null,
+          "token": "weaver",
+          "names335": [
+            "Weaver"
+          ]
+        },
+        {
+          "id": 3586,
+          "npcs": [
+            5719
+          ],
+          "name": "Morphaz",
+          "required": null,
+          "token": "morphaz",
+          "names335": [
+            "Morphaz"
+          ]
+        },
+        {
+          "id": 3585,
+          "npcs": [
+            5722
+          ],
+          "name": "Hazzas",
+          "required": null,
+          "token": "hazzas",
+          "names335": [
+            "Hazzas"
+          ]
+        },
+        {
+          "id": 3584,
+          "npcs": [
+            5709
+          ],
+          "name": "Shade of Eranikus",
+          "required": null,
+          "token": "eranikus",
+          "names335": [
+            "Shade of Eranikus"
+          ]
+        }
+      ]
+    },
+    "129": {
+      "name": "Курганы Иглошкурых",
+      "events": 28,
+      "bosses": [
+        {
+          "id": 2781,
+          "npcs": [
+            7356
+          ],
+          "name": "plaguemaw",
+          "required": null,
+          "token": "plaguemaw",
+          "names335": [
+            "Plaguemaw the Rotting"
+          ]
+        },
+        {
+          "id": 2780,
+          "npcs": [
+            7355
+          ],
+          "name": "Tuten'kash",
+          "required": null,
+          "token": "tuten",
+          "names335": [
+            "Tuten'kash"
+          ]
+        },
+        {
+          "id": 2782,
+          "npcs": [
+            7357
+          ],
+          "name": "Mordresh Fire Eye",
+          "required": null,
+          "token": "mordresh",
+          "names335": [
+            "Mordresh Fire Eye"
+          ]
+        },
+        {
+          "id": 2784,
+          "npcs": [
+            8567
+          ],
+          "name": "Glutton",
+          "required": null,
+          "token": "glutton",
+          "names335": [
+            "Glutton"
+          ]
+        },
+        {
+          "id": 2783,
+          "npcs": [
+            7354
+          ],
+          "name": "raggle",
+          "required": null,
+          "token": "raggle",
+          "names335": [
+            "Ragglesnout"
+          ]
+        },
+        {
+          "id": 2785,
+          "npcs": [
+            7358
+          ],
+          "name": "Amnennar the Coldbringer",
+          "required": null,
+          "token": "amnennar",
+          "names335": [
+            "Amnennar the Coldbringer"
+          ]
+        }
+      ]
+    },
+    "189": {
+      "name": "Монастырь Алого ордена",
+      "events": 31,
+      "bosses": [
+        {
+          "id": 444,
+          "npcs": [
+            3983
+          ],
+          "name": "Interrogator Vishas",
+          "required": null,
+          "token": "vishas",
+          "names335": [
+            "Interrogator Vishas"
+          ]
+        },
+        {
+          "id": 2779,
+          "npcs": [
+            4543
+          ],
+          "name": "Bloodmage Thalnos",
+          "required": null,
+          "token": "thalnos",
+          "names335": [
+            "Bloodmage Thalnos"
+          ]
+        },
+        {
+          "id": 446,
+          "npcs": [
+            3974
+          ],
+          "name": "Houndmaster Loksey",
+          "required": null,
+          "token": "loksey",
+          "names335": [
+            "Houndmaster Loksey"
+          ]
+        },
+        {
+          "id": 447,
+          "npcs": [
+            6487
+          ],
+          "name": "Arcanist Doan",
+          "required": null,
+          "token": "doan",
+          "names335": [
+            "Arcanist Doan"
+          ]
+        },
+        {
+          "id": 448,
+          "npcs": [
+            3975
+          ],
+          "name": "Herod",
+          "required": null,
+          "token": "herod",
+          "names335": [
+            "Herod"
+          ]
+        },
+        {
+          "id": 449,
+          "npcs": [
+            4542
+          ],
+          "name": "High Inquisitor Fairbanks",
+          "required": null,
+          "token": "fairbanks",
+          "names335": [
+            "High Inquisitor Fairbanks"
+          ]
+        },
+        {
+          "id": 450,
+          "npcs": [
+            3976,
+            3977
+          ],
+          "name": "High Inquisitor Whitemane",
+          "required": [
+            3977
+          ],
+          "token": "whitemane",
+          "names335": [
+            "Scarlet Commander Mograine",
+            "High Inquisitor Whitemane"
+          ]
+        }
+      ]
+    },
+    "209": {
+      "name": "Зул'Фаррак",
+      "events": 30,
+      "bosses": [
+        {
+          "id": 597,
+          "npcs": [
+            7271
+          ],
+          "name": "Witch Doctor Zum'rah",
+          "required": null,
+          "token": "zumrah",
+          "names335": [
+            "Witch Doctor Zum'rah"
+          ]
+        },
+        {
+          "id": 596,
+          "npcs": [
+            7272
+          ],
+          "name": "Theka the Martyr",
+          "required": null,
+          "token": "theka",
+          "names335": [
+            "Theka the Martyr"
+          ]
+        },
+        {
+          "id": 593,
+          "npcs": [
+            7795
+          ],
+          "name": "Hydromancer Velratha",
+          "required": null,
+          "token": "velratha",
+          "names335": [
+            "Hydromancer Velratha"
+          ]
+        },
+        {
+          "id": 594,
+          "npcs": [
+            7273
+          ],
+          "name": "Ghaz'rilla",
+          "required": null,
+          "token": "gahzrilla",
+          "names335": [
+            "Gahz'rilla"
+          ]
+        },
+        {
+          "id": 595,
+          "npcs": [
+            8127
+          ],
+          "name": "Antu'sul",
+          "required": null,
+          "token": "antusul",
+          "names335": [
+            "Antu'sul"
+          ]
+        },
+        {
+          "id": 598,
+          "npcs": [
+            7796
+          ],
+          "name": "Nekrum Gutchewer",
+          "required": null,
+          "token": "nekrum",
+          "names335": [
+            "Nekrum Gutchewer"
+          ]
+        },
+        {
+          "id": 599,
+          "npcs": [
+            7275
+          ],
+          "name": "Shadowpriest Sezz'ziz",
+          "required": null,
+          "token": "sezzziz",
+          "names335": [
+            "Shadowpriest Sezz'ziz"
+          ]
+        },
+        {
+          "id": 600,
+          "npcs": [
+            7267,
+            7797
+          ],
+          "name": "ukorz",
+          "required": [
+            7267,
+            7797
+          ],
+          "token": "ukorz",
+          "names335": [
+            "Chief Ukorz Sandscalp",
+            "Ruuzlu"
+          ]
+        }
+      ]
+    },
+    "229": {
+      "name": "Вершина Черной горы",
+      "events": 47,
+      "bosses": [
+        {
+          "id": 267,
+          "npcs": [
+            9196
+          ],
+          "name": "Highlord Omokk",
+          "required": null,
+          "token": "omokk",
+          "names335": [
+            "Highlord Omokk"
+          ]
+        },
+        {
+          "id": 268,
+          "npcs": [
+            9236
+          ],
+          "name": "Shadow Hunter Vosh'gajin",
+          "required": null,
+          "token": "voshgajin",
+          "names335": [
+            "Shadow Hunter Vosh'gajin"
+          ]
+        },
+        {
+          "id": 269,
+          "npcs": [
+            9237
+          ],
+          "name": "War Master Voone",
+          "required": null,
+          "token": "voone",
+          "names335": [
+            "War Master Voone"
+          ]
+        },
+        {
+          "id": 270,
+          "npcs": [
+            10596
+          ],
+          "name": "Mother Smolderweb",
+          "required": null,
+          "token": "smolderweb",
+          "names335": [
+            "Mother Smolderweb"
+          ]
+        },
+        {
+          "id": 271,
+          "npcs": [
+            10584
+          ],
+          "name": "Urok Doomhowl",
+          "required": null,
+          "token": "urok",
+          "names335": [
+            "Urok Doomhowl"
+          ]
+        },
+        {
+          "id": 272,
+          "npcs": [
+            9736
+          ],
+          "name": "Quartermaster Zigris",
+          "required": null,
+          "token": "zigris",
+          "names335": [
+            "Quartermaster Zigris"
+          ]
+        },
+        {
+          "id": 274,
+          "npcs": [
+            10220
+          ],
+          "name": "Halycon",
+          "required": null,
+          "token": "halycon",
+          "names335": [
+            "Halycon"
+          ]
+        },
+        {
+          "id": 273,
+          "npcs": [
+            10268
+          ],
+          "name": "Gizrul the Slavener",
+          "required": null,
+          "token": "gizrul",
+          "names335": [
+            "Gizrul the Slavener"
+          ]
+        },
+        {
+          "id": 275,
+          "npcs": [
+            9568
+          ],
+          "name": "Overlord Wyrmthalak",
+          "required": null,
+          "token": "wyrmthalak",
+          "names335": [
+            "Overlord Wyrmthalak"
+          ]
+        },
+        {
+          "id": 3062,
+          "npcs": [
+            9816
+          ],
+          "name": "Pyroguard Emberseer",
+          "required": null,
+          "token": "emberseer",
+          "names335": [
+            "Pyroguard Emberseer"
+          ]
+        },
+        {
+          "id": 3063,
+          "npcs": [
+            10429,
+            10339
+          ],
+          "name": "rend",
+          "required": [
+            10429
+          ],
+          "token": "rend",
+          "names335": [
+            "Warchief Rend Blackhand",
+            "Gyth"
+          ]
+        },
+        {
+          "id": 3068,
+          "npcs": [
+            10430
+          ],
+          "name": "The Beast",
+          "required": null,
+          "token": "beast",
+          "names335": [
+            "The Beast"
+          ]
+        },
+        {
+          "id": 3070,
+          "npcs": [
+            16042
+          ],
+          "name": "valthalak",
+          "required": null,
+          "token": "valthalak",
+          "names335": [
+            "Lord Valthalak"
+          ]
+        },
+        {
+          "id": 3069,
+          "npcs": [
+            10363
+          ],
+          "name": "General Drakkisath",
+          "required": null,
+          "token": "drakkisath",
+          "names335": [
+            "General Drakkisath"
+          ]
+        }
+      ]
+    },
+    "230": {
+      "name": "Глубины Черной горы",
+      "events": 83,
+      "bosses": [
+        {
+          "id": 227,
+          "npcs": [
+            9018
+          ],
+          "name": "High Interrogator Gerstahn",
+          "required": null,
+          "token": "gerstahn",
+          "names335": [
+            "High Interrogator Gerstahn"
+          ]
+        },
+        {
+          "id": 228,
+          "npcs": [
+            9025
+          ],
+          "name": "Lord Roccor",
+          "required": null,
+          "token": "roccor",
+          "names335": [
+            "Lord Roccor"
+          ]
+        },
+        {
+          "id": 229,
+          "npcs": [
+            9319
+          ],
+          "name": "Houndmaster Grebmar",
+          "required": null,
+          "token": "grebmar",
+          "names335": [
+            "Houndmaster Grebmar"
+          ]
+        },
+        {
+          "id": 230,
+          "npcs": [
+            9027,
+            9028,
+            9029,
+            9030,
+            9031,
+            9032
+          ],
+          "name": "ring",
+          "required": null,
+          "token": "ring",
+          "names335": [
+            "Gorosh the Dervish",
+            "Grizzle",
+            "Eviscerator",
+            "Ok'thor the Breaker",
+            "Anub'shiah",
+            "Hedrum the Creeper"
+          ]
+        },
+        {
+          "id": 231,
+          "npcs": [
+            9024
+          ],
+          "name": "Pyromancer Loregrain",
+          "required": null,
+          "token": "loregrain",
+          "names335": [
+            "Pyromancer Loregrain"
+          ]
+        },
+        {
+          "id": 232,
+          "npcs": [
+            9017
+          ],
+          "name": "Lord Incendius",
+          "required": null,
+          "token": "incendius",
+          "names335": [
+            "Lord Incendius"
+          ]
+        },
+        {
+          "id": 235,
+          "npcs": [
+            9016
+          ],
+          "name": "Bael'Gar",
+          "required": null,
+          "token": "baelgar",
+          "names335": [
+            "Bael'Gar"
+          ]
+        },
+        {
+          "id": 234,
+          "npcs": [
+            9056
+          ],
+          "name": "Fineous Darkvire",
+          "required": null,
+          "token": "fineous",
+          "names335": [
+            "Fineous Darkvire"
+          ]
+        },
+        {
+          "id": 233,
+          "npcs": [
+            9041
+          ],
+          "name": "Warder Stilgiss",
+          "required": null,
+          "token": "stilgiss",
+          "names335": [
+            "Warder Stilgiss"
+          ]
+        },
+        {
+          "id": 2791,
+          "npcs": [
+            9476
+          ],
+          "name": "vault",
+          "required": null,
+          "token": "vault",
+          "names335": [
+            "Watchman Doomgrip"
+          ]
+        },
+        {
+          "id": 236,
+          "npcs": [
+            9033
+          ],
+          "name": "General Angerforge",
+          "required": null,
+          "token": "angerforge",
+          "names335": [
+            "General Angerforge"
+          ]
+        },
+        {
+          "id": 237,
+          "npcs": [
+            8983
+          ],
+          "name": "Golem Lord Argelmach",
+          "required": null,
+          "token": "argelmach",
+          "names335": [
+            "Golem Lord Argelmach"
+          ]
+        },
+        {
+          "id": 239,
+          "npcs": [
+            9502
+          ],
+          "name": "Phalanx",
+          "required": null,
+          "token": "phalanx",
+          "names335": [
+            "Phalanx"
+          ]
+        },
+        {
+          "id": 238,
+          "npcs": [
+            9537
+          ],
+          "name": "Hurley Blackbreath",
+          "required": null,
+          "token": "hurley",
+          "names335": [
+            "Hurley Blackbreath"
+          ]
+        },
+        {
+          "id": 240,
+          "npcs": [
+            9543
+          ],
+          "name": "Ribbly Screwspigot",
+          "required": null,
+          "token": "ribbly",
+          "names335": [
+            "Ribbly Screwspigot"
+          ]
+        },
+        {
+          "id": 241,
+          "npcs": [
+            9499
+          ],
+          "name": "Plugger Spazzring",
+          "required": null,
+          "token": "plugger",
+          "names335": [
+            "Plugger Spazzring"
+          ]
+        },
+        {
+          "id": 242,
+          "npcs": [
+            9156
+          ],
+          "name": "Ambassador Flamelash",
+          "required": null,
+          "token": "flamelash",
+          "names335": [
+            "Ambassador Flamelash"
+          ]
+        },
+        {
+          "id": 243,
+          "npcs": [
+            9034,
+            9035,
+            9036,
+            9037,
+            9038,
+            9039,
+            9040
+          ],
+          "name": "seven",
+          "required": [
+            9034,
+            9035,
+            9036,
+            9037,
+            9038,
+            9039,
+            9040
+          ],
+          "token": "seven",
+          "names335": [
+            "Hate'rel",
+            "Anger'rel",
+            "Vile'rel",
+            "Gloom'rel",
+            "Seeth'rel",
+            "Doom'rel",
+            "Dope'rel"
+          ]
+        },
+        {
+          "id": 244,
+          "npcs": [
+            9938
+          ],
+          "name": "Magmus",
+          "required": null,
+          "token": "magmus",
+          "names335": [
+            "Magmus"
+          ]
+        },
+        {
+          "id": 2790,
+          "npcs": [
+            9019
+          ],
+          "name": "Emperor Dagran Thaurissan",
+          "required": null,
+          "token": "emperor",
+          "names335": [
+            "Emperor Dagran Thaurissan"
+          ]
+        },
+        {
+          "id": 2789,
+          "npcs": [
+            8929
+          ],
+          "name": "Принцесса Мойра Бронзобород",
+          "required": null,
+          "token": "moira",
+          "names335": [
+            "Princess Moira Bronzebeard"
+          ]
+        }
+      ]
+    },
+    "289": {
+      "name": "Некроситет",
+      "events": 46,
+      "bosses": [
+        {
+          "id": 2805,
+          "npcs": [
+            10506
+          ],
+          "name": "Kirtonos the Herald",
+          "required": null,
+          "token": "kirtonos",
+          "names335": [
+            "Kirtonos the Herald"
+          ]
+        },
+        {
+          "id": 2811,
+          "npcs": [
+            11622
+          ],
+          "name": "Rattlegore",
+          "required": null,
+          "token": "rattlegore",
+          "names335": [
+            "Rattlegore"
+          ]
+        },
+        {
+          "id": 2804,
+          "npcs": [
+            10503
+          ],
+          "name": "Jandice Barov",
+          "required": null,
+          "token": "jandice",
+          "names335": [
+            "Jandice Barov"
+          ]
+        },
+        {
+          "id": 2813,
+          "npcs": [
+            10432
+          ],
+          "name": "Vectus",
+          "required": null,
+          "token": "vectus",
+          "names335": [
+            "Vectus"
+          ]
+        },
+        {
+          "id": 2809,
+          "npcs": [
+            10433
+          ],
+          "name": "Marduk Blackpool",
+          "required": null,
+          "token": "marduk",
+          "names335": [
+            "Marduk Blackpool"
+          ]
+        },
+        {
+          "id": 2810,
+          "npcs": [
+            10508
+          ],
+          "name": "Ras Frostwhisper",
+          "required": null,
+          "token": "ras",
+          "names335": [
+            "Ras Frostwhisper"
+          ]
+        },
+        {
+          "id": 3055,
+          "npcs": [
+            16118
+          ],
+          "name": "kormok",
+          "required": null,
+          "token": "kormok",
+          "names335": [
+            "Kormok"
+          ]
+        },
+        {
+          "id": 2808,
+          "npcs": [
+            10901
+          ],
+          "name": "Lorekeeper Polkelt",
+          "required": null,
+          "token": "polkelt",
+          "names335": [
+            "Lorekeeper Polkelt"
+          ]
+        },
+        {
+          "id": 2806,
+          "npcs": [
+            10502
+          ],
+          "name": "Lady Illucia Barov",
+          "required": null,
+          "token": "illucia",
+          "names335": [
+            "Lady Illucia Barov"
+          ]
+        },
+        {
+          "id": 2802,
+          "npcs": [
+            11261
+          ],
+          "name": "Doctor Theolen Krastinov",
+          "required": null,
+          "token": "krastinov",
+          "names335": [
+            "Doctor Theolen Krastinov"
+          ]
+        },
+        {
+          "id": 2807,
+          "npcs": [
+            10504
+          ],
+          "name": "Lord Alexei Barov",
+          "required": null,
+          "token": "alexei",
+          "names335": [
+            "Lord Alexei Barov"
+          ]
+        },
+        {
+          "id": 2803,
+          "npcs": [
+            10505
+          ],
+          "name": "Instructor Malicia",
+          "required": null,
+          "token": "malicia",
+          "names335": [
+            "Instructor Malicia"
+          ]
+        },
+        {
+          "id": 2812,
+          "npcs": [
+            10507
+          ],
+          "name": "The Ravenian",
+          "required": null,
+          "token": "ravenian",
+          "names335": [
+            "The Ravenian"
+          ]
+        },
+        {
+          "id": 2801,
+          "npcs": [
+            1853
+          ],
+          "name": "Darkmaster Gandling",
+          "required": null,
+          "token": "gandling",
+          "names335": [
+            "Darkmaster Gandling"
+          ]
+        }
+      ]
+    },
+    "329": {
+      "name": "Стратхольм",
+      "events": 59,
+      "bosses": [
+        {
+          "id": 2799,
+          "npcs": [
+            10393
+          ],
+          "name": "skul",
+          "required": null,
+          "token": "skul",
+          "names335": [
+            "Skul"
+          ]
+        },
+        {
+          "id": 2797,
+          "npcs": [
+            11058
+          ],
+          "name": "ezra",
+          "required": null,
+          "token": "ezra",
+          "names335": [
+            "Fras Siabi"
+          ]
+        },
+        {
+          "id": 2798,
+          "npcs": [
+            11143
+          ],
+          "name": "postmaster",
+          "required": null,
+          "token": "postmaster",
+          "names335": [
+            "Postmaster Malown"
+          ]
+        },
+        {
+          "id": 472,
+          "npcs": [
+            10516
+          ],
+          "name": "The Unforgiven",
+          "required": null,
+          "token": "unforgiven",
+          "names335": [
+            "The Unforgiven"
+          ]
+        },
+        {
+          "id": 473,
+          "npcs": [
+            10558
+          ],
+          "name": "Hearthsinger Forresten",
+          "required": null,
+          "token": "forresten",
+          "names335": [
+            "Hearthsinger Forresten"
+          ]
+        },
+        {
+          "id": 474,
+          "npcs": [
+            10808
+          ],
+          "name": "Timmy the Cruel",
+          "required": null,
+          "token": "timmy",
+          "names335": [
+            "Timmy the Cruel"
+          ]
+        },
+        {
+          "id": 476,
+          "npcs": [
+            11032
+          ],
+          "name": "Malor the Zealous",
+          "required": null,
+          "token": "malor",
+          "names335": [
+            "Malor the Zealous"
+          ]
+        },
+        {
+          "id": 475,
+          "npcs": [
+            10997
+          ],
+          "name": "Cannon Master Willey",
+          "required": null,
+          "token": "willey",
+          "names335": [
+            "Cannon Master Willey"
+          ]
+        },
+        {
+          "id": 2796,
+          "npcs": [
+            11120
+          ],
+          "name": "hammersmith",
+          "required": null,
+          "token": "hammersmith",
+          "names335": [
+            "Crimson Hammersmith"
+          ]
+        },
+        {
+          "id": 477,
+          "npcs": [
+            10811
+          ],
+          "name": "Archivist Galford",
+          "required": null,
+          "token": "galford",
+          "names335": [
+            "Archivist Galford"
+          ]
+        },
+        {
+          "id": 478,
+          "npcs": [
+            10813
+          ],
+          "name": "Balnazzar",
+          "required": null,
+          "token": "balnazzar",
+          "names335": [
+            "Balnazzar"
+          ]
+        },
+        {
+          "id": 482,
+          "npcs": [
+            10435
+          ],
+          "name": "Magistrate Barthilas",
+          "required": null,
+          "token": "barthilas",
+          "names335": [
+            "Magistrate Barthilas"
+          ]
+        },
+        {
+          "id": 480,
+          "npcs": [
+            10437
+          ],
+          "name": "Nerub'enkan",
+          "required": null,
+          "token": "nerubenkan",
+          "names335": [
+            "Nerub'enkan"
+          ]
+        },
+        {
+          "id": 2800,
+          "npcs": [
+            10809
+          ],
+          "name": "stonespine",
+          "required": null,
+          "token": "stonespine",
+          "names335": [
+            "Stonespine"
+          ]
+        },
+        {
+          "id": 2795,
+          "npcs": [
+            11121
+          ],
+          "name": "swordsmith",
+          "required": null,
+          "token": "swordsmith",
+          "names335": [
+            "Black Guard Swordsmith"
+          ]
+        },
+        {
+          "id": 479,
+          "npcs": [
+            10436
+          ],
+          "name": "Baroness Anastari",
+          "required": null,
+          "token": "anastari",
+          "names335": [
+            "Baroness Anastari"
+          ]
+        },
+        {
+          "id": 481,
+          "npcs": [
+            10438
+          ],
+          "name": "Maleki the Pallid",
+          "required": null,
+          "token": "maleki",
+          "names335": [
+            "Maleki the Pallid"
+          ]
+        },
+        {
+          "id": 483,
+          "npcs": [
+            10439
+          ],
+          "name": "Ramnstein the Gorger",
+          "required": null,
+          "token": "ramstein",
+          "names335": [
+            "Ramstein the Gorger"
+          ]
+        },
+        {
+          "id": 484,
+          "npcs": [
+            10440
+          ],
+          "name": "Baron Rivendare",
+          "required": null,
+          "token": "rivendare",
+          "names335": [
+            "Baron Rivendare"
+          ]
+        }
+      ]
+    },
+    "349": {
+      "name": "Мародон",
+      "events": 36,
+      "bosses": [
+        {
+          "id": 422,
+          "npcs": [
+            13282
+          ],
+          "name": "Noxxion",
+          "required": null,
+          "token": "noxxion",
+          "names335": [
+            "Noxxion"
+          ]
+        },
+        {
+          "id": 423,
+          "npcs": [
+            12258
+          ],
+          "name": "Razorlash",
+          "required": null,
+          "token": "razorlash",
+          "names335": [
+            "Razorlash"
+          ]
+        },
+        {
+          "id": 424,
+          "npcs": [
+            12236
+          ],
+          "name": "Lord Vyletongue",
+          "required": null,
+          "token": "vyletongue",
+          "names335": [
+            "Lord Vyletongue"
+          ]
+        },
+        {
+          "id": 427,
+          "npcs": [
+            13601
+          ],
+          "name": "Tinkerer Gizlock",
+          "required": null,
+          "token": "gizlock",
+          "names335": [
+            "Tinkerer Gizlock"
+          ]
+        },
+        {
+          "id": 425,
+          "npcs": [
+            12225
+          ],
+          "name": "Celebras the Cursed",
+          "required": null,
+          "token": "celebras",
+          "names335": [
+            "Celebras the Cursed"
+          ]
+        },
+        {
+          "id": 426,
+          "npcs": [
+            12203
+          ],
+          "name": "Landslide",
+          "required": null,
+          "token": "landslide",
+          "names335": [
+            "Landslide"
+          ]
+        },
+        {
+          "id": 428,
+          "npcs": [
+            13596
+          ],
+          "name": "Rotgrip",
+          "required": null,
+          "token": "rotgrip",
+          "names335": [
+            "Rotgrip"
+          ]
+        },
+        {
+          "id": 429,
+          "npcs": [
+            12201
+          ],
+          "name": "Princess Theradras",
+          "required": null,
+          "token": "theradras",
+          "names335": [
+            "Princess Theradras"
+          ]
+        }
+      ]
+    },
+    "389": {
+      "name": "Огненная пропасть",
+      "events": 16,
+      "bosses": [
+        {
+          "id": 2732,
+          "npcs": [
+            11517
+          ],
+          "name": "Oggleflint",
+          "required": null,
+          "token": "oggleflint",
+          "names335": [
+            "Oggleflint"
+          ]
+        },
+        {
+          "id": 2733,
+          "npcs": [
+            11520
+          ],
+          "name": "Taragaman the Hungerer",
+          "required": null,
+          "token": "taragaman",
+          "names335": [
+            "Taragaman the Hungerer"
+          ]
+        },
+        {
+          "id": 2734,
+          "npcs": [
+            11518
+          ],
+          "name": "Жергош Призыватель Духов",
+          "required": null,
+          "token": "jergosh",
+          "names335": [
+            "Jergosh the Invoker"
+          ]
+        },
+        {
+          "id": 2735,
+          "npcs": [
+            11519
+          ],
+          "name": "Bazzalan",
+          "required": null,
+          "token": "bazzalan",
+          "names335": [
+            "Bazzalan"
+          ]
+        }
+      ]
+    },
+    "429": {
+      "name": "Забытый Город",
+      "events": 53,
+      "bosses": [
+        {
+          "id": 2792,
+          "npcs": [
+            14354
+          ],
+          "name": "pusillin",
+          "required": null,
+          "token": "pusillin",
+          "names335": [
+            "Pusillin"
+          ]
+        },
+        {
+          "id": 345,
+          "npcs": [
+            14327
+          ],
+          "name": "Lethtendris",
+          "required": null,
+          "token": "lethtendris",
+          "names335": [
+            "Lethtendris"
+          ]
+        },
+        {
+          "id": 344,
+          "npcs": [
+            13280
+          ],
+          "name": "Hydrospawn",
+          "required": null,
+          "token": "hydrospawn",
+          "names335": [
+            "Hydrospawn"
+          ]
+        },
+        {
+          "id": 343,
+          "npcs": [
+            11490
+          ],
+          "name": "Zevrim Thornhoof",
+          "required": null,
+          "token": "zevrim",
+          "names335": [
+            "Zevrim Thornhoof"
+          ]
+        },
+        {
+          "id": 346,
+          "npcs": [
+            11492
+          ],
+          "name": "Alzzin the Wildshaper",
+          "required": null,
+          "token": "alzzin",
+          "names335": [
+            "Alzzin the Wildshaper"
+          ]
+        },
+        {
+          "id": 350,
+          "npcs": [
+            11489
+          ],
+          "name": "Tendris Warpwood",
+          "required": null,
+          "token": "tendris",
+          "names335": [
+            "Tendris Warpwood"
+          ]
+        },
+        {
+          "id": 347,
+          "npcs": [
+            11488
+          ],
+          "name": "Illyanna Ravenoak",
+          "required": null,
+          "token": "illyanna",
+          "names335": [
+            "Illyanna Ravenoak"
+          ]
+        },
+        {
+          "id": 348,
+          "npcs": [
+            11487
+          ],
+          "name": "Magister Kalendris",
+          "required": null,
+          "token": "kalendris",
+          "names335": [
+            "Magister Kalendris"
+          ]
+        },
+        {
+          "id": 2794,
+          "npcs": [
+            11467
+          ],
+          "name": "tsuzee",
+          "required": null,
+          "token": "tsuzee",
+          "names335": [
+            "Tsu'zee"
+          ]
+        },
+        {
+          "id": 349,
+          "npcs": [
+            11496
+          ],
+          "name": "Immol'thar",
+          "required": null,
+          "token": "immolthar",
+          "names335": [
+            "Immol'thar"
+          ]
+        },
+        {
+          "id": 361,
+          "npcs": [
+            11486
+          ],
+          "name": "Prince Tortheldrin",
+          "required": null,
+          "token": "tortheldrin",
+          "names335": [
+            "Prince Tortheldrin"
+          ]
+        },
+        {
+          "id": 2793,
+          "npcs": [
+            14506
+          ],
+          "name": "helnurath",
+          "required": null,
+          "token": "helnurath",
+          "names335": [
+            "Lord Hel'nurath"
+          ]
+        },
+        {
+          "id": 362,
+          "npcs": [
+            14326
+          ],
+          "name": "Guard Mol'dar",
+          "required": null,
+          "token": "moldar",
+          "names335": [
+            "Guard Mol'dar"
+          ]
+        },
+        {
+          "id": 363,
+          "npcs": [
+            14322
+          ],
+          "name": "Топотун Криг",
+          "required": null,
+          "token": "kreeg",
+          "names335": [
+            "Stomper Kreeg"
+          ]
+        },
+        {
+          "id": 364,
+          "npcs": [
+            14321
+          ],
+          "name": "Guard Fengus",
+          "required": null,
+          "token": "fengus",
+          "names335": [
+            "Guard Fengus"
+          ]
+        },
+        {
+          "id": 365,
+          "npcs": [
+            14323
+          ],
+          "name": "Guard Slip'kik",
+          "required": null,
+          "token": "slipkik",
+          "names335": [
+            "Guard Slip'kik"
+          ]
+        },
+        {
+          "id": 366,
+          "npcs": [
+            14325
+          ],
+          "name": "Капитан Давигром",
+          "required": null,
+          "token": "kromcrush",
+          "names335": [
+            "Captain Kromcrush"
+          ]
+        },
+        {
+          "id": 367,
+          "npcs": [
+            14324
+          ],
+          "name": "Cho'Rush the Observer",
+          "required": null,
+          "token": "chorush",
+          "names335": [
+            "Cho'Rush the Observer"
+          ]
+        },
+        {
+          "id": 368,
+          "npcs": [
+            11501
+          ],
+          "name": "King Gordok",
+          "required": null,
+          "token": "gordok",
+          "names335": [
+            "King Gordok"
+          ]
+        }
+      ]
+    }
+  },
+  "excluded": {
+    "3065": "Чертоги танов",
+    "3001": "Терраса Создателя",
+    "2999": "Руины Лордерона",
+    "2998": "Раскопки: Болотина",
+    "2994": "Тюрьма Алькац",
+    "2974": "Крепость Черночревов",
+    "2970": "Затонувший город",
+    "2959": "Даларан",
+    "3039": "Крепость Крол'док"
+  },
+  "recordings": 669,
+  "bytes": 55182434
+}

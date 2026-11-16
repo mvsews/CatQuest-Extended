@@ -1,0 +1,15 @@
+{
+  "metrics_version": 2,
+  "glyph_offsets": [
+    404,
+    408,
+    412,
+    416
+  ],
+  "hmtx_checksum_offset": 112,
+  "hmtx_offset": 400,
+  "hmtx_length": 28,
+  "head_adjustment_offset": 196,
+  "units_per_em": 2048,
+  "bytes": 1588
+}

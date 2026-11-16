@@ -1,0 +1,17 @@
+Dungeon narrator: 19 original classic instances compatible with WoW 3.3.5a
+
+Original author: Cathey / daniilcathey (CatQuest).
+Source: CatQuest Books & Lore 1.2.0, file 9568747:
+https://www.curseforge.com/wow/addons/catquest-books/files/9568747
+
+Original texts, subtitles and 669 unchanged audio recordings are used under
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International:
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+Changes: selected 19 compatible scenarios; converted trigger IDs to
+WoW 3.3.5a creature IDs; changed the Lua data structure and file paths.
+The selected scenario data in DungeonData.lua retains CC BY-NC-SA 4.0.
+Audio is distributed free of charge as part of this non-commercial port.
+Names, game text and Warcraft setting belong to Blizzard Entertainment.
+No endorsement by the original author or Blizzard is implied.

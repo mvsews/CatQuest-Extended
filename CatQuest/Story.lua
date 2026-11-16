@@ -165,10 +165,14 @@ end
 -- Replay the voiced, completed quests of a chapter in story order.
 function ns.StoryListen(entry)
     local queued = 0
-    local voicedHere = ns.VoiceLocale() == "ruRU"
     for _, questID in ipairs(entry.quests) do
-        if ns.StoryCompleted(questID) and voicedHere and data.voiced[questID] then
-            if ns.PlayQuest(questID, "quest", true, false, ns.StoryTitle(questID)) then
+        if ns.StoryCompleted(questID) and ns.CanPlayQuest(questID, "quest") then
+            -- Use the chapter quest's giver, rather than an unrelated NPC
+            -- whose dialogue happens to be open while replay is requested.
+            local npcID = CatQuest335QuestGiver and CatQuest335QuestGiver[questID]
+            -- A chapter is one ordered playlist, even when individual new
+            -- dialogues are configured to interrupt the current narration.
+            if ns.PlayQuest(questID, "quest", true, false, ns.StoryTitle(questID), npcID, true) then
                 queued = queued + 1
             end
         end
@@ -180,11 +184,8 @@ function ns.StoryListen(entry)
 end
 
 function ns.StoryCanListen(entry)
-    if ns.VoiceLocale() ~= "ruRU" then
-        return false
-    end
     for _, questID in ipairs(entry.quests) do
-        if ns.StoryCompleted(questID) and data.voiced[questID] then
+        if ns.StoryCompleted(questID) and ns.CanPlayQuest(questID, "quest") then
             return true
         end
     end
@@ -247,16 +248,17 @@ for i = 1, ROWS do
     row:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -82 - (i - 1) * 32)
     row.count = row:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     row.count:SetPoint("LEFT", row, "LEFT", 0, 0)
-    row.count:SetWidth(54)
+    row.count:SetWidth(38)
     row.count:SetJustifyH("LEFT")
     row.score = row:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    row.score:SetPoint("LEFT", row.count, "RIGHT", 4, 0)
-    row.score:SetWidth(44)
+    row.score:SetPoint("LEFT", row, "LEFT", 42, 0)
+    row.score:SetWidth(48)
     row.score:SetJustifyH("LEFT")
     row.score:SetTextColor(1, 0.82, 0)
     row.name = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-    row.name:SetPoint("LEFT", row.score, "RIGHT", 4, 0)
-    row.name:SetPoint("RIGHT", row, "RIGHT", -88, 0)
+    row.name:SetPoint("LEFT", row, "LEFT", 96, 0)
+    row.name:SetPoint("RIGHT", row, "RIGHT", -92, 0)
+    row.name:SetHeight(26)
     row.name:SetJustifyH("LEFT")
     row.listen = CreateFrame("Button", "CatQuest335StoryListen" .. i, row, "UIPanelButtonTemplate")
     row.listen:SetWidth(84)
@@ -344,7 +346,7 @@ function ns.StoryRefresh()
             local progress = entry.done .. "/" .. entry.total
             row.count:SetText(progress)
             if score then
-                row.score:SetText("★" .. tostring(score))
+                row.score:SetText(tostring(score) .. "/100")
             else
                 row.score:SetText("")
             end

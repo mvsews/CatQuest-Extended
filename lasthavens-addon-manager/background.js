@@ -5,6 +5,8 @@ import {
   sendTelemetry,
 } from "./telemetry.js";
 import { errorOf, recordError, sendErrors } from "./reports.js";
+import { reportQuestVote, flushQuestVotes } from "./quest-ratings.js";
+import { receiveContactPart, flushContactMessages } from "./contact.js";
 
 // Errors of this service worker go to the error report too (reports.js).
 self.addEventListener("error", (e) => recordError({ source: "background", message: `${e.message} ${e.filename || ""}:${e.lineno || ""}` }));
@@ -22,7 +24,9 @@ const VOICE_LOCALES = new Set([
   "ruRU", "enUS", "zhCN", "zhTW", "deDE", "frFR",
   "esES", "esMX", "ptBR", "koKR", "itIT",
 ]);
-const PROBE_LIMIT = 200;
+// Keep diagnostics useful without letting a noisy game read stream turn into
+// a large session-storage rewrite on every frame.
+const PROBE_LIMIT = 300;
 const PLAY_PAGE = "https://lasthavens.com/play";
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
@@ -36,12 +40,19 @@ const runUpdates = (force) =>
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   if (reason === "install") chrome.runtime.openOptionsPage();
   chrome.alarms.create("updates", { periodInMinutes: 60 });
+  chrome.alarms.create("quest-votes", { periodInMinutes: 5 });
+  await flushQuestVotes();
+  await flushContactMessages();
   await runUpdates(true);
 });
 chrome.runtime.onStartup.addListener(() => runUpdates(false));
+chrome.runtime.onStartup.addListener(() => flushQuestVotes());
+chrome.runtime.onStartup.addListener(() => flushContactMessages());
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "updates") runUpdates(false);
   if (alarm.name === "error-report") sendErrors();
+  if (alarm.name === "quest-votes") flushQuestVotes();
+  if (alarm.name === "quest-votes") flushContactMessages();
 });
 
 function base64(bytes) {
@@ -150,26 +161,39 @@ async function fetchVoiceIndex(demand) {
 
 // Session storage writes are serialized so probe events are never lost.
 let probeWrite = Promise.resolve();
+let probeBatch = [], probeTimer = null, probeSequence = 0;
 function appendProbe(event) {
+  event = {...event, seq:++probeSequence, at:event?.at || Date.now(), ext:chrome.runtime.getManifest().version};
   countProbe(event);
   const error = errorOf(event);
   if (error) recordError(error, event);
   // The game ordered a track: tell the server who (telemetry.js reportOrder).
   if (event?.type === "demand") reportOrder({ quest: event.quest, kind: event.kind, locale: event.locale });
-  probeWrite = probeWrite
+  probeBatch.push(event);
+  if (probeBatch.length > PROBE_LIMIT) probeBatch.shift();
+  if (probeTimer) return;
+  probeTimer = setTimeout(() => {
+    probeTimer = null;
+    const batch = probeBatch; probeBatch = [];
+    probeWrite = probeWrite
     .then(async () => {
       const { probeLog = [] } = await chrome.storage.session.get("probeLog");
-      probeLog.push(event);
       await chrome.storage.session.set({
-        probeLog: probeLog.slice(-PROBE_LIMIT),
+        probeLog: probeLog.concat(batch).slice(-PROBE_LIMIT),
       });
     })
     .catch(() => {});
+  }, 1000);
 }
+const statusSeen = new Map();
 
 chrome.runtime.onMessage.addListener((m, sender, sendResponse) => {
   const senderUrl = sender.tab?.url || sender.url || "";
   const fromGame = senderUrl.startsWith(PLAY_PAGE);
+  if (m.kind === "contact-part" && fromGame) {
+    receiveContactPart(m).then((ok) => sendResponse({ ok })).catch(() => sendResponse({ ok: false }));
+    return true;
+  }
 
   if (m.kind === "diagnostic" && fromGame) {
     chrome.storage.session.set({ lastStatus: m.status });
@@ -178,6 +202,10 @@ chrome.runtime.onMessage.addListener((m, sender, sendResponse) => {
   if (m.kind === "feedback" && fromGame) {
     reportFeedback(m);
     return;
+  }
+  if (m.kind === "quest-vote" && fromGame) {
+    reportQuestVote(m).then((ok) => sendResponse({ ok })).catch(() => sendResponse({ ok: false }));
+    return true;
   }
   if (m.kind === "character" && fromGame) {
     reportCharacter(m);
@@ -195,6 +223,12 @@ chrome.runtime.onMessage.addListener((m, sender, sendResponse) => {
   }
   if (m.kind === "addon-settings-save" && fromGame) {
     saveAddonSettings(m.settings)
+      .then((ok) => sendResponse({ ok }))
+      .catch(() => sendResponse({ ok: false }));
+    return true;
+  }
+  if (m.kind === "addon-settings-import" && fromGame) {
+    saveAddonSettings(m.settings, { fromSnapshot: true })
       .then((ok) => sendResponse({ ok }))
       .catch(() => sendResponse({ ok: false }));
     return true;
@@ -244,10 +278,26 @@ chrome.runtime.onMessage.addListener((m, sender, sendResponse) => {
         return;
       }
     }
-    fetch(url, { cache: "no-store" })
-      .then((r) => r.json())
-      .then(sendResponse)
-      .catch(() => sendResponse(null));
+    const started = Date.now();
+    fetch(url, { cache: "no-store", signal:AbortSignal.timeout(15000) })
+      .then(async (r) => {
+        const answer = await r.json();
+        const state = String(answer.status || answer.state || "unknown");
+        const key = `${sender.tab?.id}|${url.pathname}|${m.locale || ""}`;
+        const signature = `${r.status}|${state}`;
+        if (statusSeen.get(key) !== signature) {
+          statusSeen.set(key,signature);
+          if(statusSeen.size>200) statusSeen.delete(statusSeen.keys().next().value);
+          appendProbe({type:"server-status",ctx:"background",run:m.run,quest:m.quest,kind:m.type,locale:m.locale,
+            status:r.status,stage:state,path:url.pathname,ms:Date.now()-started,ok:r.ok});
+        }
+        sendResponse(answer);
+      })
+      .catch((error) => {
+        appendProbe({type:"server-status",ctx:"background",run:m.run,quest:m.quest,kind:m.type,locale:m.locale,
+          status:0,ok:false,error:String(error),ms:Date.now()-started});
+        sendResponse(null);
+      });
     return true;
   }
   if (m.kind === "check-updates") {
@@ -282,26 +332,46 @@ chrome.runtime.onMessage.addListener((m, sender, sendResponse) => {
     return;
   }
 
-  fetch(url, { cache: "no-store" })
+  const started = Date.now();
+  const diagnostic = {ctx:"background",run:String(m.run || "").slice(0,64),request:String(m.request || "").slice(0,100),
+    path:url.pathname,quest:Number(url.pathname.match(/\/voice\/(\d+)\//)?.[1]) || 0,
+    kind:url.pathname.match(/\/(DETAIL|PROGRESS|COMPLETE)$/)?.[1] || (BOOK_PATH.test(url.pathname)?"BOOK":"GOSSIP"),
+    locale:url.searchParams.get("locale") || ""};
+  appendProbe({...diagnostic,type:"backend-request"});
+  fetch(url, { cache: "no-store", signal:AbortSignal.timeout(95000) })
     .then(async (response) => {
       const contentType = response.headers.get("Content-Type") || "";
+      appendProbe({...diagnostic,type:"backend-headers",status:response.status,ms:Date.now()-started,detail:contentType});
       const audio =
         response.status === 200 &&
         /^(audio\/|application\/ogg)/i.test(contentType);
       // A 202 "still generating" JSON or an error page is never sent as audio.
-      const body64 = audio
-        ? base64(new Uint8Array(await response.arrayBuffer()))
-        : "";
+      const bytes = audio ? new Uint8Array(await response.arrayBuffer()) : null;
+      const body64 = bytes ? base64(bytes) : "";
+      let detail = "";
+      let terminal = false;
+      let retryAfter = Number(response.headers.get("Retry-After") || 0);
+      if (!audio && /json/i.test(contentType)) {
+        const body = await response.json().catch(() => ({}));
+        detail = [body.status,body.error,body.message,body.reason].filter(v=>typeof v === "string").join("; ").slice(0,300);
+        terminal = body.status === "missing_text";
+        if (!retryAfter && Number.isFinite(Number(body.retry_after))) retryAfter = Number(body.retry_after);
+      }
+      appendProbe({...diagnostic,type:"backend-body",status:response.status,ms:Date.now()-started,
+        bytes:bytes?.length || 0,ok:audio,detail});
       sendResponse({
         ok: audio,
         status: response.status,
         contentType,
         body64,
-        error: audio ? "" : `HTTP ${response.status} ${contentType}`.trim(),
+        terminal,
+        retryAfter: Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(3600, retryAfter) : 0,
+        error: audio ? "" : `HTTP ${response.status} ${contentType} ${detail}`.trim(),
       });
     })
-    .catch((error) =>
-      sendResponse({ ok: false, status: 502, error: String(error) }),
-    );
+    .catch((error) => {
+      appendProbe({...diagnostic,type:"backend-error",status:0,ok:false,error:String(error),ms:Date.now()-started});
+      sendResponse({ ok: false, status: 502, error: String(error) });
+    });
   return true;
 });

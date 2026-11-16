@@ -107,6 +107,9 @@
   "errorToc": {
     "message": "Отсутствует основной Folder/Folder.toc."
   },
+  "errorExtensionZip": {
+    "message": "Выбран ZIP Chrome-расширения. Для импорта WoW выберите архив CatQuest-*.zip; CatQuest-Lasthavens-*.zip устанавливается в Chrome отдельно."
+  },
   "errorUnsupported": {
     "message": "Неподдерживаемый ZIP: шифрование, ZIP64, несколько томов, ссылки или метод сжатия."
   },

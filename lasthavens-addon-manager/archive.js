@@ -146,7 +146,15 @@ export async function importZip(bytes) {
     if (tocs.length === 1)
       roots.push({ root: "", folder: tocs[0].slice(0, -4), toc: tocs[0] });
   }
-  if (!roots.length) throw new AddonError("errorToc");
+  if (!roots.length) {
+    // The extension ZIP is intentionally not a WoW addon and has no TOC.
+    // Make the common mix-up actionable instead of showing the generic
+    // Folder/Folder.toc message.
+    const names = [...files.keys()].map((p) => p.toLowerCase());
+    if (names.some((p) => p.endsWith("/manifest.json") || p === "manifest.json"))
+      throw new AddonError("errorExtensionZip");
+    throw new AddonError("errorToc");
+  }
   // Embedded libraries belong to their parent addon, not separate addons.
   const topRoots = roots.filter(
     (r) =>

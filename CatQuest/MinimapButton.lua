@@ -4,7 +4,7 @@ CatQuest335 = ns
 local L = ns.L
 
 -- Scroll button on the minimap edge, as in the original CatQuest:
--- left click replays the lore of this place, right click opens settings.
+-- left click replays place lore; right click opens the addon menu.
 -- Hold Shift while dragging it around the minimap; the angle is saved.
 if not Minimap then
     return
@@ -64,6 +64,15 @@ local function InitializeMenu(_, level)
         end
     end
     UIDropDownMenu_AddButton(options, level)
+
+    local contact = UIDropDownMenu_CreateInfo()
+    contact.text = L.CONTACT_TITLE
+    contact.notCheckable = true
+    contact.func = function()
+        if CloseDropDownMenus then CloseDropDownMenus() end
+        if ns.OpenContact then ns.OpenContact() end
+    end
+    UIDropDownMenu_AddButton(contact, level)
 end
 UIDropDownMenu_Initialize(menu, InitializeMenu, "MENU")
 

@@ -1,7 +1,7 @@
 local addonName = ...
 local ns = CatQuest335 or {}
 CatQuest335 = ns
-ns.VERSION = "0.10.51"
+ns.VERSION = "0.10.112"
 local L = ns.L
 
 local eventFrame = CreateFrame("Frame", "CatQuest335Events", UIParent)
@@ -16,11 +16,14 @@ local defaults = {
     gossipAuto = true, -- read the NPC greeting when the gossip window opens
     npcLore = true, -- read source-backed history when a named NPC is targeted
     npcLoreTrigger = "target", -- first target: after 1.5 s; kill: after combat; manual
+    questRatings = true,
+    questVotes = {},
+    questVotePending = {},
     greetDelay = true, -- let the game's standard NPC greeting finish first
     showSubtitle = true,
-    -- SFX, not Master: Stop silences the SFX channel for a moment, which
-    -- leaves music and ambience untouched.
-    volumeChannel = "SFX",
+    -- Music is the default because it has a reliable StopMusic API. SFX is
+    -- available as an explicit one-shot option.
+    volumeChannel = "Music",
     trackGap = 2,        -- pause between queued tracks, seconds
     books = false,       -- read books and notes as soon as they open; otherwise by the Read button
     turnin = true,       -- read the turn-in text on the reward screen
@@ -36,6 +39,7 @@ local defaults = {
     keepInBackground = true, -- keep sound on when the game is in the background
     compact = false,     -- compact speech window: title and progress only
     scale = 1,           -- speech window scale
+    headStrata = "below-bags", -- layer relative to the game's bag windows
     minimap = true,      -- scroll button on the minimap
     -- Start in the upper-left quadrant; the old 200-degree default commonly
     -- overlapped other minimap-button addons.
@@ -43,6 +47,7 @@ local defaults = {
     minimapLocked = false, -- do not move the minimap button by dragging
     storyQuestTitles = false, -- show the first quest title before a chapter starts
     places = true,       -- tell the lore of a place on the first visit
+    dungeonMaster = true, -- dungeon narrator pilot
     placesHeard = {},
     pack = "auto",
     history = {},
@@ -50,11 +55,15 @@ local defaults = {
     remoteEnabled = true,
     remoteDuration = 90, -- upper bound for an estimated server track, seconds
     pendingTimeout = 300, -- how long a requested track may take before giving up, s
+    remoteAutoRetry = true, -- retry a missing server track in the background
+    requestPanel = false, -- show the browser's on-demand voice status panel
+    voiceLog = {}, -- compact request/playback diagnostics, kept in SavedVariables
     remoteRetry = 0.5,   -- PlaySoundFile retry interval while the bridge fetches audio
     language = "auto",   -- voice language: "auto" follows the client, or a locale such as "zhCN"
     gossipAudioSlot = 0,  -- rotating virtual files for NPC gossip speech
     gossipMarkerSlot = 0, -- rotating marker slots used to send gossip text
     npcLoreHeard = {}, -- NPCID:locale -> true; source-backed history is heard once
+    gossipHeard = {}, -- NPC + locale + universal paragraph; completed playback only
 }
 
 local function MergeDefaults(target, source)
@@ -75,13 +84,15 @@ end
 CatQuest335DB = CatQuest335DB or {}
 local savedMinimapAngle = tonumber(CatQuest335DB.minimapAngle)
 local savedMinimapPositionVersion = tonumber(CatQuest335DB.minimapPositionVersion)
--- On an online first install, restore the safe user-facing settings supplied
--- by the authorized extension. Existing SavedVariables always win: replacing
--- an addon must never reset a player's local choices.
+-- On an online first install, restore the settings supplied by the extension.
+-- The browser game may return an older SavedVariables snapshot after F5, so
+-- its stored speech-window scale, position and sound channel take priority.
 local hadSavedSettings = next(CatQuest335DB) ~= nil
-if not CatQuest335_LocalMode and not hadSavedSettings and type(CatQuest335_BridgeSettings) == "table" then
+if not CatQuest335_LocalMode and type(CatQuest335_BridgeSettings) == "table" then
     for key, value in pairs(CatQuest335_BridgeSettings) do
-        if defaults[key] ~= nil and type(defaults[key]) == type(value) then
+        if (not hadSavedSettings or key == "scale" or key == "volumeChannel"
+            or key == "headStrata" or key == "questRatings")
+            and defaults[key] ~= nil and type(defaults[key]) == type(value) then
             CatQuest335DB[key] = value
         elseif key == "headPosition" and type(value) == "table" then
             CatQuest335DB[key] = {
@@ -120,7 +131,35 @@ if (CatQuest335DB.schema or 0) < 5 then
     CatQuest335DB.books = false
     CatQuest335DB.schema = 5
 end
+-- 0.11.0: make the default one-shot channel explicit. Existing installs that
+-- still have the old default Music are moved to SFX; a later manual choice of
+-- Music is preserved because this migration runs only once.
+if (CatQuest335DB.schema or 0) < 6 then
+    if CatQuest335DB.volumeChannel == nil or CatQuest335DB.volumeChannel == "Music" then
+        CatQuest335DB.volumeChannel = "SFX"
+    end
+    CatQuest335DB.schema = 6
+end
+-- 0.11.1: restore Music as the default channel. The previous release moved
+-- the old default to SFX; migrate that automatic choice back once.
+if (CatQuest335DB.schema or 0) < 7 then
+    if CatQuest335DB.volumeChannel == "SFX" then
+        CatQuest335DB.volumeChannel = "Music"
+    end
+    CatQuest335DB.schema = 7
+end
+-- 0.11.2: automatically check on-demand requests until the server track is
+-- ready, so accepting a quest needs no second manual click.
+if (CatQuest335DB.schema or 0) < 8 then
+    CatQuest335DB.remoteAutoRetry = true
+    CatQuest335DB.schema = 8
+end
 ns.db = CatQuest335DB
+if type(CatQuest335_BridgeGossipHeard) == "table" then
+    for key, value in pairs(CatQuest335_BridgeGossipHeard) do
+        if value == true and type(key) == "string" and #key < 100 then ns.db.gossipHeard[key] = true end
+    end
+end
 
 ns.state = {
     recent = {}, -- "questID:kind" -> GetTime() when the quest dialog voiced it
@@ -144,6 +183,46 @@ local function Print(message)
 end
 
 ns.Print = Print
+
+local VOICE_LOG_LIMIT = 300
+local function VoiceLog(item, status, detail)
+    if not item then return end
+    local log = ns.db.voiceLog
+    if type(log) ~= "table" then
+        log = {}
+        ns.db.voiceLog = log
+    end
+    log[#log + 1] = {
+        at = time and time() or 0,
+        uptime = GetTime(),
+        version = ns.VERSION,
+        page = type(CatQuest335_BridgeReady) == "table" and CatQuest335_BridgeReady.contactPage or nil,
+        status = tostring(status or ""),
+        questID = tonumber(item.questID) or 0,
+        kind = tostring(item.kind or ""),
+        title = tostring(item.title or ""),
+        detail = tostring(detail or ""):sub(1, 140),
+        file = tostring(item.file or ""):sub(1, 180),
+        slot = item.prefetchSlot,
+        key = tostring(item.key or ""):sub(1, 180),
+        channel = item.playChannel or ns.db.volumeChannel,
+        duration = item.duration,
+        attempt = item.readySignalAttempts,
+        requestedFont = item.readyFontRequested,
+        observedFont = item.readyFontObserved,
+        fontUnit = item.readyFontUnit,
+        fontMetrics = item.readyFontMetrics,
+        fontWidths = item.readyFontWidths,
+        verified = item.bridgeVerified and true or false,
+        queue = #ns.state.queue,
+        pending = #ns.state.pending,
+    }
+    while #log > VOICE_LOG_LIMIT do
+        table.remove(log, 1)
+    end
+    if ns.SendDiagnosticStage then pcall(ns.SendDiagnosticStage, item, status) end
+end
+ns.VoiceLog = VoiceLog
 
 function ns.VoiceLocale()
     if ns.db.language and ns.db.language ~= "auto" then
@@ -287,6 +366,8 @@ local function CreatureIDFromUnit(unit)
     end
 end
 
+ns.CreatureIDFromUnit = CreatureIDFromUnit
+
 local function QuestNpcID(questID, kind, explicitID)
     local id = tonumber(explicitID) or CreatureIDFromUnit("npc")
     if id and id > 0 then
@@ -317,11 +398,34 @@ local function GetTrackData(questID, kind, npcID)
             end
         end
         local cues, genderSuffix = SelectVariant(track)
-        if cues then
+        -- Empty 0.1-second entries are manifest placeholders, not local audio.
+        if cues and (#cues > 0 or (tonumber(track.d) or 0) > 0.1) then
             return quest, candidate.folder, track, cues, genderSuffix, npcSuffix, npcID
         end
     end
     return nil, nil, nil, nil, nil, "", npcID
+end
+
+-- The story window and playback use the same pack selection. Server tracks
+-- are requested on demand; their IDs need not occur in the old Codex index.
+function ns.CanPlayQuest(questID, kind)
+    questID = tonumber(questID)
+    if not questID then return false end
+    kind = kind or "quest"
+    local npcID = kind == "turnin" and CatQuest335QuestFinisher and CatQuest335QuestFinisher[questID]
+        or CatQuest335QuestGiver and CatQuest335QuestGiver[questID]
+    local _, _, _, cues = GetTrackData(questID, kind, npcID)
+    if cues then return true end
+    if not ns.db.remoteEnabled or CatQuest335_LocalMode then return false end
+    local ready = CatQuest335_BridgeReady
+    if type(ready) == "table" and ready.mode == "local" then
+        if CompanionBridge() then return true end
+        local info = BridgeInfo(ns.VoiceLocale())
+        local bits = info and tonumber(info.q[questID]) or 0
+        local flag = kind == "turnin" and 2 or 1
+        return math.floor(bits / flag) % 2 == 1
+    end
+    return true
 end
 
 local function Utf8Len(text)
@@ -517,22 +621,20 @@ local function BuildItem(questID, kind, text, titleOverride, npcID)
     local relativePath = track.p or ("Sounds\\q\\" .. fileName)
     relativePath = string.gsub(relativePath, "/", "\\")
 
-    -- The client can return "" for the title; fall back to the quest log.
+    -- Closed NPC dialogs keep their last GetTitleText value. Prefer the
+    -- quest log's ID-matched title rather than the last NPC quest's title.
     local title = titleOverride or quest.title
-    if (not title or title == "") and GetTitleText then
-        title = GetTitleText()
-    end
     if (not title or title == "") and GetNumQuestLogEntries and GetQuestLogTitle then
         for index = 1, GetNumQuestLogEntries() do
             -- Returns can contain nil (quest tag, completion), so # is unreliable.
-            local count = select("#", GetQuestLogTitle(index))
             local values = { GetQuestLogTitle(index) }
-            for i = 8, count do
-                if values[i] == questID then
-                    title = values[1]
-                end
+            if values[9] == questID then
+                title = values[1]
             end
         end
+    end
+    if (not title or title == "") and ns.state.dialogQuest == questID and GetTitleText then
+        title = GetTitleText()
     end
     if title == "" then
         title = nil
@@ -582,19 +684,19 @@ local function RememberMissing(questID, kind)
     end
 end
 
+local function SoundChannel()
+    -- File-based bridge markers need a sound channel even in Music mode.
+    return ns.db.volumeChannel == "Music" and "SFX" or (ns.db.volumeChannel or "SFX")
+end
+
 local function CallPlaySound(path)
-    local channel = ns.db.volumeChannel or "Master"
+    local channel = SoundChannel()
     local ok, result = pcall(PlaySoundFile, path, channel)
     -- The original 3.3.5a API may return nothing even when playback starts.
     -- Local pack tracks were selected from its index; nil is not a reason to
     -- play the same file a second time on SFX.
     if ok and result ~= false then
         return channel
-    end
-
-    local fallbackOK, fallbackResult = pcall(PlaySoundFile, path, "SFX")
-    if fallbackOK and fallbackResult ~= false then
-        return "SFX"
     end
 
     return nil
@@ -610,6 +712,50 @@ local function SafeGetCVar(name)
     end
 end
 
+local function RestoreMusicVoice()
+    ns.state.musicPlaying = nil
+    local saved = ns.db.musicSaved
+    ns.db.musicSaved = nil
+    if saved and SetCVar then
+        for name, value in pairs(saved) do
+            pcall(SetCVar, name, value)
+        end
+    end
+end
+
+local function StopMusicVoice()
+    if not ns.state.musicPlaying then
+        return
+    end
+    -- In 3.3.5 StopMusic fades scripted music. Replacing it first cuts the
+    -- voice immediately; this deliberately absent path is never played.
+    pcall(PlayMusic, "Interface\\AddOns\\CatQuest\\Sounds\\stop-voice.wav")
+    pcall(StopMusic)
+    RestoreMusicVoice()
+end
+
+local function CallPlayMusic(path)
+    if not PlayMusic or not StopMusic or not GetCVar or not SetCVar then
+        return nil
+    end
+    ns.RestoreSoundTweaks()
+    ns.db.musicSaved = {
+        Sound_EnableMusic = SafeGetCVar("Sound_EnableMusic") or "1",
+        Sound_MusicVolume = SafeGetCVar("Sound_MusicVolume") or "1",
+    }
+    -- Music may be disabled or turned down by the player. Restore both values
+    -- after this voice, including when /reload happens during playback.
+    pcall(SetCVar, "Sound_EnableMusic", "1")
+    pcall(SetCVar, "Sound_MusicVolume", "1")
+    local ok = pcall(PlayMusic, path)
+    if not ok then
+        RestoreMusicVoice()
+        return nil
+    end
+    ns.state.musicPlaying = true
+    return "Music"
+end
+
 local function ApplySoundTweaks()
     if ns.state.tweaked or not GetCVar or not SetCVar then
         return
@@ -618,8 +764,11 @@ local function ApplySoundTweaks()
     local saved = {}
     local duck = tonumber(ns.db.duck) or 0
     if duck > 0 then
-        local cvars = { "Sound_MusicVolume" }
-        if ns.db.volumeChannel ~= "Ambience" then
+        local cvars = {}
+        if not (ns.state.active and ns.state.active.playChannel == "Music") then
+            cvars[#cvars + 1] = "Sound_MusicVolume"
+        end
+        if not (ns.state.active and ns.state.active.playChannel == "Ambience") then
             cvars[#cvars + 1] = "Sound_AmbienceVolume"
         end
         for i = 1, #cvars do
@@ -663,10 +812,14 @@ local function BeginPlaying(item)
     item.cueIndex = 0
     ns.state.active = item
     ns.state.lastAudioChannel = item.playChannel or ns.db.volumeChannel or "SFX"
+    if item.playChannel == "Music" and (tonumber(item.duration) or 0) <= 0 then
+        item.duration = EstimateDuration(item.text)
+    end
     ns.state.demandShown = nil
     ns.state.lastItem = item
     ns.state.lastPlayedKey = item.key
     ns.state.lastPlayedAt = item.startedAt
+    VoiceLog(item, "playing", item.bridgeVerified and "server-ready" or item.companion and "companion" or "local/manifest")
     Remember(item)
     ApplySoundTweaks()
 
@@ -690,23 +843,293 @@ end
 
 -- A server track may not exist yet: the first read asks the browser bridge
 -- to fetch it, later reads find it in the bridge cache. Retry until timeout.
--- Tracks the server is still voicing wait here instead of blocking the queue.
--- When nothing plays, one of them is tried per second; the first that has
--- arrived starts by itself, so the player never has to ask twice.
+-- The first loading track keeps its place in the queue. Later tracks must
+-- not issue playback reads until it starts or times out.
 ns.state.pending = ns.state.pending or {}
 
-local function TryPlay(item)
-    -- One call per attempt: every miss is a file read that reaches the bridge.
-    local ok, result = pcall(PlaySoundFile, item.file, ns.db.volumeChannel or "Master")
+local function ReadyFontEnabled(item)
     local ready = CatQuest335_BridgeReady
-    if type(ready) == "table" and ready.mode == "local" then
+    return item.demandAudio and type(ready) == "table" and ready.fontReady == 1
+        and ready.mode ~= "local"
+end
+
+local function PrefetchSignalEnabled(item)
+    local ready = CatQuest335_BridgeReady
+    return item.readySignalPath and type(ready) == "table"
+        and (tonumber(ready.prefetchSignal) or 0) >= 1 and ready.fontReady == 1 and ready.mode ~= "local"
+end
+
+-- The last glyph can contribute its ink bounds instead of its hmtx advance.
+-- Keep that last glyph identical and calibrate two fixed advances (M=1em,
+-- N=10em). Subtraction removes both the terminal bounds and fixed padding.
+local function MeasureReadyDuration(item, measure)
+    local widths = {}
+    item.readySignalError = nil
+    item.readyFontUnit, item.readyFontWidths = nil, nil
+    item.readyFontMetrics = tonumber(CatQuest335_BridgeReady and CatQuest335_BridgeReady.readyMetrics) or 1
+    local function width(text)
+        local ok, observed = pcall(function() measure:SetText(text); return measure:GetStringWidth() end)
+        local result = ok and tonumber(observed) or nil
+        if not result or result ~= result or result == math.huge or result < 0 then
+            item.readySignalError = "width(" .. text .. ") failed: " .. tostring(observed)
+            return nil
+        end
+        widths[#widths+1] = text .. ":" .. string.format("%.4f", result)
+        return result
+    end
+    local function fail(reason)
+        item.readyFontWidths = table.concat(widths, " ")
+        item.readySignalError = item.readySignalError or reason
+        VoiceLog(item, "font-invalid", item.readySignalError)
+        return nil
+    end
+    local unit, low, span
+    if item.readyFontMetrics >= 2 then
+        -- M alone is retained in diagnostics to identify terminal-ink widths.
+        if not width("M") then return fail("missing terminal width") end
+        low = width("MM")
+        local high = width("NM")
+        if not low or not high then return fail("missing calibration") end
+        span = high-low
+        if span <= 0 then return fail("calibration span <= 0") end
+        unit = span/9
+    else
+        unit = width("M")
+    end
+    item.readyFontUnit = unit
+    if not unit or unit <= 0 then return fail("calibration unit <= 0") end
+    local deciseconds = 0
+    for _, char in ipairs({"A","B","C","D"}) do
+        local measured = width(item.readyFontMetrics >= 2 and (char .. "M") or char)
+        if not measured then return fail("missing digit " .. char) end
+        local raw = item.readyFontMetrics >= 2 and ((measured-low)/unit) or (measured/unit-1)
+        local digit = math.floor(raw+0.5)
+        if digit < 0 or digit > 9 or math.abs(raw-digit) > 0.20 then
+            return fail("invalid digit " .. char .. "=" .. string.format("%.4f",raw))
+        end
+        deciseconds = deciseconds*10+digit
+    end
+    item.readyFontWidths = table.concat(widths, " ")
+    if deciseconds <= 0 then
+        if item.readyFontMetrics >= 2 and CatQuest335_BridgeReady.waitingFont == 1 then
+            VoiceLog(item, "font-waiting", "локальный сигнал: аудио ещё не загружено")
+            return nil
+        end
+        return fail("decoded duration is zero")
+    end
+    return deciseconds/10+0.25
+end
+
+local function ConfirmPrefetchSignal(item)
+    if not PrefetchSignalEnabled(item) then return false end
+    if item.prefetchReady then return true end
+    -- Even a local ready-signal font is a synchronous virtual-file lookup in
+    -- the 3.3.5 client. Never probe it from every queue tick: the extension
+    -- fetch is async, so an increasing retry interval avoids render freezes.
+    local now = GetTime()
+    if now < (item.nextReadySignalAt or 0) then return false end
+    -- SetFont performs a synchronous virtual-file lookup in 3.3.5.  The
+    -- bridge has already started the async fetch; probing immediately only
+    -- adds a visible hitch while the file is guaranteed to be absent.  Defer
+    -- the first probe and serialize later probes across all queued items.
+    if not item.readySignalAttempts then
+        item.readySignalAttempts = 1
+        item.nextReadySignalAt = now + 8
+        VoiceLog(item, "font-waiting", "первичная проверка отложена, чтобы не блокировать кадр")
+        return false
+    end
+    if now < (ns.state.readySignalProbeAt or 0) then return false end
+    local attempt = (tonumber(item.readySignalAttempts) or 0) + 1
+    item.readySignalAttempts = attempt
+    local delays = CatQuest335_BridgeReady.waitingFont == 1 and {2,4,8,15,30} or {6,10,18,30,45}
+    item.nextReadySignalAt = now + delays[math.min(attempt, #delays)]
+    ns.state.readySignalProbeAt = now + 8
+    if not ns.state.prefetchSignalFont then
+        ns.state.prefetchSignalFont = CreateFont("CatQuest335PrefetchSignalFont")
+        local frame = CreateFrame("Frame", nil, UIParent)
+        frame:Hide()
+        ns.state.prefetchSignalMeasure = frame:CreateFontString(nil, "OVERLAY")
+        if GameFontNormal then
+            ns.state.prefetchSignalMeasure:SetFontObject(GameFontNormal)
+        end
+    end
+    local font = ns.state.prefetchSignalFont
+    -- Missing files may be cached by the client. Each probe needs a fresh path.
+    local path = item.readySignalPath
+    if (tonumber(CatQuest335_BridgeReady.prefetchSignal) or 0) >= 2 then
+        if attempt > 16 then return false end
+        path = string.gsub(path, "%.ttf$", "\\" .. attempt .. ".ttf")
+    end
+    item.readyFontRequested = path
+    VoiceLog(item, "font-probe", path)
+    local clock = type(debugprofilestop) == "function" and debugprofilestop or function() return GetTime()*1000 end
+    local probeStarted = clock()
+    local ok = pcall(font.SetFont, font, path, 12)
+    local actual = ok and font:GetFont()
+    item.readyFontObserved = actual
+    local function canonical(path) return string.lower((string.gsub(path or "", "\\", "/"))) end
+    if type(actual) ~= "string" or canonical(actual) ~= canonical(path) then
+        VoiceLog(item, "font-missing", string.format("SetFont ok=%s; %.0f ms; observed=%s", tostring(ok), clock()-probeStarted, tostring(actual)))
+        return false
+    end
+    local measure = ns.state.prefetchSignalMeasure
+    -- Bind only after the FontObject actually loaded. Never measure an
+    -- uninitialised FontString: the client raises "Font not set" on SetText.
+    local bound, bindError = pcall(measure.SetFontObject, measure, font)
+    if not bound then
+        item.readySignalError = tostring(bindError)
+        VoiceLog(item, "font-invalid", item.readySignalError)
+        return false
+    end
+    local duration = MeasureReadyDuration(item, measure)
+    if not duration then return false end
+    item.prefetchReady = true
+    item.bridgeVerified = true
+    item.duration = duration
+    VoiceLog(item, "font-ready", string.format("duration=%.2f; unit=%.3f; %.0f ms", item.duration, item.readyFontUnit, clock()-probeStarted))
+    return true
+end
+
+-- SetFont is the only reliable readiness acknowledgement in the browser
+-- client, but on 3.3.5 it performs a synchronous virtual-file read. A
+-- two-second retry therefore freezes the game every time the server is still
+-- generating a track. The first read starts the request immediately; later
+-- reads back off so waiting for a long TTS job does not turn into a stutter.
+local READY_FONT_RETRY_DELAYS = { 8, 15, 30 }
+
+local function ConfirmRemoteReady(item)
+    local ready = CatQuest335_BridgeReady
+    if ns.db.readyFontPage ~= ready.contactPage then
+        ns.db.readyFontPage, ns.db.readyFontAliases, ns.db.readyFontPoll = ready.contactPage, {}, 0
+    end
+    ns.state.verifiedAudio = ns.state.verifiedAudio or {}
+    local verified = ns.state.verifiedAudio[item.file]
+    if verified then
+        item.duration, item.bridgeVerified = verified, true
+        return true
+    end
+    local now = GetTime()
+    if now < (item.nextReadyFontAt or 0) then return false end
+    local attempt = (tonumber(item.readyFontAttempts) or 0) + 1
+    item.readyFontAttempts = attempt
+    local delay = READY_FONT_RETRY_DELAYS[math.min(attempt, #READY_FONT_RETRY_DELAYS)]
+    item.nextReadyFontAt = now + delay
+    local root = "Interface\\AddOns\\CatQuest335_ServerVoices\\ready\\"
+    local path
+    if not item.readyFontPath then
+        local aliases = ns.db.readyFontAliases or {}
+        ns.db.readyFontAliases = aliases
+        local n = (tonumber(aliases[item.file]) or 0) + 1
+        if n > 4 then
+            if not item.readyReloadHinted then Print(L.BRIDGE_NEEDS_RELOAD); item.readyReloadHinted = true end
+            return false
+        end
+        aliases[item.file] = n
+        local slot = string.match(item.file, "\\gossip\\(%d+)%.ogg$")
+        path = slot and (root .. "gossip\\" .. slot .. "\\" .. n .. ".ttf")
+            or (root .. ns.VoiceLocale() .. "\\q\\" .. item.questID .. "_"
+                .. (item.kind == "turnin" and "COMPLETE" or "DETAIL") .. "\\" .. n .. ".ttf")
+        item.readyFontPath = path
+    else
+        local n = (tonumber(ns.db.readyFontPoll) or 0) + 1
+        if n > 2048 then
+            if not item.readyReloadHinted then Print(L.BRIDGE_NEEDS_RELOAD); item.readyReloadHinted = true end
+            return false
+        end
+        ns.db.readyFontPoll = n
+        path = root .. "poll\\" .. n .. ".ttf"
+    end
+    if not ns.state.readyFont then
+        ns.state.readyFont = CreateFont("CatQuest335ReadinessFont")
+        local frame = CreateFrame("Frame", nil, UIParent)
+        frame:Hide()
+        ns.state.readyMeasure = frame:CreateFontString(nil, "OVERLAY")
+        ns.state.readyMeasure:SetFontObject(ns.state.readyFont)
+    end
+    local font, measure = ns.state.readyFont, ns.state.readyMeasure
+    item.readyFontRequested = path
+    local ok = pcall(font.SetFont, font, path, 12)
+    local actual = ok and font:GetFont()
+    item.readyFontObserved = actual
+    local function canonical(p) return string.lower((string.gsub(p or "", "\\", "/"))) end
+    if type(actual) ~= "string" or canonical(actual) ~= canonical(path) then return false end
+    local duration = MeasureReadyDuration(item, measure)
+    if not duration then return false end
+    item.duration, item.bridgeVerified = duration, true
+    ns.state.verifiedAudio[item.file] = item.duration
+    return true
+end
+
+local function TryPlay(item, skipReadiness)
+    local asyncBridge = item.readySignalPath and type(CatQuest335_BridgeReady) == "table"
+        and (tonumber(CatQuest335_BridgeReady.prefetchSignal) or 0) >= 1
+    if not skipReadiness and asyncBridge then
+        if not ConfirmPrefetchSignal(item) then return false end
+    elseif not skipReadiness and ReadyFontEnabled(item) and not ConfirmRemoteReady(item) then
+        return false
+    end
+    if ns.db.volumeChannel == "Music" and (not item.demandAudio or item.bridgeVerified) then
+        VoiceLog(item, "play-call", "PlayMusic; слышимость не подтверждена")
+        item.playChannel = CallPlayMusic(item.file)
+        if not item.playChannel then VoiceLog(item, "play-failed", "PlayMusic failed/unavailable") end
+        if item.playChannel and item.remote and item.demandAudio then
+            VoiceLog(item, "ready", "server confirmed readiness")
+        end
+        return item.playChannel ~= nil
+    end
+    item.playChannel = SoundChannel()
+    -- One call per attempt: every miss is a file read that reaches the bridge.
+    VoiceLog(item, "play-call", "PlaySoundFile " .. SoundChannel())
+    local ok, result = pcall(PlaySoundFile, item.file, SoundChannel())
+    if not ok or result == false then VoiceLog(item, "play-failed", "ok=" .. tostring(ok) .. " result=" .. tostring(result)) end
+    local ready = CatQuest335_BridgeReady
+    if item.bridgeVerified or (type(ready) == "table" and ready.mode == "local") then
         -- The local manifest established that this file is installed; the
         -- original client does not have a useful success return value.
+        if ok and result ~= false and item.remote and item.demandAudio then
+            VoiceLog(item, "ready", "server confirmed readiness")
+        end
         return ok and result ~= false
     end
     -- Lasthavens' virtual filesystem uses a truthy result to signal a ready
     -- read. Preserve that distinction for online retries.
+    if ok and result and item.remote and item.demandAudio then
+        VoiceLog(item, "ready", "server confirmed readiness")
+    end
     return ok and result
+end
+
+-- Request a completion track as soon as a quest is accepted, but do not put
+-- it in the playback queue.  The readiness-font handshake asks the browser
+-- bridge/backend for the file without audible playback; when the quest is
+-- later turned in, the normal COMPLETE path can start immediately.
+function ns.PrefetchQuestCompletion(questID, title, npcID)
+    questID = tonumber(questID)
+    if not questID or not ns.db.enabled or not ns.db.auto or not ns.db.remoteEnabled
+        or CatQuest335_LocalMode then
+        return false
+    end
+    ns.state.prefetch = ns.state.prefetch or {}
+    local key = tostring(questID) .. ":COMPLETE:" .. ns.VoiceLocale()
+    if ns.state.prefetch[key] then
+        return false
+    end
+    local item = BuildItem(questID, "turnin", false, title, npcID)
+    if not item or not item.remote then
+        return false
+    end
+    ns.state.prefetch[key] = GetTime()
+    item.demandAudio = true
+    if ns.RequestVoicePrefetch(item) then
+        VoiceLog(item, "preload", "фоновая COMPLETE; воспроизведение не запрашивалось")
+        VoiceLog(item, "requested", "предзагрузка COMPLETE отправлена асинхронно")
+        return true
+    end
+    -- Older bridges cannot probe a remote file without playing it. Do not
+    -- start the completion line early; the normal turn-in request remains a
+    -- safe fallback and the diagnostic log records why prefetch was skipped.
+    VoiceLog(item, "error", "предзагрузка ждёт readiness-мост расширения")
+    return false
 end
 
 local function FindPending(key)
@@ -721,6 +1144,7 @@ local function AddPending(item, quiet)
     item.phase = "pending"
     item.requestedAt = GetTime()
     ns.state.pending[#ns.state.pending + 1] = item
+    VoiceLog(item, "waiting", "дорожка ещё не готова")
     if not quiet then
         Print(string.format(L.REQUESTED, item.title or tostring(item.questID)))
     end
@@ -771,6 +1195,12 @@ local function TrackState(item)
     end
     if type(ready) ~= "table" then
         return companion and "companion" or nil
+    end
+    if item.kind == "book" or item.kind == "place" then
+        local hash = string.match(item.key or "", "^[^:]+:([0-9a-fA-F]+)")
+        local books = ready.b
+        return hash and type(books) == "table" and books[string.lower(hash)]
+            and "ready" or (companion and "companion" or nil)
     end
     if not IsQuestItem(item) then
         return nil
@@ -854,6 +1284,9 @@ local POLL_SLOTS = 2048
 -- How long the window shows a quest voiced on demand.
 local DEMAND_WINDOW_SECONDS = 150
 local POLL_OFFSETS = { 8, 14, 20, 27, 35, 45, 60, 80, 105, 135, 170, 210, 255, 300 }
+-- PlayMusic loops at EOF on the 3.3.5 client. Keep a tiny post-roll so the
+-- final syllable is not clipped, but do not leave the old 0.8 s repeat window.
+local MUSIC_EOF_GRACE = 0.10
 
 local function SchedulePolls()
     local now = GetTime()
@@ -875,10 +1308,14 @@ local function ClearDemandWindow(item)
     end
 end
 
-local function PollDemand()
+local function PollDemand(item)
+    -- The async signal handshake never attempts a network-backed poll. Legacy
+    -- audio polls remain available only for older browser extensions.
+    if PrefetchSignalEnabled(item) or ReadyFontEnabled(item) then return end
     local times = ns.state.pollTimes
     local now = GetTime()
-    if not times or not times[1] or times[1] > now then
+    if not item or ns.state.active or ns.state.pending[1] ~= item
+        or not times or not times[1] or times[1] > now then
         return
     end
     -- Polls that came due together are one poll.
@@ -887,14 +1324,24 @@ local function PollDemand()
     end
     local n = (tonumber(ns.db.pollSeq) or 0) % POLL_SLOTS + 1
     ns.db.pollSeq = n
-    pcall(PlaySoundFile, "Interface\\AddOns\\CatQuest335_ServerVoices\\poll\\" .. n .. ".ogg",
-        ns.db.volumeChannel or "Master")
+    local path = "Interface\\AddOns\\CatQuest335_ServerVoices\\poll\\" .. n .. ".ogg"
+    -- PlayMusic has no readiness result. Dynamic generation keeps the
+    -- existing file/poll transport until the bridge can acknowledge a start.
+    local ok, result = pcall(PlaySoundFile, path, SoundChannel())
+    local played = ok and result
+    item.playChannel = SoundChannel()
+    if played then
+        table.remove(ns.state.pending, 1)
+        BeginPlaying(item)
+    end
 end
 
 local function StartItem(item)
+    if item.valid and not item.valid() then return false end
     local trackState = item.remote and TrackState(item)
     if item.remote and trackState == "missing" then
         ns.state.lastItem = item
+        VoiceLog(item, "error", "нет локальной дорожки")
         Print(string.format(L.NO_LOCAL_TRACK or L.NO_TRACK, tostring(item.questID),
             "https://t.me/warcraft_rus_chat"))
         return false
@@ -902,6 +1349,7 @@ local function StartItem(item)
     if item.remote and trackState == "companion" then
         if not CompanionSpeak(item) then
             ns.state.lastItem = item
+            VoiceLog(item, "error", "компаньон не получил текст")
             Print("компаньон не получил текст для озвучки")
             return false
         end
@@ -919,57 +1367,106 @@ local function StartItem(item)
             Print(string.format(L.LANG_NEEDS_RELOAD, ns.LanguageName(locale)))
         end
         ns.state.lastItem = item
+        VoiceLog(item, "error", "нужна перезагрузка страницы игры")
         return false
     end
     if item.remote and IsOnDemand(item) then
-        TryPlay(item)
-        -- Keep the request in the normal retry queue as well.
-        if not FindPending(item.key) then
-            AddPending(item, true)
-            -- The game caches the quest path after the first miss. Poll with
-            -- fresh filenames so a track generated later is handed to WoW.
-            SchedulePolls()
+        item.demandAudio = true
+        -- Keep the player informed while a generated track is on the server.
+        -- This is also the visible Stop button for world-boss/NPC narration.
+        ns.state.demandShown = item
+        if ns.ShowDemand then
+            ns.ShowDemand(item)
         end
-        -- Keep every requested item in the same pending retry queue. The old
-        -- poll-only path could play the newly ready track outside active and
-        -- then leave the head window stuck; retrying the actual item lets the
-        -- queue own the start and the end of the sound.
+        ns.state.manualRemoteRequests = ns.state.manualRemoteRequests or {}
+        local requestedBefore = ns.state.manualRemoteRequests[item.key]
+        if item.gossipAudioSlot then
+            ns.RequestGossipPrefetch(item)
+        else
+            ns.RequestVoicePrefetch(item)
+        end
+        -- On-demand audio is deliberately manual now. The first click only
+        -- requests it. A later click may start playback only after the
+        -- readiness handshake confirms the VFS file. The old direct attempt
+        -- bypassed that check, so a backend 404 was shown as playing while
+        -- PlaySoundFile silently read a missing path.
+        if requestedBefore and TryPlay(item) then
+            -- A cached/generated track may already play even though the
+            -- startup index still calls it on-demand. It owns the same slot
+            -- as every other sound; do not start the rest of a chapter here.
+            BeginPlaying(item)
+            return true
+        end
+        ns.state.manualRemoteRequests[item.key] = GetTime()
+        ns.state.manualRemoteBlocked = true
         ns.state.lastItem = item
         ns.state.lastPlayedKey = item.key
         ns.state.lastPlayedAt = GetTime()
-        Remember(item)
-        if ns.ShowDemand and not ns.state.active and not CatQuest335_BridgeReady.budgetOut then
-            ns.ShowDemand(item)
-            ns.state.demandShown = item
-            item.demandHideAt = GetTime() + DEMAND_WINDOW_SECONDS
-            -- Voicing takes up to a minute or two, then the track plays.
-            ns.After(DEMAND_WINDOW_SECONDS, function()
-                ClearDemandWindow(item)
-            end)
-        end
         if CatQuest335_BridgeReady.budgetOut then
             -- The server would not voice it now. The request above still goes
             -- out, so a topped-up budget voices it after all.
             if not ns.state.budgetHinted then
                 ns.state.budgetHinted = true
-                Print(L.BUDGET_OUT)
+                Print(string.format(L.MANUAL_REVIEW or L.BUDGET_OUT,
+                    item.title or tostring(item.questID)))
             end
+            VoiceLog(item, "requested", "сервер сообщил об исчерпанном бюджете")
         else
-            Print(string.format(L.REQUESTED, item.title or tostring(item.questID)))
+            VoiceLog(item, "requested", "запрос отправлен на сервер")
+            local requestedText = ns.db.remoteAutoRetry and L.REQUESTED or L.REQUESTED_MANUAL
+            Print(string.format(requestedText, item.title or tostring(item.questID)))
+        end
+        if ns.db.remoteAutoRetry and not FindPending(item.key) then
+            -- One server request, followed by local readiness checks. This
+            -- does not submit another generation job on every poll.
+            AddPending(item, true)
         end
         return false
     end
     if item.remote then
+        -- The server manifest says that a track exists, but after an
+        -- extension/game reload it may still be absent from the browser VFS.
+        -- Do not call PlayMusic in that gap: PlayMusic can return normally
+        -- while the file read is still being started, leaving a silent player
+        -- window.  The ready-signal handshake also refreshes an already
+        -- server-ready track into the current VFS session.
+        local ready = CatQuest335_BridgeReady
+        local needsVfsPrefetch = type(ready) == "table"
+            and (tonumber(ready.prefetchSignal) or 0) >= 1
+            and ready.mode ~= "local"
+        if trackState ~= "ready" or needsVfsPrefetch then
+            if IsQuestItem(item) then
+                ns.RequestVoicePrefetch(item)
+            end
+            if (item.kind == "book" or item.kind == "place") then
+                ns.RequestNarrationPrefetch(item)
+            end
+        end
         if TryPlay(item) then
             BeginPlaying(item)
             return true
         end
-        -- Not ready: the read above asked the server to voice it.
-        AddPending(item)
+        -- Keep a server-ready item in the pending queue while the browser
+        -- materializes the file in the current game VFS.  Without this, the
+        -- item was removed immediately after the first PlayMusic race and a
+        -- second click reused the client's cached failed read.
+        if not item.demandAudio and not FindPending(item.key) then
+            AddPending(item)
+        else
+            VoiceLog(item, "requested", "запрос отправлен на сервер")
+        end
+        ns.state.manualRemoteBlocked = true
+        ns.state.manualRemoteRequests = ns.state.manualRemoteRequests or {}
+        ns.state.manualRemoteRequests[item.key] = GetTime()
         return false
     end
 
-    local channel = CallPlaySound(item.file)
+    local channel
+    if ns.db.volumeChannel == "Music" then
+        channel = CallPlayMusic(item.file)
+    else
+        channel = CallPlaySound(item.file)
+    end
     if not channel then
         if ns.state.active == item then
             ns.state.active = nil
@@ -978,6 +1475,7 @@ local function StartItem(item)
             ns.HideHead()
         end
         Print(string.format(L.PLAY_FAILED, item.file))
+        VoiceLog(item, "error", "PlaySoundFile не запустил файл")
         return false
     end
 
@@ -1006,7 +1504,7 @@ local function BuildGossipItem(text, title, audioSlot, npc, kind, loreID)
         end
         companionKey = tostring(companionKey)
     end
-    local pages = SplitPages(text)
+    local pages = SplitPages(text, PageBudget())
     local duration = EstimateDuration(text)
     return {
         questID = 0,
@@ -1020,17 +1518,20 @@ local function BuildGossipItem(text, title, audioSlot, npc, kind, loreID)
         duration = duration,
         voice = "server",
         title = title or L.GOSSIP_TITLE,
+        gossipAudioSlot = tonumber(audioSlot),
         npc = npc,
         npcLoreID = tonumber(loreID),
         remote = true,
-        dialog = kind ~= "npcLore",
+        dialog = kind ~= "npcLore" and kind ~= "dungeon",
         text = text,
     }
 end
 ns.BuildGossipItem = BuildGossipItem
 
-local nextPendingAt, pendingCursor = 0, 0
+local nextPendingAt = 0
+local READY_ATTEMPT_LIMIT = 8
 local function ProcessPending()
+    if ns.state.active then return end
     local pending = ns.state.pending
     local now = GetTime()
     if #pending == 0 or now < nextPendingAt then
@@ -1040,20 +1541,46 @@ local function ProcessPending()
     local limit = tonumber(ns.db.pendingTimeout) or 300
     for i = #pending, 1, -1 do
         local item = pending[i]
-        if now - item.requestedAt >= limit then
+        if item.valid and not item.valid() then
             table.remove(pending, i)
+        elseif item.remote and not item.prefetchReady
+            and math.max(tonumber(item.readySignalAttempts) or 0,
+                tonumber(item.readyFontAttempts) or 0) >= READY_ATTEMPT_LIMIT then
+            local attempts = math.max(tonumber(item.readySignalAttempts) or 0,
+                tonumber(item.readyFontAttempts) or 0)
+            table.remove(pending, i)
+            if ns.state.demandShown == item then ClearDemandWindow(item) end
             RememberMissing(item.questID, item.kind)
-            Print(string.format(L.NOTICE_TIMEOUT, item.title or tostring(item.questID), math.floor(limit)))
+            VoiceLog(item, "timeout", string.format("готовность не подтверждена после %d проверок", attempts))
+            Print(string.format(L.NOTICE_READY_RETRY or L.NOTICE_TIMEOUT,
+                item.title or tostring(item.questID), attempts))
+        elseif now - item.requestedAt >= limit then
+            table.remove(pending, i)
+            if ns.state.demandShown == item then ClearDemandWindow(item) end
+            RememberMissing(item.questID, item.kind)
+            VoiceLog(item, "timeout", string.format("сервер не ответил за %d с", math.floor(limit)))
+            Print(string.format(L.MANUAL_REVIEW or L.NOTICE_TIMEOUT,
+                item.title or tostring(item.questID)))
         end
     end
     if #pending == 0 then
         return
     end
-    pendingCursor = pendingCursor % #pending + 1
-    local item = pending[pendingCursor]
-    if TryPlay(item) then
-        table.remove(pending, pendingCursor)
-        BeginPlaying(item)
+    -- Do not let one slow server request block every track behind it. A ready
+    -- item may overtake an older pending item; this is preferable to leaving
+    -- the whole voice stream silent while one generation job is still running.
+    for i = 1, #pending do
+        local item = pending[i]
+        if TryPlay(item) then
+            table.remove(pending, i)
+            BeginPlaying(item)
+            return
+        end
+    end
+    -- A fresh poll filename bypasses WoW's cached miss for the quest path. It
+    -- belongs to the oldest waiting item, never an anonymous sound.
+    if pending[1] then
+        PollDemand(pending[1])
     end
 end
 
@@ -1067,6 +1594,10 @@ local function StartNext()
     end
 
     while not ns.state.active and ns.db.enabled do
+        -- A reward line enters the FIFO immediately, even while the NPC's
+        -- greeting delay is running. Later dialogs must not cancel/overtake it.
+        local first=ns.state.queue[1]
+        if first and GetTime() < (first.notBefore or 0) then return end
         local item = table.remove(ns.state.queue, 1)
         if not item then
             break
@@ -1074,6 +1605,8 @@ local function StartNext()
         if StartItem(item) then
             return
         end
+        -- A pending server item must not block later queue entries. ProcessPending
+        -- will pick it up when it becomes ready, potentially after this item.
     end
     -- A quest being voiced on demand keeps its window (ns.ShowDemand).
     if not ns.state.active and not ns.state.demandShown and ns.HideHead then
@@ -1109,7 +1642,7 @@ local function IsDialogueItem(item)
 end
 
 local function IsAmbientLoreItem(item)
-    return item and (item.kind == "place" or item.kind == "npcLore")
+    return item and (item.kind == "place" or item.kind == "npcLore" or item.kind == "dungeon")
 end
 
 -- A quest or a normal NPC dialog has priority over automatically started
@@ -1134,10 +1667,27 @@ local function InterruptAmbientLoreFor(item)
     end
 end
 
-function ns.PlayQuest(questID, kind, force, text, title, npcID)
+function ns.PlayQuest(questID, kind, force, text, title, npcID, sequence, delay)
     kind = kind or "quest"
+    -- Quest frames can emit QUEST_DETAIL/QUEST_ACCEPTED or reward refreshes
+    -- more than once.  The normal queue guard is not enough when the first
+    -- line has already finished before the duplicate event arrives; that
+    -- would start the same audio a second time, often at the restored volume.
+    if not force then
+        local recent = ns.state.recentAutoQuest
+        local now = GetTime and GetTime() or 0
+        local key = tostring(tonumber(questID) or 0) .. ":" .. kind .. ":"
+            .. ns.VoiceLocale() .. ":" .. tostring(npcID or 0)
+        if recent and recent.key == key and now - (recent.at or 0) < 30 then
+            return false
+        end
+    end
     if text == nil then
-        text = QuestTextFor(nil, kind)
+        if ns.state.dialogQuest == tonumber(questID) then
+            text = QuestTextFor(nil, kind)
+        elseif kind == "quest" then
+            text = QuestLogText(tonumber(questID))
+        end
     end
     local item = BuildItem(questID, kind, text or nil, title, npcID)
     if not item then
@@ -1152,12 +1702,28 @@ function ns.PlayQuest(questID, kind, force, text, title, npcID)
     if HasQuestItem(questID, kind) then
         return false
     end
-    return ns.PlayItem(item, force)
+    item.notBefore=GetTime()+(tonumber(delay) or 0)
+    local started = ns.PlayItem(item, force, nil, sequence)
+    if started and not force then
+        ns.state.recentAutoQuest = {
+            key = item.key,
+            at = GetTime and GetTime() or 0,
+        }
+    end
+    return started
+end
+
+local function HasTurninWork()
+    if ns.state.active and ns.state.active.kind=="turnin" then return true end
+    for _,list in ipairs({ns.state.queue,ns.state.pending}) do
+        for _,item in ipairs(list) do if item.kind=="turnin" then return true end end
+    end
+    return false
 end
 
 -- Queue any prepared item (quest, book page, place lore): one queue, one
 -- pause between tracks, one Stop for all of them.
-function ns.PlayItem(item, force, replay)
+function ns.PlayItem(item, force, replay, sequence)
     local now = GetTime()
     -- A double click on a manual "Voice/Read" button used to pass force=true
     -- and bypass the active/queue duplicate checks below. Keep a tiny input
@@ -1170,6 +1736,12 @@ function ns.PlayItem(item, force, replay)
     end
     if FindPending(item.key) then
         Print(string.format(L.ALREADY_PENDING, item.title or tostring(item.questID)))
+        return false
+    end
+    -- Map/list buttons use force=true, but force must not bypass quest
+    -- identity deduplication. Otherwise a second click can enqueue the same
+    -- quest while its first request is still pending on the server.
+    if not replay and IsQuestItem(item) and HasQuestItem(item.questID, item.kind) then
         return false
     end
     if not force and ns.state.demandShown and ns.state.demandShown.key == item.key then
@@ -1191,7 +1763,8 @@ function ns.PlayItem(item, force, replay)
     InterruptAmbientLoreFor(item)
 
     -- Queue off (settings): a new line cuts the one playing and those waiting.
-    if ns.db.queue == false and (ns.state.active or #ns.state.queue > 0 or #ns.state.pending > 0) then
+    if not sequence and item.kind~="turnin" and not HasTurninWork() and ns.db.queue == false
+        and (ns.state.active or #ns.state.queue > 0 or #ns.state.pending > 0) then
         if ns.state.active then
             ns.SilenceVoice()
             ns.state.active = nil
@@ -1222,6 +1795,7 @@ function ns.PlayItem(item, force, replay)
         end
     end
     table.insert(ns.state.queue, position, item)
+    VoiceLog(item, "queued", "добавлено в очередь воспроизведения")
     if waitingBefore > 0 then
         local position = waitingBefore + 1
         Print(string.format(L.QUEUED, item.title or tostring(item.questID), position))
@@ -1248,11 +1822,18 @@ local function SilenceVoice()
     if bridge then
         pcall(bridge.Stop)
     end
+    if ns.state.musicPlaying then
+        StopMusicVoice()
+        return
+    end
     if not GetCVar or not SetCVar then
         return
     end
     local channel = (ns.state.active and ns.state.active.playChannel)
         or ns.state.lastAudioChannel or ns.db.volumeChannel
+    if channel == "Music" then
+        return
+    end
     local cvar = ({ Master = "Sound_EnableAllSound", Ambience = "Sound_EnableAmbience" })[channel or ""]
         or "Sound_EnableSFX"
     if tostring(GetCVar(cvar)) ~= "1" then
@@ -1267,6 +1848,12 @@ ns.SilenceVoice = SilenceVoice
 ns.IsFemale = IsFemale
 
 function ns.Stop(quiet)
+    ns.state.stopEpoch = (ns.state.stopEpoch or 0) + 1
+    for _,slot in ipairs({"dialogTimer","gossipTimer"}) do
+        if ns.state[slot] then ns.CancelAfter(ns.state[slot]);ns.state[slot]=nil end
+    end
+    ns.state.turninClaimCandidate=nil
+    if ns.DungeonStop then ns.DungeonStop() end
     if ns.state.npcLoreTimer then
         ns.CancelAfter(ns.state.npcLoreTimer)
         ns.state.npcLoreTimer = nil
@@ -1277,6 +1864,9 @@ function ns.Stop(quiet)
     end
     ns.state.npcLoreKillPending = nil
     ns.state.npcLoreTargetPending = nil
+    if ns.state.active then
+        VoiceLog(ns.state.active, "stopped", "остановлено пользователем")
+    end
     -- Try to interrupt any in-game audio even when an estimated duration has
     -- already cleared active; the companion stop is independent of active.
     SilenceVoice()
@@ -1299,7 +1889,16 @@ function ns.Stop(quiet)
 end
 
 function ns.Skip()
+    local skipped = ns.state.active or ns.state.pending[1]
+    if skipped then
+        VoiceLog(skipped, "skipped", "пропущено пользователем")
+    end
     SilenceVoice()
+    if not ns.state.active and ns.state.pending[1] then
+        local waiting = table.remove(ns.state.pending, 1)
+        if ns.state.demandShown == waiting then ns.state.demandShown = nil end
+        ns.state.pollTimes = {}
+    end
     ns.state.active = nil
     -- After the channel comes back on.
     ns.state.resumeAt = GetTime() + 0.2
@@ -1336,6 +1935,12 @@ function ns.Replay()
     if item.kind == "gossip" then
         return ns.PlayGossipText(item.text, item.title, item.npc)
     end
+    if item.kind == "dungeon" then
+        local replay = {}
+        for k, v in pairs(item) do replay[k] = v end
+        replay.valid, replay.onFinish = nil, nil
+        return ns.PlayItem(replay, true, true)
+    end
     if item.kind == "npcLore" then
         return ns.PlayGossipText(item.text, item.title, item.npc, false, "npcLore", item.npcLoreID)
     end
@@ -1349,16 +1954,19 @@ function ns.OnUpdate()
         if demand and demand.demandHideAt and GetTime() >= demand.demandHideAt then
             ClearDemandWindow(demand)
         end
+        -- Resolve the current loading item before touching the next chapter
+        -- entry. File reads can themselves start audio in the browser client.
+        if GetTime() >= (ns.state.resumeAt or 0) then ProcessPending() end
         StartNext()
         -- Only when nothing plays: a waiting track must not overlap another.
-        if not ns.state.active and #ns.state.queue == 0 and GetTime() >= (ns.state.resumeAt or 0) then
-            ProcessPending()
-            PollDemand()
-        end
         if ns.state.tweaked and not ns.state.active and #ns.state.queue == 0 then
             RestoreSoundTweaks()
         end
         return
+    end
+
+    if ns.SyncHead then
+        ns.SyncHead(item)
     end
 
     local elapsed = GetTime() - item.startedAt
@@ -1378,8 +1986,16 @@ function ns.OnUpdate()
     end
 
     local duration = item.duration
-    if duration > 0 and elapsed >= duration + 0.15 then
+    -- PlayMusic loops a file when it reaches EOF. Give the decoder a tiny
+    -- post-roll for the last syllable; a long grace period exposes the start
+    -- of a quiet second loop.
+    if duration > 0 and elapsed >= duration + MUSIC_EOF_GRACE then
+        if item.playChannel == "Music" then
+            StopMusicVoice()
+        end
         ns.state.active = nil
+        if ns.MarkGossipHeard then ns.MarkGossipHeard(item) end
+        VoiceLog(item, "finished", "таймер длительности завершён; слышимость API не подтверждает")
         ns.state.resumeAt = GetTime() + (tonumber(ns.db.trackGap) or 2)
         if ns.HideHead then
             ns.HideHead()
@@ -1446,6 +2062,29 @@ local function SelectedQuestID()
     return QuestIDFromValues({ GetQuestLogTitle(index) })
 end
 
+-- While the world map is open, its quest list has its own selection. It does
+-- not necessarily match the quest-log selection (or the quest in an NPC
+-- dialog), so /cq id must prefer the map's quest when the player is looking
+-- at the map.
+local function SelectedMapQuest()
+    if not WorldMapFrame or not WorldMapFrame.IsShown or not WorldMapFrame:IsShown() then
+        return nil, nil
+    end
+
+    local selected = WORLDMAP_SETTINGS and WORLDMAP_SETTINGS.selectedQuest
+    local questID = selected and tonumber(selected.questId)
+    if not questID or questID <= 0 then
+        return nil, nil
+    end
+
+    local title
+    local logIndex = selected and tonumber(selected.questLogIndex)
+    if logIndex and logIndex > 0 and GetQuestLogTitle then
+        title = GetQuestLogTitle(logIndex)
+    end
+    return questID, title
+end
+
 local function QuestIDFromTitle(title)
     if not title or title == "" or not GetNumQuestLogEntries then
         return nil
@@ -1458,6 +2097,11 @@ local function QuestIDFromTitle(title)
             return QuestIDFromValues(values)
         end
     end
+end
+
+function ns.QuestIDForDialog()
+    local title = GetTitleText and GetTitleText()
+    return CurrentQuestID() or QuestIDFromTitle(title) or QuestIDFromKnownTitles(title), title
 end
 
 local function SelectedQuestTitle()
@@ -1473,16 +2117,23 @@ local function SelectedQuestTitle()
 end
 
 local function PrintCurrentQuest()
+    local mapQuestID, mapTitle = SelectedMapQuest()
     local title = GetTitleText and GetTitleText() or nil
-    local questID = CurrentQuestID()
-    if not questID and title and title ~= "" then
-        questID = QuestIDFromTitle(title)
-    end
-    if not questID then
-        questID = SelectedQuestID()
-    end
-    if not title or title == "" then
-        title = SelectedQuestTitle()
+    local questID
+    if mapQuestID then
+        questID = mapQuestID
+        title = mapTitle or title
+    else
+        questID = CurrentQuestID()
+        if not questID and title and title ~= "" then
+            questID = QuestIDFromTitle(title)
+        end
+        if not questID then
+            questID = SelectedQuestID()
+        end
+        if not title or title == "" then
+            title = SelectedQuestTitle()
+        end
     end
     if questID then
         Print(string.format(L.CURRENT_QUEST, tostring(title or L.NO_TITLE), tostring(questID)))
@@ -1492,9 +2143,12 @@ local function PrintCurrentQuest()
 end
 
 function ns.PlaySelectedQuest()
-    local questID = SelectedQuestID()
+    local index = GetQuestLogSelection and GetQuestLogSelection()
+    local values = index and GetQuestLogTitle and { GetQuestLogTitle(index) } or {}
+    local questID = QuestIDFromValues(values)
     if questID then
-        ns.PlayQuest(questID, "quest", true)
+        local text = GetQuestLogQuestText and GetQuestLogQuestText()
+        ns.PlayQuest(questID, "quest", true, text or false, values[1])
     else
         Print(L.NO_SELECTED)
     end
@@ -1539,7 +2193,27 @@ local function QuestDialogKey(questID, kind, npcID)
     return tostring(questID) .. ":" .. kind .. ":" .. ns.VoiceLocale() .. ":" .. tostring(npcID or 0)
 end
 
+local function CancelAutomaticGossip()
+    ns.state.autoGossipEpoch = (ns.state.autoGossipEpoch or 0) + 1
+    if ns.state.gossipTimer then
+        ns.CancelAfter(ns.state.gossipTimer)
+        ns.state.gossipTimer = nil
+    end
+    for _, list in ipairs({ ns.state.queue, ns.state.pending }) do
+        for i = #list, 1, -1 do
+            if list[i].autoGossip then table.remove(list, i) end
+        end
+    end
+    -- A first greeting already playing may finish once before the quest.
+    -- Cancel only greetings that have not actually started yet.
+    if ns.state.demandShown and ns.state.demandShown.autoGossip then
+        ns.state.demandShown = nil
+        if not ns.state.active and ns.HideHead then ns.HideHead() end
+    end
+end
+
 local function OnQuestEvent(event, manual)
+    if event=="QUEST_COMPLETE" then ns.state.turninClaimCandidate=nil end
     if ns.state.npcLoreTimer then
         ns.CancelAfter(ns.state.npcLoreTimer)
         ns.state.npcLoreTimer = nil
@@ -1564,6 +2238,10 @@ local function OnQuestEvent(event, manual)
     if not kind then
         return
     end
+    -- Selecting a quest supersedes the automatic greeting, including a
+    -- greeting whose marker transfer has not finished yet. Explicit Read
+    -- requests and committed turn-ins retain their normal queue positions.
+    CancelAutomaticGossip()
 
     -- Never fall back to the quest selected in the log: a quest shared by a
     -- party member is shown in this window but is not that quest.
@@ -1585,6 +2263,9 @@ local function OnQuestEvent(event, manual)
         Print(string.format(L.NO_QUEST_ID, tostring(title or "?")))
         return
     end
+    -- A duplicate reward refresh must retain the claim context even when
+    -- its audio is already queued and the event is deduplicated below.
+    if kind=="turnin" then ns.state.turninClaimCandidate={questID=questID,at=GetTime()} end
     -- Some 3.3.5 clients can emit QUEST_DETAIL more than once while the
     -- dialog is being refreshed. Do not enqueue the same automatic read
     -- again while this quest window is still open. Manual "Read" calls are
@@ -1605,6 +2286,19 @@ local function OnQuestEvent(event, manual)
         ns.state.acceptPending = { questID = questID, text = text, npcID = npcID }
         return
     end
+    if kind=="turnin" then
+        if ns.state.dialogTimer then
+            ns.CancelAfter(ns.state.dialogTimer);ns.state.dialogTimer=nil
+        end
+        -- Snapshot the reward while this dialog still owns its text/title.
+        -- GreetingDelay belongs to this queued item, never a replaceable
+        -- shared dialog timer. Completing another quest cannot erase it.
+        ns.state.recent[questID..":"..kind]=GetTime()
+        ns.state.dialogKey=QuestDialogKey(questID,kind,npcID)
+        ns.state.turninClaimCandidate={questID=questID,at=GetTime()}
+        return ns.PlayQuest(questID,kind,manual and true or false,text,title,npcID,true,
+            manual and 0 or GreetingDelay())
+    end
     local function play()
         if not ns.db.enabled then
             return
@@ -1614,9 +2308,25 @@ local function OnQuestEvent(event, manual)
         end
         ns.state.recent[questID .. ":" .. kind] = GetTime()
         ns.state.dialogKey = QuestDialogKey(questID, kind, npcID)
-        ns.PlayQuest(questID, kind, manual and true or false, text, nil, npcID)
+        ns.PlayQuest(questID, kind, manual and true or false, text, title, npcID)
     end
     ScheduleDialog("dialogTimer", manual and 0 or GreetingDelay(), play)
+end
+
+-- A committed hand-in keeps its final line after the reward window closes.
+-- QUEST_FINISHED can run inside GetQuestReward, before this secure post-hook;
+-- the close handler defers cancellation until the following scheduler tick.
+if hooksecurefunc and GetQuestReward then
+    hooksecurefunc("GetQuestReward",function()
+        local candidate=ns.state.turninClaimCandidate
+        if not candidate or GetTime()-candidate.at>60 then return end
+        local function Mark(item)
+            if item and item.kind=="turnin" and item.questID==candidate.questID then item.turninClaimed=true end
+        end
+        Mark(ns.state.active)
+        for _,list in ipairs({ns.state.queue,ns.state.pending}) do for _,item in ipairs(list) do Mark(item) end end
+        ns.state.turninClaimCandidate=nil
+    end)
 end
 
 -- "Read" button in the quest window: the quest on screen.
@@ -1646,6 +2356,7 @@ if hooksecurefunc and AcceptQuest then
         local pending = ns.state.acceptPending
         ns.state.acceptPending = nil
         if pending and ns.db.enabled then
+            ns.PrefetchQuestCompletion(pending.questID, nil, pending.npcID)
             ns.state.recent[pending.questID .. ":quest"] = GetTime()
             ns.PlayQuest(pending.questID, "quest", false, pending.text, nil, pending.npcID)
         end
@@ -1658,15 +2369,22 @@ local function OnQuestAccepted(questIndexOrID)
     end
 
     local questID
-    if type(questIndexOrID) == "number" and GetQuestData(questIndexOrID) then
-        questID = questIndexOrID
-    elseif type(questIndexOrID) == "number" and GetQuestLogTitle then
+    if type(questIndexOrID) == "number" and GetQuestLogTitle then
         questID = QuestIDFromValues({ GetQuestLogTitle(questIndexOrID) })
+    end
+    -- Some custom 3.3.5 builds send the quest ID rather than the log index.
+    -- The old code rejected server-only quests because they are absent from
+    -- the local CatQuest pack. WotLK quest IDs are safely above this range.
+    if not questID and type(questIndexOrID) == "number" and questIndexOrID > 1000 then
+        questID = questIndexOrID
     end
 
     -- QUEST_ACCEPTED is a fallback for builds without GetQuestID: the quest
     -- dialog usually voiced this quest already, so do not read it twice.
     local heard = questID and ns.state.recent[questID .. ":quest"]
+    if questID then
+        ns.PrefetchQuestCompletion(questID)
+    end
     if questID and not (heard and GetTime() - heard < 600) then
         ns.After(0.8, function()
             if ns.db.enabled and ns.db.auto then
@@ -1724,7 +2442,7 @@ function ns.Probe(questID)
     }
     local function Attempt(round)
         for i = 1, #paths do
-            local ok, a, b = pcall(PlaySoundFile, paths[i], ns.db.volumeChannel or "Master")
+            local ok, a, b = pcall(PlaySoundFile, paths[i], SoundChannel())
             Print(string.format("probe %d/%d: ok=%s ret=%s,%s %s", round, i,
                 tostring(ok), tostring(a), tostring(b), paths[i]))
         end
@@ -1780,8 +2498,8 @@ local GOSSIP_MAX_BYTES = 800
 local GOSSIP_CHUNK_BYTES = WHO_MAX_BYTES - 3 - 3 -- frame + id/index/total
 -- A message for the extension: kind byte (1 character, 2 error), length,
 -- payload, checksum.
-local function Frame(kind, payload)
-    if #payload + 3 > WHO_MAX_BYTES then
+local function Frame(kind, payload, limit)
+    if not payload or #payload + 3 > (limit or WHO_MAX_BYTES) then
         return nil
     end
     local bytes = { kind, #payload }
@@ -1796,10 +2514,19 @@ local function Frame(kind, payload)
     return bytes
 end
 
-function ns.CharacterBytes()
+function ns.CharacterSnapshot()
     local realm = GetRealmName and GetRealmName() or ""
     local name = UnitName and UnitName("player") or ""
     local guid = UnitGUID and UnitGUID("player") or ""
+    if realm=="" or name=="" or not guid:match("^0[xX]%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x$")
+        or realm:find("[\t\r\n]") or name:find("[\t\r\n]") then return nil end
+    return {realm=realm,name=name,guid=guid}
+end
+
+function ns.CharacterPayload(character)
+    local who=character or ns.CharacterSnapshot()
+    if not who then return nil end
+    local realm,name,guid=who.realm,who.name,who.guid
     local hex = string.match(guid, "^0[xX](%x+)$")
     if realm == "" or name == "" or not hex or string.len(hex) ~= 16 then
         return nil
@@ -1808,7 +2535,17 @@ function ns.CharacterBytes()
     for i = 1, 16, 2 do
         payload[#payload + 1] = tonumber(string.sub(hex, i, i + 1), 16)
     end
-    return Frame(1, payload)
+    return payload
+end
+
+function ns.CharacterBytes()
+    return Frame(1, ns.CharacterPayload())
+end
+
+function ns.NewActionID()
+    ns.db.actionSerial=(tonumber(ns.db.actionSerial) or 0)+1
+    return string.format("%08x%04x%04x", (time and time() or 0)%4294967296,
+        math.random(0,65535),ns.db.actionSerial%65536)
 end
 
 -- Plays one message as markers, a few at a time (a burst of sounds may lose
@@ -1825,8 +2562,8 @@ local function MarkerFiles(bytes, slot, folder)
     return files
 end
 
-local function SendMarkerFiles(files, onDone)
-    if not files or not ns.db.remoteEnabled or CatQuest335_LocalMode
+local function SendMarkerFiles(files, onDone, explicitVote, onProgress)
+    if not files or (not explicitVote and not ns.db.remoteEnabled) or CatQuest335_LocalMode
         or type(CatQuest335_BridgeReady) ~= "table"
         or CatQuest335_BridgeReady.mode == "local" then
         return false
@@ -1836,11 +2573,12 @@ local function SendMarkerFiles(files, onDone)
         for _ = 1, 8 do
             local file = files[index]
             if not file then
-                return
+                break
             end
             index = index + 1
             pcall(PlaySoundFile, "Interface\\AddOns\\CatQuest335_ServerVoices\\" .. file .. ".ogg", "Master")
         end
+        if onProgress then onProgress(math.floor((index - 1) * 100 / #files)) end
         if files[index] then
             ns.After(0.2, Next)
         elseif onDone then
@@ -1851,22 +2589,150 @@ local function SendMarkerFiles(files, onDone)
     return true
 end
 
-local function SendBytes(bytes)
-    if not bytes or not ns.db.remoteEnabled or CatQuest335_LocalMode
+local function SendPrefetchFrame(frame, signalSlot)
+    if not frame then return false end
+    if (tonumber(CatQuest335_BridgeReady.prefetchSignal) or 0) >= 2 then
+        return SendMarkerFiles(MarkerFiles(frame, signalSlot, "prefetch"), nil)
+    end
+    local slot = (tonumber(ns.db.gossipMarkerSlot) or 0) % GOSSIP_MARKER_SLOTS + 1
+    ns.db.gossipMarkerSlot = slot
+    return SendMarkerFiles(MarkerFiles(frame, slot, "gossip-msg"), nil)
+end
+
+-- One local silent marker per stage: no synchronous network polling.
+local DIAGNOSTIC_STAGES = {requested=1,waiting=2,ready=3,playing=4,finished=5,["font-invalid"]=9,["font-waiting"]=33,
+    stopped=6,skipped=7,timeout=8,error=9,queued=10,["font-ready"]=11,
+    ["font-missing"]=12,["play-call"]=13,["play-failed"]=14,packet=15,preload=16}
+function ns.SendDiagnosticStage(item, status)
+    local ready = CatQuest335_BridgeReady
+    if not item or not item.prefetchSlot or not ns.db.remoteEnabled or CatQuest335_LocalMode
+        or type(ready) ~= "table" or ready.clientTrace ~= 1 or ready.mode == "local" then return end
+    local stage = DIAGNOSTIC_STAGES[status]
+    if status == "font-probe" then
+        local attempt = tonumber(item.readySignalAttempts) or 0
+        if attempt >= 1 and attempt <= 16 then stage = 16 + attempt end
+    end
+    if not stage then return end
+    item.diagnosticStages = item.diagnosticStages or {}
+    if item.diagnosticStages[stage] then return end
+    item.diagnosticStages[stage] = true
+    local slot = item.prefetchSlot
+    ns.After(0.7, function()
+        pcall(PlaySoundFile, "Interface\\AddOns\\CatQuest335_ServerVoices\\trace\\" .. slot .. "\\" .. stage .. ".ogg", "Master")
+    end)
+end
+
+local function SendBytes(bytes, explicitVote)
+    if not bytes or (not explicitVote and not ns.db.remoteEnabled) or CatQuest335_LocalMode
         or type(CatQuest335_BridgeReady) ~= "table"
         or CatQuest335_BridgeReady.mode == "local" then
         return false
     end
     local slot = (tonumber(ns.db.whoSlot) or 0) % WHO_SLOTS + 1
     ns.db.whoSlot = slot
-    return SendMarkerFiles(MarkerFiles(bytes, slot, "who"))
+    return SendMarkerFiles(MarkerFiles(bytes, slot, "who"), nil, explicitVote)
 end
 
--- The browser game does not reliably write SavedVariables on F5. Keep the
--- two settings that affect the speech window/audio ducking in sync as soon
--- as the player changes them, using the same small marker channel as the
--- character report. The bridge accepts a partial settings object and merges
--- it with the rest of the account settings.
+-- The browser extension consumes this small frame in the game worker. It
+-- starts an async fetch and exposes the result through ready-signal/<slot>.ttf.
+-- The addon only checks that local signal file, so it never performs a
+-- network-backed SetFont while the game is rendering or processing the queue.
+local function ReadySignalPath(slot)
+    local ready = CatQuest335_BridgeReady
+    local root = (tonumber(ready and ready.prefetchSignal) or 0) >= 3
+        and "Interface\\AddOns\\CatQuest\\r\\"
+        or "Interface\\AddOns\\CatQuest335_ServerVoices\\ready-signal\\"
+    return root .. slot .. ".ttf"
+end
+
+function ns.RequestVoicePrefetch(item)
+    if not item or not item.remote or not IsQuestItem(item) then return false end
+    local ready = CatQuest335_BridgeReady
+    if type(ready) ~= "table" or (tonumber(ready.prefetchSignal) or 0) < 1 or ready.mode == "local" then
+        return false
+    end
+    if item.prefetchSent then return true end
+    local questID = tonumber(item.questID)
+    if not questID or questID <= 0 or questID >= 10000000 then return false end
+    local locale = ns.VoiceLocale()
+    local localeIndex = {
+        ruRU=1, enUS=2, zhCN=3, zhTW=4, deDE=5, frFR=6,
+        esES=7, esMX=8, ptBR=9, koKR=10, itIT=11,
+    }
+    local typeCode = item.kind == "turnin" and 2 or item.kind == "quest" and 1 or 0
+    local localeCode = localeIndex[locale] or 0
+    if typeCode == 0 or localeCode == 0 then return false end
+    local slot = (tonumber(ns.db.readySignalSlot) or 0) % 512 + 1
+    ns.db.readySignalSlot = slot
+    local payload = {
+        math.floor(questID / 16777216) % 256,
+        math.floor(questID / 65536) % 256,
+        math.floor(questID / 256) % 256,
+        questID % 256,
+        typeCode, localeCode,
+        math.floor(slot / 256) % 256, slot % 256,
+    }
+    local frame = Frame(8, payload)
+    if not frame then return false end
+    item.prefetchSlot = slot
+    item.readySignalPath = ReadySignalPath(slot)
+    item.prefetchSent = SendPrefetchFrame(frame, slot)
+    VoiceLog(item, "packet", "quest marker sent=" .. tostring(item.prefetchSent))
+    return item.prefetchSent
+end
+
+function ns.RequestNarrationPrefetch(item)
+    if not item or not item.remote or item.prefetchSent then return false end
+    local ready = CatQuest335_BridgeReady
+    if type(ready) ~= "table" or (tonumber(ready.prefetchSignal) or 0) < 1 or ready.mode == "local" then
+        return false
+    end
+    local stem = string.match(item.file or "", "\\b\\([%x_mf]+)%.ogg$")
+    if not stem then return false end
+    local hash, suffix = string.match(stem, "^(%x%x%x%x%x%x%x%x)(_[mf])$")
+    if not hash and string.len(stem) == 8 and string.match(stem, "^%x+$") then hash = stem end
+    if not hash then return false end
+    local variantCode = suffix == "_m" and 1 or suffix == "_f" and 2 or 0
+    local slot = (tonumber(ns.db.readySignalSlot) or 0) % 512 + 1
+    ns.db.readySignalSlot = slot
+    local payload = {}
+    for i = 1, 8, 2 do
+        payload[#payload + 1] = tonumber(string.sub(hash, i, i + 1), 16)
+    end
+    payload[#payload + 1] = variantCode
+    payload[#payload + 1] = math.floor(slot / 256) % 256
+    payload[#payload + 1] = slot % 256
+    local frame = Frame(9, payload)
+    if not frame then return false end
+    item.prefetchSlot = slot
+    item.readySignalPath = ReadySignalPath(slot)
+    item.prefetchSent = SendPrefetchFrame(frame, slot)
+    VoiceLog(item, "packet", "narration marker sent=" .. tostring(item.prefetchSent))
+    return item.prefetchSent
+end
+
+function ns.RequestGossipPrefetch(item)
+    if not item or not item.remote or item.prefetchSent or not item.gossipAudioSlot then return false end
+    local ready = CatQuest335_BridgeReady
+    if type(ready) ~= "table" or (tonumber(ready.prefetchSignal) or 0) < 1 or ready.mode == "local" then
+        return false
+    end
+    local audioSlot = tonumber(item.gossipAudioSlot)
+    if not audioSlot or audioSlot < 1 or audioSlot > 255 then return false end
+    local slot = (tonumber(ns.db.readySignalSlot) or 0) % 512 + 1
+    ns.db.readySignalSlot = slot
+    local frame = Frame(10, { audioSlot, math.floor(slot / 256) % 256, slot % 256 })
+    if not frame then return false end
+    item.prefetchSlot = slot
+    item.readySignalPath = ReadySignalPath(slot)
+    item.prefetchSent = SendPrefetchFrame(frame, slot)
+    VoiceLog(item, "packet", "gossip marker sent=" .. tostring(item.prefetchSent))
+    return item.prefetchSent
+end
+
+-- The browser game does not reliably write SavedVariables on F5. Send window
+-- settings through markers when they change; the extension merges each partial
+-- update with the account settings.
 function ns.AnnounceSettings()
     if not ns.db.remoteEnabled or CatQuest335_LocalMode
         or type(CatQuest335_BridgeReady) ~= "table"
@@ -1881,10 +2747,23 @@ function ns.AnnounceSettings()
         ns.state.settingsAnnounceTimer = nil
         local scale = tonumber(ns.db.scale) or 1
         local duck = tonumber(ns.db.duck) or 0
-        local text = string.format("scale=%.2f\tduck=%d", scale, duck)
+        local channel = ns.db.volumeChannel or "SFX"
+        local layer = ns.db.headStrata or "below-bags"
+        local panel = ns.db.requestPanel and 1 or 0
+        local text = string.format("scale=%.2f\tduck=%d\tchannel=%s\tlayer=%s\tpanel=%d", scale, duck, channel, layer, panel)
         return SendBytes(Frame(5, { string.byte(text, 1, -1) }))
     end)
     return true
+end
+
+function ns.AnnouncePosition()
+    local saved = ns.db.headPosition
+    local point = saved and saved.point or "CENTER"
+    local relativePoint = saved and saved.relativePoint or "CENTER"
+    local x = saved and tonumber(saved.x) or 0
+    local y = saved and tonumber(saved.y) or -180
+    local text = string.format("position=%s,%s,%.2f,%.2f", point, relativePoint, x, y)
+    return SendBytes(Frame(5, { string.byte(text, 1, -1) }))
 end
 
 function ns.AnnounceCharacter()
@@ -1894,9 +2773,46 @@ end
 -- A message of another kind (3: feedback, Feedback.lua). False when it
 -- cannot go out (not Lasthavens, server voices off, too long).
 function ns.SendMessageBytes(kind, payload)
-    return SendBytes(Frame(kind, payload))
+    -- Feedback is an explicit player action too. It must not depend on the
+    -- server-voice toggle: a player can report a broken local/original track
+    -- even when remote voice generation is disabled.
+    return SendBytes(Frame(kind, payload, (kind == 3 or kind == 6) and 256 or nil), kind == 3 or kind == 6 or kind == 5)
 end
 ns.MESSAGE_MAX_PAYLOAD = WHO_MAX_BYTES - 3
+
+-- Explicit player messages have their own marker pool, independent of audio
+-- and telemetry. Keep the same conservative burst size as other messages.
+function ns.SendContactMessage(id, category, text, onProgress, onDone)
+    if type(CatQuest335_BridgeReady) ~= "table" or not CatQuest335_BridgeReady.contact then return false end
+    if ns.db.contactPage ~= CatQuest335_BridgeReady.contactPage then
+        ns.db.contactPage = CatQuest335_BridgeReady.contactPage
+        ns.db.contactSlotsUsed = 0
+    end
+    local contactSlotsUsed = tonumber(ns.db.contactSlotsUsed) or 0
+    if not string.match(tostring(id), "^%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x$")
+        or not category or category < 1 or category > 3
+        or type(text) ~= "string" or #text < 1 or #text > 4500 then return false end
+    local header = {}
+    for i = 1, 16, 2 do header[#header + 1] = tonumber(string.sub(id, i, i + 1), 16) end
+    local total = math.ceil(#text / 58)
+    -- The client caches reads by filename for the page lifetime. Never wrap
+    -- this pool silently: reusing cached markers would lose a new message.
+    if contactSlotsUsed + total > 80 then return false end
+    local files = {}
+    for part = 1, total do
+        local payload = {}
+        for i = 1, #header do payload[i] = header[i] end
+        payload[9], payload[10], payload[11] = part, total, category
+        local chunk = string.sub(text, (part - 1) * 58 + 1, part * 58)
+        for i = 1, #chunk do payload[#payload + 1] = string.byte(chunk, i) end
+        local slot = contactSlotsUsed + part
+        local markers = MarkerFiles(Frame(7, payload), slot, "contact")
+        for i = 1, #markers do files[#files + 1] = markers[i] end
+    end
+    local ok = SendMarkerFiles(files, onDone, true, onProgress)
+    if ok then ns.db.contactSlotsUsed = contactSlotsUsed + total end
+    return ok
+end
 
 local function TextChunks(text, limit)
     local chunks, start = {}, 1
@@ -1948,7 +2864,7 @@ local function CleanGossipText(text)
     return string.gsub(text, "%s+", " ")
 end
 
-local function SendGossipText(title, text, npc, onReady)
+local function SendGossipText(title, text, npc, onReady, heardKey)
     if not ns.db.remoteEnabled or CatQuest335_LocalMode
         or type(CatQuest335_BridgeReady) ~= "table"
         or CatQuest335_BridgeReady.mode == "local" then
@@ -1965,6 +2881,7 @@ local function SendGossipText(title, text, npc, onReady)
     local npcID = npc and tonumber(npc.id) or 0
     local gender = npc and tostring(npc.gender or "") or ""
     local header = "v2\t" .. tostring(npcID or 0) .. "\t" .. gender
+    if heardKey then header = header .. "\t" .. heardKey end
     local combined = header .. "\n" .. title .. "\n" .. text
     if string.len(combined) > GOSSIP_MAX_BYTES then
         combined = TrimUtf8(combined, GOSSIP_MAX_BYTES)
@@ -1999,6 +2916,28 @@ local function SendGossipText(title, text, npc, onReady)
     return audioSlot
 end
 
+local function GossipHeardKey(text, npc, title)
+    local id = tonumber(npc and npc.id) or 0
+    local input = (id > 0 and tostring(id) or tostring(npc and npc.name or title or "")) .. "\n" .. text
+    local a, b = 5381, 0
+    for i = 1, #input do
+        local byte = string.byte(input, i)
+        a = (a * 33 + byte) % 4294967296
+        b = (b * 65599 + byte) % 4294967296
+    end
+    return tostring(id) .. ":" .. ns.VoiceLocale() .. ":" .. string.format("%08x%08x", a, b)
+end
+
+function ns.MarkGossipHeard(item)
+    if item.kind ~= "gossip" or not item.gossipHeardKey then return end
+    ns.db.gossipHeard[item.gossipHeardKey] = true
+    local ready = CatQuest335_BridgeReady
+    if item.gossipAudioSlot and type(ready) == "table" and ready.gossipOnce then
+        pcall(PlaySoundFile, "Interface\\AddOns\\CatQuest335_ServerVoices\\heard\\gossip\\"
+            .. item.gossipAudioSlot .. ".ogg", "Master")
+    end
+end
+
 function ns.PlayGossipText(text, title, npc, quiet, kind, loreID)
     local companion = CompanionBridge()
     local ready = CatQuest335_BridgeReady
@@ -2011,13 +2950,31 @@ function ns.PlayGossipText(text, title, npc, quiet, kind, loreID)
         return false
     end
     text = CleanGossipText(text)
+    if kind~="npcLore" and kind~="dungeon" and ns.UniversalGossipText then text=ns.UniversalGossipText(text) end
     title = CleanGossipText(title or L.GOSSIP_TITLE)
     if text == "" then
         Print(L.NO_GOSSIP_TEXT)
         return false
     end
-    if kind ~= "npcLore" then
-        ns.state.dialogGossip = true
+    local automatic = quiet and (not kind or kind == "gossip")
+    local heardKey = (not kind or kind == "gossip") and GossipHeardKey(text, npc, title) or nil
+    if automatic and ns.db.gossipHeard[heardKey] then return false end
+    ns.state.gossipTransfers = ns.state.gossipTransfers or {}
+    local transfer = heardKey and ns.state.gossipTransfers[heardKey]
+    local stopEpoch = ns.state.stopEpoch or 0
+    local gossipEpoch = ns.state.autoGossipEpoch or 0
+    if transfer and transfer.stop == stopEpoch and
+        (not transfer.automatic or transfer.epoch == gossipEpoch) then return false end
+    if heardKey then
+        for _, list in ipairs({ns.state.queue, ns.state.pending}) do
+            for _, queued in ipairs(list) do if queued.gossipHeardKey == heardKey then return false end end
+        end
+        if ns.state.active and ns.state.active.gossipHeardKey == heardKey then return false end
+    end
+    if kind ~= "npcLore" and kind ~= "dungeon" then ns.state.dialogGossip = true end
+    local function decorate(item, slot)
+        item.autoGossip, item.gossipHeardKey, item.gossipAudioSlot = automatic, heardKey, slot
+        if heardKey then item.key = "gossip:" .. heardKey end
     end
     if directCompanion then
         local item = BuildGossipItem(text, title, nil, npc, kind, loreID)
@@ -2027,6 +2984,7 @@ function ns.PlayGossipText(text, title, npc, quiet, kind, loreID)
             end
             return false
         end
+        decorate(item)
         ns.state.dialogKey = item.key
         local ok = ns.PlayItem(item, false)
         if ok and not quiet then
@@ -2034,14 +2992,23 @@ function ns.PlayGossipText(text, title, npc, quiet, kind, loreID)
         end
         return ok
     end
+    local token = {stop=stopEpoch,epoch=gossipEpoch,automatic=automatic}
+    if heardKey then ns.state.gossipTransfers[heardKey] = token end
     local ok = SendGossipText(title, text, npc, function(audioSlot)
+        if heardKey and ns.state.gossipTransfers[heardKey] == token then ns.state.gossipTransfers[heardKey] = nil end
+        -- A target/boss request may still be sending its marker frames when
+        -- Stop is pressed. Its delayed callback must not revive the voice.
+        if (ns.state.stopEpoch or 0) ~= stopEpoch then return end
+        if automatic and (ns.state.autoGossipEpoch or 0) ~= gossipEpoch then return end
         local item = BuildGossipItem(text, title, audioSlot, npc, kind, loreID)
         if item then
+            decorate(item, audioSlot)
             ns.state.dialogKey = item.key
             ns.PlayItem(item, false)
         end
-    end)
+    end, heardKey)
     if not ok then
+        if heardKey and ns.state.gossipTransfers[heardKey] == token then ns.state.gossipTransfers[heardKey] = nil end
         if not quiet then
             Print(string.format(L.NO_LOCAL_GOSSIP, "https://t.me/warcraft_rus_chat"))
         end
@@ -2086,6 +3053,9 @@ local function OpenGossipData()
         name = UnitName and UnitName("npc") or title,
         gender = "",
     }
+    if not npc.id and UnitName and title==UnitName("target") then
+        npc.id=CreatureIDFromUnit("target")
+    end
     if npc.id and npc.id >= 10000000 then
         npc.id = nil
     end
@@ -2117,7 +3087,9 @@ function ns.OnGossipShow()
     end
     -- The classic client can fire GOSSIP_SHOW before the greeting fontstring
     -- has been populated. Read it on the next frame and deduplicate refreshes.
+    local gossipEpoch = ns.state.autoGossipEpoch or 0
     ns.After(0, function()
+        if (ns.state.autoGossipEpoch or 0) ~= gossipEpoch or ns.state.dialogQuest then return end
         local text, title, npc = OpenGossipData()
         text = CleanGossipText(text)
         title = CleanGossipText(title or L.GOSSIP_TITLE)
@@ -2136,6 +3108,36 @@ function ns.OnGossipShow()
             end
         end)
     end)
+end
+
+-- Some 3.3.5 clients update a multi-page NPC story after SelectGossipOption
+-- without emitting another GOSSIP_SHOW. Fizzcrank's "The Mechagnomes" tale is
+-- one such conversation: every "Go on" opens a new text page. Re-sample the
+-- visible window after the server response so every page gets its own gossip
+-- voice request; OnGossipShow's key still suppresses duplicate reads.
+local function RefreshGossipAfterSelection()
+    for _, delay in ipairs({ 0.15, 0.60 }) do
+        ns.After(delay, function()
+            if not ns.db.enabled or not ns.db.auto or not ns.db.gossipAuto then
+                return
+            end
+            if GossipFrame and GossipFrame.IsShown and not GossipFrame:IsShown() then
+                return
+            end
+            ns.OnGossipShow()
+        end)
+    end
+end
+
+-- The function name differs between the stock 3.3.5 client and a few custom
+-- clients. Hook whichever one is present; duplicate hooks are harmless because
+-- the gossip text key is deduplicated above.
+if hooksecurefunc then
+    for _, name in ipairs({ "SelectGossipOption", "GossipSelectOption" }) do
+        if type(_G[name]) == "function" then
+            hooksecurefunc(name, RefreshGossipAfterSelection)
+        end
+    end
 end
 
 -- Source-backed NPC histories use the same remote gossip transport as a
@@ -2206,6 +3208,14 @@ function ns.PlayNpcLore(npcID, force, npcOverride, afterKill)
         return false
     end
     local npc = npcOverride or TargetNpc(npcID) or { id = npcID, name = lore.name, gender = "" }
+    if lore.voiceGender == "male" or lore.voiceGender == "female" then
+        -- These histories use a prepared narrator voice. The model's sex
+        -- must not select a different cache entry for the same narration.
+        local narrator = {}
+        for field, value in pairs(npc) do narrator[field] = value end
+        narrator.gender = lore.voiceGender
+        npc = narrator
+    end
     local title = lore.title or lore.name or L.NPC_LORE_TITLE
     local function play()
         ns.state.npcLoreTimer = nil
@@ -2382,6 +3392,7 @@ function ns.ReportError(text)
     if ns.state.errorsSent[key] or (ns.state.errorsCount or 0) >= ERRORS_PER_LOAD then
         return false
     end
+    VoiceLog(ns.state.active or ns.state.pending[1] or {kind="lua"}, "lua-error", tostring(text))
     if SendBytes(ns.ErrorBytes(text)) then
         ns.state.errorsSent[key] = true
         ns.state.errorsCount = (ns.state.errorsCount or 0) + 1
@@ -2461,11 +3472,60 @@ local function PrintHistory()
     end
 end
 
+local function PrintVoiceLog(argument)
+    if string.lower(argument or "") == "clear" then
+        ns.db.voiceLog = {}
+        Print(L.LOG_CLEARED)
+        return
+    end
+    local log = ns.db.voiceLog or {}
+    if #log == 0 then
+        Print(L.LOG_EMPTY)
+        return
+    end
+    Print(L.LOG_HEADER)
+    local active = ns.state.active and "playing" or ns.state.pending[1] and "waiting" or "idle"
+    Print(string.format("state=%s queue=%d pending=%d", active, #ns.state.queue, #ns.state.pending))
+    for _, list in ipairs({ ns.state.pending, ns.state.queue }) do
+        for index, item in ipairs(list) do
+            if index > 5 then break end
+            Print(string.format("%s #%d q%s %s: %s", list == ns.state.pending and "pending" or "queue",
+                index, tostring(item.questID or 0), tostring(item.kind), tostring(item.title or "")))
+        end
+    end
+    for i = #log, math.max(1, #log - 19), -1 do
+        local entry = log[i]
+        local when = date and entry.at and date("%H:%M:%S", entry.at) or "--:--:--"
+        local id = tonumber(entry.questID) or 0
+        local identity = id > 0 and ("q" .. tostring(id)) or (entry.kind ~= "" and entry.kind or "item")
+        local title = entry.title ~= "" and entry.title or "без названия"
+        local detail = entry.detail ~= "" and (" — " .. entry.detail) or ""
+        Print(string.format("%s [%s] %s: %s%s", when, tostring(entry.status or "?"), identity, title, detail))
+    end
+    if #log > 20 then
+        Print(string.format("... ещё %d записей; /cq log clear — очистить", #log - 20))
+    end
+end
+
 local function HandleSlash(message)
     local command, argument = (message or ""):match("^%s*(%S*)%s*(.-)%s*$")
     command = string.lower(command or "")
 
-    if command == "stop" then
+    if command == "debug" then
+        if ns.OpenDebug then ns.OpenDebug() end
+    elseif command == "status" then
+        local a, p = ns.state.active, ns.state.pending[1]
+        local item = a or p or ns.state.queue[1] or ns.state.lastItem
+        Print(string.format("v%s phase=%s quest=%s queue=%d pending=%d channel=%s", ns.VERSION,
+            a and "playing" or p and "waiting" or "idle", tostring(item and item.questID or "-"),
+            #ns.state.queue, #ns.state.pending, tostring(ns.db.volumeChannel)))
+        if item then
+            Print(string.format("file=%s duration=%s font=%s unit=%s verified=%s", tostring(item.file),
+                tostring(item.duration), tostring(item.readyFontObserved), tostring(item.readyFontUnit), tostring(item.bridgeVerified)))
+            Print(string.format("signal=%s attempts=%s requestedFont=%s error=%s", tostring(item.prefetchSlot),
+                tostring(item.readySignalAttempts), tostring(item.readyFontRequested), tostring(item.readySignalError)))
+        end
+    elseif command == "stop" then
         ns.Stop()
     elseif command == "next" or command == "skip" then
         ns.Skip()
@@ -2515,6 +3575,8 @@ local function HandleSlash(message)
             ns.db.remoteEnabled = not ns.db.remoteEnabled
         end
         Print(string.format(L.REMOTE, ns.db.remoteEnabled and L.ON or L.OFF))
+    elseif command == "dm" then
+        if ns.DungeonCommand then ns.DungeonCommand(string.lower(argument or "")) end
     elseif command == "npc" or command == "npc-lore" then
         local value = string.lower(argument or "")
         if value == "on" or value == "off" then
@@ -2525,6 +3587,8 @@ local function HandleSlash(message)
         else
             ns.PlayNpcLore(nil, true)
         end
+    elseif command == "rate" then
+        if ns.OpenQuestRating then ns.OpenQuestRating(tonumber(argument)) end
     elseif command == "bug" or command == "report" then
         if ns.OpenFeedback then
             ns.OpenFeedback()
@@ -2590,6 +3654,13 @@ local function HandleSlash(message)
     elseif command == "h" then
         PrintHistory()
     elseif command == "log" then
+        if argument == "play" or argument == "quest" then
+            -- Compatibility with the old meaning of /cq log.
+            ns.PlaySelectedQuest()
+        else
+            PrintVoiceLog(argument)
+        end
+    elseif command == "selected" then
         ns.PlaySelectedQuest()
     elseif command == "probe" and argument == "tex" then
         ns.ProbeTextures()
@@ -2647,9 +3718,9 @@ local function OnEvent(event, ...)
         end
         ns.After(2, ns.AnnounceLanguage)
         ns.After(5, ns.AnnounceCharacter)
-        ns.After(6, ns.AnnounceSettings)
         -- Volumes ducked before a reload come back.
         RestoreSoundTweaks()
+        RestoreMusicVoice()
         if ns.ApplyWindowPosition then
             ns.ApplyWindowPosition()
         end
@@ -2688,7 +3759,15 @@ local function OnEvent(event, ...)
         end
         -- stopOnClose (settings): closing the window stops its line.
         if ns.db.stopOnClose and ns.state.dialogKey then
-            ns.DropItem(ns.state.dialogKey)
+            local key,epoch=ns.state.dialogKey,ns.state.stopEpoch or 0
+            ns.After(0,function()
+                if (ns.state.stopEpoch or 0)~=epoch then return end
+                local claimed=ns.state.active and ns.state.active.key==key and ns.state.active.turninClaimed
+                for _,list in ipairs({ns.state.queue,ns.state.pending}) do
+                    for _,item in ipairs(list) do if item.key==key and item.turninClaimed then claimed=true end end
+                end
+                if not claimed then ns.DropItem(key) end
+            end)
         end
         ns.state.dialogKey = nil
         return

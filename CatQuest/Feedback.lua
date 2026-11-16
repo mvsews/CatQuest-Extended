@@ -15,14 +15,22 @@ local REASONS = {
     "FB_WRONG_TEXT", "FB_STRESS", "FB_VOICE", "FB_VOLUME", "FB_BROKEN", "FB_LANGUAGE", "FB_OTHER",
 }
 ns.FEEDBACK_REASONS = REASONS
-local NOTE_MAX_BYTES = 62
+-- Feedback frames support up to 256 bytes in the bridge. Seven bytes are
+-- reserved for target/id/reason/locale, leaving room for about 120 Cyrillic
+-- characters (240 UTF-8 bytes).
+local NOTE_MAX_BYTES = 240
 
 local function Target(item)
     if not item then
         return nil
     end
-    if item.kind == "book" or item.kind == "place" then
-        local hash = item.key and string.match(item.key, ":(%x%x%x%x%x%x%x%x)$")
+    if item.kind == "npcLore" then
+        local id = tonumber(item.npcLoreID or (item.npc and item.npc.id))
+        if id and id > 0 then return 4, id end
+        return nil
+    end
+    if item.kind == "book" or item.kind == "place" or item.kind == "dungeon" then
+        local hash = item.bookHash or (item.key and string.match(item.key, ":(%x%x%x%x%x%x%x%x)$"))
         return hash and 3, hash and tonumber(hash, 16)
     end
     local id = tonumber(item.questID)
@@ -76,7 +84,7 @@ end
 
 local form = CreateFrame("Frame", "CatQuest335Feedback", UIParent)
 form:SetWidth(340)
-form:SetHeight(306)
+form:SetHeight(330)
 form:SetPoint("CENTER", UIParent, "CENTER", 0, 60)
 form:SetFrameStrata("FULLSCREEN_DIALOG")
 form:SetFrameLevel(50)
@@ -154,6 +162,15 @@ form.note:SetScript("OnEnterPressed", function(box)
     box:ClearFocus()
 end)
 
+form.attachDiagnostics = CreateFrame("CheckButton", "CatQuest335FeedbackDiagnostics", form, "UICheckButtonTemplate")
+form.attachDiagnostics:SetWidth(24)
+form.attachDiagnostics:SetHeight(24)
+form.attachDiagnostics:SetPoint("BOTTOMLEFT", form, "BOTTOMLEFT", 14, 42)
+local diagnosticsLabel = _G["CatQuest335FeedbackDiagnosticsText"]
+if diagnosticsLabel then
+    diagnosticsLabel:SetText(L.FB_ATTACH_DIAGNOSTICS)
+end
+
 form.send = CreateFrame("Button", nil, form, "UIPanelButtonTemplate")
 form.send:SetWidth(110)
 form.send:SetHeight(22)
@@ -176,6 +193,15 @@ form.send:SetScript("OnClick", function()
     else
         ns.Print(L.FB_NOT_SENT)
     end
+    if form.attachDiagnostics:GetChecked() and ns.SubmitContact then
+        local item = form.item or {}
+        local id = item.questID or item.npcLoreID or item.bookHash or "?"
+        local title = item.title or item.name or "?"
+        local reason = form.reason and L[REASONS[form.reason]] or "?"
+        local note = form.note:GetText() or ""
+        local context = string.format(L.FB_DEBUG_CONTEXT, tostring(title), tostring(id), tostring(reason), note ~= "" and note or "—")
+        ns.SubmitContact(1, context, true)
+    end
     form:Hide()
 end)
 
@@ -192,25 +218,31 @@ function ns.OpenFeedback(item)
     end
     form.send:Disable()
     form.note:SetText("")
-    local name = item.title or (item.questID and item.questID > 0 and string.format(L.QUEST_N, item.questID)) or ""
-    form.quest:SetText(name .. ((item.questID or 0) > 0 and ("  (ID " .. item.questID .. ")") or ""))
+    form.attachDiagnostics:SetChecked(false)
+    local name = (item.npc and item.npc.name) or item.title
+        or (item.questID and item.questID > 0 and string.format(L.QUEST_N, item.questID)) or ""
+    local label = name .. ((item.questID or 0) > 0 and ("  (ID " .. item.questID .. ")") or "")
+    if item.kind == "npcLore" then
+        label = label .. "  (NPC ID " .. tostring(item.npcLoreID or (item.npc and item.npc.id)) .. ")"
+    end
+    if (item.kind == "book" or item.kind == "place" or item.kind == "dungeon") and item.file then
+        local file = string.match(item.file, "([^\\/]+)$") or item.file
+        label = label .. "\n" .. (L.FB_FILE or "File") .. ": " .. file
+    end
+    form.quest:SetText(label)
     form:Show()
     return true
 end
 
--- The bug button: top right corner of the speech window.
+-- A text button remains visible without relying on a client-specific icon.
 local head = CatQuest335TalkingHead
 if head then
-    local bug = CreateFrame("Button", "CatQuest335FeedbackButton", head)
-    bug:SetWidth(20)
-    bug:SetHeight(20)
-    bug:SetPoint("TOPRIGHT", head, "TOPRIGHT", -10, -10)
-    -- HelpIcon-Bug is not present in every 3.3.5 client. Use a regular
-    -- inventory icon that exists in the game data, so the report button is
-    -- visible on both stock and custom clients.
-    bug:SetNormalTexture("Interface\\Icons\\INV_Misc_Bug_01")
-    bug:SetPushedTexture("Interface\\Icons\\INV_Misc_Bug_01")
-    bug:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    local bug = CreateFrame("Button", "CatQuest335FeedbackButton", head, "UIPanelButtonTemplate")
+    bug:SetWidth(112)
+    bug:SetHeight(22)
+    bug:SetPoint("TOPRIGHT", head, "TOPRIGHT", -12, -16)
+    bug:SetText(L.FB_REPORT)
+    head.title:SetWidth(322)
     bug:SetFrameLevel((head:GetFrameLevel() or 0) + 20)
     bug:SetScript("OnClick", function()
         ns.OpenFeedback(head.item)

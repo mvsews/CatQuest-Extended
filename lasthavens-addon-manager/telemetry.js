@@ -12,6 +12,38 @@ const CLIENT_VERSION = "3.3.5a";
 let chain = Promise.resolve();
 const serial = (fn) => (chain = chain.then(fn).catch(() => {}));
 
+// A game read can happen every few hundred milliseconds. Writing one
+// chrome.storage.local record for every read creates an unbounded promise
+// queue and makes the game tab stutter even when the addon itself is disabled.
+// Accumulate counters in memory and flush them as one small write instead.
+let pendingCounters = Object.create(null);
+let pendingLocale = "";
+let counterTimer = null;
+function flushCounters() {
+  const counters = pendingCounters;
+  const locale = pendingLocale;
+  pendingCounters = Object.create(null);
+  pendingLocale = "";
+  if (!Object.keys(counters).length && !locale) return;
+  serial(async () => {
+    const { telemetry = {}, telemetryOff = false } = await chrome.storage.local.get(["telemetry", "telemetryOff"]);
+    if (telemetryOff) return;
+    const merged = { ...(telemetry.counters || {}) };
+    for (const [key, value] of Object.entries(counters))
+      merged[key] = Math.min((merged[key] || 0) + value, 100000);
+    await chrome.storage.local.set({
+      telemetry: { ...telemetry, counters: merged, locale: locale || telemetry.locale || "" },
+    });
+  });
+}
+function scheduleCounterFlush() {
+  if (counterTimer) return;
+  counterTimer = setTimeout(() => {
+    counterTimer = null;
+    flushCounters();
+  }, 2000);
+}
+
 async function load() {
   const { telemetry = {}, telemetryOff = false } = await chrome.storage.local.get(["telemetry", "telemetryOff"]);
   return { telemetry, off: telemetryOff };
@@ -40,18 +72,15 @@ export function countProbe(event) {
   const field = counterFor(event);
   const locale = (event?.type === "install" || event?.type === "voice-locale") && event.locale;
   if (!field && !locale) return;
-  serial(async () => {
-    const { telemetry, off } = await load();
-    if (off) return;
-    const counters = { ...(telemetry.counters || {}) };
-    if (field) counters[field] = Math.min((counters[field] || 0) + 1, 100000);
-    await chrome.storage.local.set({
-      telemetry: { ...telemetry, counters, locale: locale || telemetry.locale || "" },
-    });
-  });
+  if (field) pendingCounters[field] = (pendingCounters[field] || 0) + 1;
+  if (locale) pendingLocale = locale;
+  scheduleCounterFlush();
 }
 
 export function sendTelemetry({ force = false } = {}) {
+  // Commit any counters collected since the last timer tick before taking a
+  // telemetry snapshot. This is one batched write, never one write per read.
+  flushCounters();
   return serial(async () => {
     const { telemetry, off } = await load();
     if (off) return;
@@ -201,14 +230,14 @@ async function postSigned(path, body) {
 const SETTING_BOOLS = new Set([
   "enabled", "auto", "showSubtitle", "books", "turnin", "queue", "readAfterAccept",
   "stopOnClose", "readButton", "bookPages", "head", "headLocked", "keepInBackground",
-  "compact", "minimap", "minimapLocked", "storyQuestTitles", "places", "remoteEnabled",
+  "compact", "minimap", "minimapLocked", "storyQuestTitles", "places", "remoteEnabled", "requestPanel", "questRatings",
 ]);
 const SETTING_NUMBERS = {
   trackGap: [0, 10], duck: [0, 100], scale: [0.5, 2], minimapAngle: [0, 360],
   remoteDuration: [3, 600], pendingTimeout: [10, 1800],
 };
 const SETTING_TEXT = {
-  volumeChannel: new Set(["Master", "SFX", "Ambience", "Dialog"]),
+  volumeChannel: new Set(["Master", "SFX", "Music", "Ambience", "Dialog"]),
   language: new Set(["auto", "ruRU", "enUS", "zhCN", "zhTW", "deDE", "frFR", "esES", "esMX", "ptBR", "koKR", "itIT"]),
   uiLanguage: new Set(["auto", "ruRU", "enUS"]),
   pack: new Set(["auto", "original"]),
@@ -261,13 +290,24 @@ async function postSignedJson(path, body) {
 }
 
 export async function getAddonSettings() {
-  const { addonSettings = {} } = await chrome.storage.local.get("addonSettings");
+  await addonSettingsSaveChain;
+  const { addonSettings = {}, addonSettingsDirty = false } =
+    await chrome.storage.local.get(["addonSettings", "addonSettingsDirty"]);
   const local = cleanAddonSettings(addonSettings);
+  if (addonSettingsDirty && Object.keys(local).length) {
+    const saved = await postSignedJson("/api/v1/settings", { mode: "put", scope: "account", settings: local });
+    if (saved) await chrome.storage.local.set({ addonSettingsDirty: false });
+    return local;
+  }
   const answer = await postSignedJson("/api/v1/settings", { mode: "get", scope: "account" });
   const remote = cleanAddonSettings(answer?.settings);
   if (Object.keys(remote).length) {
-    await chrome.storage.local.set({ addonSettings: remote });
-    return remote;
+    // Older servers omit Music from the account reply. Keep the local choice
+    // across page reloads until the server accepts it too.
+    const settings = { ...remote };
+    if (!settings.volumeChannel && local.volumeChannel === "Music") settings.volumeChannel = "Music";
+    await chrome.storage.local.set({ addonSettings: settings, addonSettingsDirty: false });
+    return settings;
   }
   if (Object.keys(local).length && answer?.updated_at === 0)
     await postSignedJson("/api/v1/settings", { mode: "put", scope: "account", settings: local });
@@ -276,16 +316,31 @@ export async function getAddonSettings() {
 
 let addonSettingsSaveChain = Promise.resolve(false);
 
-export function saveAddonSettings(value) {
+export function saveAddonSettings(value, { fromSnapshot = false } = {}) {
   const incoming = cleanAddonSettings(value);
   if (!Object.keys(incoming).length) return Promise.resolve(false);
   addonSettingsSaveChain = addonSettingsSaveChain.then(async () => {
     const { addonSettings = {} } = await chrome.storage.local.get("addonSettings");
-    // Marker updates contain only scale/duck. Preserve all other settings and
-    // serialize writes so a slider cannot finish out of order.
-    const settings = cleanAddonSettings({ ...cleanAddonSettings(addonSettings), ...incoming });
-    await chrome.storage.local.set({ addonSettings: settings });
-    return Boolean(await postSignedJson("/api/v1/settings", { mode: "put", scope: "account", settings }));
+    // The browser can return an older SavedVariables snapshot after F5. Its
+    // window fields must not replace values already received via markers.
+    const current = cleanAddonSettings(addonSettings);
+    if (fromSnapshot && !Object.keys(current).length) {
+      // The initial settings fetch may have timed out while the game read its
+      // SavedVariables. Recover the account's window values before importing.
+      const answer = await postSignedJson("/api/v1/settings", { mode: "get", scope: "account" });
+      const remote = cleanAddonSettings(answer?.settings);
+      for (const key of ["scale", "duck", "headPosition", "volumeChannel", "questRatings"])
+        if (Object.prototype.hasOwnProperty.call(remote, key)) current[key] = remote[key];
+    }
+    const updates = { ...incoming };
+    if (fromSnapshot)
+      for (const key of ["scale", "duck", "headPosition", "volumeChannel", "questRatings"])
+        if (Object.prototype.hasOwnProperty.call(current, key)) delete updates[key];
+    const settings = cleanAddonSettings({ ...current, ...updates });
+    await chrome.storage.local.set({ addonSettings: settings, addonSettingsDirty: true });
+    const saved = await postSignedJson("/api/v1/settings", { mode: "put", scope: "account", settings });
+    if (saved) await chrome.storage.local.set({ addonSettingsDirty: false });
+    return Boolean(saved);
   }).catch(() => false);
   return addonSettingsSaveChain;
 }
@@ -439,7 +494,7 @@ export async function setIdentityOff(off) {
 // "Something is wrong with this voice-over" from the game (the bug button).
 // The player sent it on purpose, so it goes out even with statistics off,
 // but then without the install and the character.
-const FEEDBACK_TARGETS = ["quest", "turnin", "book"];
+const FEEDBACK_TARGETS = ["quest", "turnin", "book", "npc"];
 export function reportFeedback({ target, id, reason, locale, note } = {}) {
   if (!FEEDBACK_TARGETS.includes(target) || !Number.isInteger(reason) || reason < 1 || reason > 20) return;
   if (target === "book" ? !/^[0-9a-f]{8}$/.test(String(id)) : !(Number.isInteger(id) && id > 0 && id < 1e7)) return;

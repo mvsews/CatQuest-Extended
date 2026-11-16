@@ -62,6 +62,13 @@ AiQuestVoice-источника. Этот источник, `.env` и API-клю
 
 ## Книги, записки и лор мест
 
+Мастер подземелий для 19 классических инстансов использует 669 исходных записей,
+тексты и субтитры **CatQuest Books & Lore 1.2.0**, Cathey / daniilcathey,
+[официальный файл 9568747](https://www.curseforge.com/wow/addons/catquest-books/files/9568747),
+CC BY-NC-SA 4.0. Аудио не изменялось. Данные сценария преобразованы для
+триггеров клиента 3.3.5a и сохраняют ту же лицензию. Атрибуция также находится
+в `CatQuest/DungeonVoiceLicense.txt` внутри распространяемого аддона.
+
 `CatQuest/BookData.lua` собирается скриптом `tools/build_books.py` из
 **CatQuest Books 0.6.4** (daniilcathey,
 https://www.curseforge.com/wow/addons/catquest-books, CC BY-NC-SA 4.0):
@@ -70,3 +77,12 @@ https://www.curseforge.com/wow/addons/catquest-books, CC BY-NC-SA 4.0):
 отдельно.
 Пак распространяется под CC BY-NC-SA 4.0, как и CatQuest Voices; этот порт
 некоммерческий, авторство сохраняется.
+
+## Служебный шрифт подтверждения готовности
+
+`lasthavens-addon-manager/vendor/catquest-ready.ttf` — переименованный поднабор
+DejaVu Sans с изменёнными метриками пяти символов. Он служит обмену состоянием
+между браузерным мостом и Lua и не используется для оформления интерфейса.
+Собирается `scripts/build_readiness_font.py`. DejaVu основан на Bitstream Vera;
+полный текст разрешения и атрибуция включены в
+`lasthavens-addon-manager/vendor/catquest-ready.LICENSE`.

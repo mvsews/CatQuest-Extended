@@ -30,6 +30,13 @@
         ? payload.remoteGossip
         : null,
       player = typeof payload.player === "string" ? payload.player : "",
+      readinessFont = payload.readinessFont || null,
+      sharedVoice = {runId:payload.runId || "",extensionVersion:payload.extensionVersion || "",
+        addonVersion:payload.addonVersion || "",
+        autoRetry: payload.remoteAutoRetry === true,
+        ...(globalThis.crossOriginIsolated && typeof SharedArrayBuffer === "function"
+        ? {header:new SharedArrayBuffer(513 * 4 * 4),audio:new SharedArrayBuffer(4 * 2 * 1024 * 1024),lanes:4,laneBytes:2 * 1024 * 1024}
+        : {})},
       // Server voice tracks are virtual files too: mask stale cached copies.
       masked = folders.concat(
         Object.keys(remoteTracks).length || remoteDemand || remoteBooks.length || remoteGossip
@@ -81,14 +88,14 @@
     } catch (e) {
       if (e.name !== "NotFoundError") throw e;
     }
-    install(files, location.href, voiceApi, clientVersion, remoteTracks, remoteDemand, remoteBooks, remoteGossip, player);
+    const overlay = install(files, location.href, voiceApi, clientVersion, remoteTracks, remoteDemand, remoteBooks, remoteGossip, player, readinessFont, sharedVoice);
     report(
       "ready",
       "Local addons prepared: " + folders.length,
       payload.revision,
       folders,
     );
-    return { files, spans, voiceApi, clientVersion, remoteTracks, remoteDemand, remoteBooks, remoteGossip, player };
+    return { files, spans, voiceApi, clientVersion, remoteTracks, remoteDemand, remoteBooks, remoteGossip, player, readinessFont, sharedVoice, sharedManifest:overlay?.sharedManifest };
   };
   addEventListener("message", (e) => {
     if (
@@ -116,7 +123,7 @@
         return;
       }
       const original = new URL(String(url), location.href).href;
-      const source = `const queue=[];function boot(e){if(!e.data?.__lhBoot){queue.push(e);return}removeEventListener('message',boot);(${install.toString()})(e.data.files,${JSON.stringify(original)},e.data.voiceApi,e.data.clientVersion,e.data.remoteTracks,e.data.remoteDemand,e.data.remoteBooks,e.data.remoteGossip,e.data.player);importScripts(${JSON.stringify(original)});const assign=assignWasmImports;assignWasmImports=function(){assign();const io=wasmImports.WebVfsStoreIo;wasmImports.WebVfsStoreIo=function(file,write,ptr,count,at){const got=io(file,write,ptr,count,at);if(file===1&&!write&&got>0){for(const [start,len,value]of e.data.spans){const lo=Math.max(start,at),hi=Math.min(start+len,at+got);if(hi>lo)HEAPU8.fill(value,ptr+lo-at,ptr+hi-at)}}return got}};for(const event of queue)dispatchEvent(new MessageEvent('message',{data:event.data}));}addEventListener('message',boot);`;
+      const source = `const queue=[];function boot(e){if(!e.data?.__lhBoot){queue.push(e);return}removeEventListener('message',boot);(${install.toString()})(e.data.files,${JSON.stringify(original)},e.data.voiceApi,e.data.clientVersion,e.data.remoteTracks,e.data.remoteDemand,e.data.remoteBooks,e.data.remoteGossip,e.data.player,e.data.readinessFont,e.data.sharedVoice,e.data.sharedManifest);importScripts(${JSON.stringify(original)});globalThis.LHAttachReadyFontFS?.();const assign=assignWasmImports;assignWasmImports=function(){assign();const io=wasmImports.WebVfsStoreIo;wasmImports.WebVfsStoreIo=function(file,write,ptr,count,at){const got=io(file,write,ptr,count,at);if(file===1&&!write&&got>0){for(const [start,len,value]of e.data.spans){const lo=Math.max(start,at),hi=Math.min(start+len,at+got);if(hi>lo)HEAPU8.fill(value,ptr+lo-at,ptr+hi-at)}}return got}};for(const event of queue)dispatchEvent(new MessageEvent('message',{data:event.data}));}addEventListener('message',boot);`;
       super(
         URL.createObjectURL(
           new Blob([source], { type: "application/javascript" }),

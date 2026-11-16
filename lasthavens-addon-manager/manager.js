@@ -1,5 +1,6 @@
 import { importZip, exportZip } from "./archive.js";
 import { AddonError } from "./errors.js";
+import { diagnosticLabel, exportDiagnostics } from "./diagnostics-format.js";
 import {
   mergeAddons,
   toggleAddon,
@@ -156,7 +157,7 @@ async function status() {
 // Phase 0 diagnostics: what the game did when CatQuest asked for audio.
 let probeLog = [];
 const kb = (n) => (n >= 1024 ? `${Math.round(n / 1024)} KB` : `${n} B`);
-function describeProbe(e) {
+function describeLegacyProbe(e) {
   const quest = e.quest
     ? `q${e.quest} ${e.kind || ""} ${e.locale || ""}`.replace(/\s+/g, " ").trim()
     : "";
@@ -171,6 +172,16 @@ function describeProbe(e) {
       return `unmatched ${e.via} · ${e.path}`;
     case "fetch-start":
       return `fetch → server · ${quest}`;
+    case "prefetch-sent":
+      return `prefetch → page · ${quest} · slot ${e.slot}`;
+    case "prefetch":
+      return `prefetch ${e.ok ? "ready" : "waiting/error"} · ${quest} · slot ${e.slot} · HTTP ${e.status}${e.error ? " · " + e.error : ""}`;
+    case "shared-ready":
+      return `shared audio ready · slot ${e.slot} · ${kb(e.bytes || 0)}`;
+    case "signal":
+      return `game readiness · slot ${e.slot} · ${e.ok ? "ready" : "waiting"}`;
+    case "font-fs":
+      return `native font read · slot ${e.slot} · ${e.ok ? "ready" : e.stage || "waiting"}${e.error ? " · " + e.error : ""}`;
     case "fetch-done":
       return [
         `fetch ← HTTP ${e.status}`,
@@ -188,11 +199,16 @@ function describeProbe(e) {
     case "install":
       return `overlay installed · ${e.files} addon files · ${e.bytes || 0} server tracks in manifest` +
         (e.status ? ` · ${e.status} on demand (${e.locale})` : "") +
-        (e.api ? ` · ${e.api}` : "");
+        (e.api ? ` · ${e.api}` : "") + (e.detail ? ` · ${e.detail}` : "") +
+        (e.addon || e.ext ? ` · addon=${e.addon || "?"} ext=${e.ext || "?"}` : "");
     case "voice-locale":
       return `addon voice language · ${e.locale} (applies after reloading the game)`;
     case "demand":
       return `generation requested · ${quest} · HTTP ${e.status}`;
+    case "limited":
+      return `generation limited · ${quest} · HTTP ${e.status}`;
+    case "readiness":
+      return `audio readiness · ${quest} · ${e.ok ? "confirmed" : "waiting"}`;
     case "texture-probe":
       return `texture probe read · ${e.status === 200 ? "yes.tga (served)" : "no.tga (missing)"}${e.sync ? " · sync" : " · async"}`;
     case "poll":
@@ -206,9 +222,10 @@ function describeProbe(e) {
     case "size-mismatch":
       return `size mismatch · ${quest} · got ${e.bytes} B, manifest ${e.status} B`;
     default:
-      return String(e.type);
+      return [e.type,e.error,e.detail,e.path].filter(Boolean).join(" · ");
   }
 }
+function describeProbe(e) { return diagnosticLabel(e, describeLegacyProbe(e)); }
 function probeVerdict(log) {
   const reads = log.filter((e) => e.type === "read");
   if (!reads.length)
@@ -245,9 +262,8 @@ $("#diag-clear").onclick = async () => {
   renderProbe();
 };
 $("#diag-copy").onclick = async () => {
-  const text = probeLog
-    .map((e) => `${new Date(e.at || 0).toISOString()}\t${e.ctx}\t${describeProbe(e)}`)
-    .join("\n");
+  ({ probeLog = [] } = await chrome.storage.session.get("probeLog"));
+  const text = exportDiagnostics(probeLog, chrome.runtime.getManifest().version);
   try {
     await navigator.clipboard.writeText(text || "(empty)");
     showMessage("diagCopied");

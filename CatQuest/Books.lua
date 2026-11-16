@@ -147,10 +147,9 @@ function ns.FindPlace(name)
     end
 end
 
--- Place lore of where the player is: exact zone and subzone first
--- (PlaceData.lua, from the original CatQuest's LoreZones), then the zone
--- itself, then the text fallback above. Returns hash, name, zone. The third
--- value is also returned when the place has no voice yet, for demand stats.
+-- Place lore of where the player is: prefer the exact subzone. When it has no
+-- story, return its name for demand stats and the parent zone as a playback
+-- fallback. A subzone named exactly like its zone is the zone itself.
 function ns.PlaceHere()
     local zone = GetRealZoneText and GetRealZoneText() or ""
     local sub = GetSubZoneText and GetSubZoneText() or ""
@@ -166,25 +165,20 @@ function ns.PlaceHere()
             return instance.h, instance.n, instance.z, instance.a or liveArea
         end
     end
-    if sub ~= "" then
+    local zoneHash = (table_ and table_._zone) or ns.FindPlace(zone)
+    if sub ~= "" and sub ~= zone then
         local hash = table_ and table_[sub]
         if not hash and not table_ then
             hash = ns.FindPlace(sub)
         end
         if hash then
-            return hash, sub, zone, tonumber(areas and areas[sub]) or tonumber(areas and areas._zone) or liveArea
+            return hash, sub, zone, tonumber(areas and areas[sub]) or tonumber(areas and areas._zone) or liveArea,
+                zoneHash
         end
-        -- A known zone with an unvoiced subzone must stay a separate missing
-        -- place. Falling back to the parent zone makes an already-heard zone
-        -- swallow the request, so places such as Telaari Basin are never
-        -- reported to the server and never appear in the demand statistics.
-        if table_ then
-            return nil, sub, zone, liveArea
-        end
+        return nil, sub, zone, liveArea, zoneHash
     end
-    local hash = (table_ and table_._zone) or (not table_ and ns.FindPlace(zone)) or nil
-    if hash then
-        return hash, zone, zone, tonumber(areas and areas._zone) or liveArea
+    if zoneHash then
+        return zoneHash, zone, zone, tonumber(areas and areas._zone) or liveArea
     end
     if zone ~= "" or sub ~= "" then
         return nil, sub ~= "" and sub or zone, zone, liveArea
@@ -199,30 +193,38 @@ local function Utf8Limit(text, limit)
     if string.len(text) <= limit then
         return text
     end
-    text = string.sub(text, 1, limit)
-    while string.len(text) > 0 do
-        local last = string.byte(text, string.len(text))
-        if not last or last < 128 or last >= 192 then
+    local at = 1
+    while at <= limit do
+        local byte = string.byte(text, at)
+        local size = byte < 128 and 1 or byte < 224 and 2 or byte < 240 and 3 or 4
+        if at + size - 1 > limit then
             break
         end
-        text = string.sub(text, 1, string.len(text) - 1)
+        at = at + size
     end
-    return text
+    return string.sub(text, 1, at - 1)
 end
 
-function ns.ReportPlace(zone, name, hash, areaID)
+function ns.ReportPlace(zone, name, hash, areaID, force)
     if not zone or zone == "" or not name or name == "" then
         return false
     end
     ns.state.placeReports = ns.state.placeReports or {}
     local cleanZone = Utf8Limit(zone, 22)
-    local cleanName = Utf8Limit(name, 28)
-    local cleanHash = string.match(tostring(hash or ""), "^[0-9a-f]{8}$") or ""
+    local cleanHash = string.lower(tostring(hash or ""))
+    if not string.match(cleanHash, "^%x%x%x%x%x%x%x%x$") then
+        cleanHash = ""
+    end
     areaID = math.floor(tonumber(areaID) or 0)
     if areaID < 0 or areaID > 9999999 then areaID = 0 end
     local areaText = tostring(areaID)
+    -- Use the spare bytes from an empty hash for longer missing-place names.
+    local cleanName = Utf8Limit(name, 69 - #cleanZone - #cleanHash - #areaText - 3)
+    if cleanZone == "" or cleanName == "" then
+        return false
+    end
     local key = cleanZone .. "\t" .. cleanName .. "\t" .. cleanHash .. "\t" .. areaText
-    if ns.state.placeReports[key] then
+    if ns.state.placeReports[key] and not force then
         return false
     end
     local sent = ns.SendMessageBytes(4, { string.byte(cleanZone .. "\t" .. cleanName .. "\t" .. cleanHash .. "\t" .. areaText, 1, -1) })
@@ -296,6 +298,24 @@ local function DropBookItems()
     end
 end
 
+-- Death can move the player through unvisited places on the way from the
+-- graveyard.  Keep quest and book audio, but discard place lore in progress.
+local function DropPlaceItems()
+    local active = ns.state.active
+    if active and active.kind == "place" then
+        ns.SilenceVoice()
+        ns.state.active = nil
+        ns.state.resumeAt = GetTime() + 0.2
+        if ns.HideHead then ns.HideHead() end
+    end
+    for _, list in ipairs({ ns.state.queue, ns.state.pending }) do
+        for i = #list, 1, -1 do
+            if list[i].kind == "place" then table.remove(list, i) end
+        end
+    end
+    if ns.ShowQueueStatus then ns.ShowQueueStatus(#ns.state.queue) end
+end
+
 -- bookPages (settings): when a page is read through, turn to the next one;
 -- ITEM_TEXT_READY then reads it like the button would.
 local function TurnPage()
@@ -356,7 +376,16 @@ end
 
 -- force: /cq place replays the lore of the current place even if heard.
 function ns.ReadPlace(force)
+    if not force and ns.DungeonOwnsPlace and GetInstanceInfo then
+        local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
+        if ns.DungeonOwnsPlace(mapID) then return false end
+    end
     if not ns.db.enabled or not (ns.db.places or force) then
+        return false
+    end
+    -- Do this before reporting demand or marking a place as heard.  A ghost
+    -- crossing a new subzone has not visited it for the purposes of lore.
+    if UnitIsDeadOrGhost and UnitIsDeadOrGhost("player") then
         return false
     end
     -- As in the original: a story does not start in the middle of a fight.
@@ -370,8 +399,8 @@ function ns.ReadPlace(force)
         end
         return false
     end
-    local hash, name, zone, areaID = ns.PlaceHere()
-    ns.ReportPlace(zone, name, hash or "", areaID)
+    local hash, name, zone, areaID, fallbackHash = ns.PlaceHere()
+    local reported = ns.ReportPlace(zone, name, hash or "", areaID, force)
     ns.db.placesHeard = ns.db.placesHeard or {}
     -- Lasthavens: saved settings are lost on F5; the extension keeps the
     -- places heard and lists them in Bridge.lua.
@@ -383,22 +412,74 @@ function ns.ReadPlace(force)
             end
         end
     end
+    local missingName = name
+    local fallback = false
+    if not hash and fallbackHash and zone and zone ~= "" then
+        hash = fallbackHash
+        name = zone
+        fallback = true
+    end
     if not hash then
         if force then
-            ns.Print(L.PLACE_NONE)
+            ns.Print(reported and string.format(L.PLACE_REQUESTING, missingName) or L.PLACE_NONE)
         end
         return false
     end
-    -- Heard once is enough: coming back to a place stays quiet.
+    local item = BuildBookItem(hash, "place", name)
+    if not item and fallbackHash and fallbackHash ~= hash and zone and zone ~= "" then
+        item = BuildBookItem(fallbackHash, "place", zone)
+        if item then
+            hash = fallbackHash
+            name = zone
+            fallback = true
+        end
+    end
+    if not item then
+        if force then
+            ns.Print(reported and string.format(L.PLACE_REQUESTING, missingName) or L.PLACE_NONE)
+        end
+        return false
+    end
+    -- 3.3.5 can emit several zone events while the map and subzone settle.
+    -- The first event may start the parent-zone story and the next one may
+    -- resolve to that same parent as a fallback.  Do not start the same
+    -- narration twice in one transition; the second Music playback can be
+    -- heard at the player's restored music volume and sounds very quiet.
+    if not force then
+        local recent = ns.state.recentPlaceRead
+        local now = GetTime and GetTime() or 0
+        local sameTrack = recent and recent.hash == hash
+        local sameParent = recent and ((fallbackHash and recent.hash == fallbackHash)
+            or (recent.fallbackHash and recent.fallbackHash == hash))
+        if recent and now - (recent.at or 0) < 30 and (sameTrack or sameParent) then
+            ns.VoiceLog(item, "skipped", "повторное авто-чтение зоны подавлено")
+            return false
+        end
+    end
+    -- Heard once is enough: visiting another unvoiced subzone must not replay
+    -- the same parent-zone story unless the player clicked the button.
     if ns.db.placesHeard[hash] and not force then
         return false
     end
-    local item = BuildBookItem(hash, "place", name)
-    if not item then
-        return false
+    local started = ns.PlayItem(item, force)
+    if started then
+        ns.state.recentPlaceRead = {
+            hash = hash,
+            fallbackHash = fallbackHash,
+            zone = zone,
+            at = GetTime and GetTime() or 0,
+        }
+        ns.db.placesHeard[hash] = true
     end
-    ns.db.placesHeard[hash] = true
-    return ns.PlayItem(item, force)
+    if fallback and force then
+        if started then
+            ns.Print(string.format(reported and L.PLACE_REQUESTING_FALLBACK or L.PLACE_FALLBACK,
+                missingName, zone))
+        elseif reported then
+            ns.Print(string.format(L.PLACE_REQUESTING, missingName))
+        end
+    end
+    return started
 end
 
 -- "Voice" button in the book window: replay the page, or read it when
@@ -437,6 +518,9 @@ local events = CreateFrame("Frame")
 events:RegisterEvent("ITEM_TEXT_READY")
 events:RegisterEvent("ITEM_TEXT_CLOSED")
 events:RegisterEvent("PLAYER_REGEN_ENABLED")
+events:RegisterEvent("PLAYER_DEAD")
+events:RegisterEvent("PLAYER_ALIVE")
+events:RegisterEvent("PLAYER_UNGHOST")
 events:RegisterEvent("ZONE_CHANGED")
 events:RegisterEvent("ZONE_CHANGED_INDOORS")
 events:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -453,6 +537,11 @@ events:SetScript("OnEvent", function(_, event)
             if ns.db.stopOnClose then
                 StopBooks()
             end
+        elseif event == "PLAYER_DEAD" then
+            ns.state.placeAfterCombat = nil
+            DropPlaceItems()
+        elseif event == "PLAYER_ALIVE" or event == "PLAYER_UNGHOST" then
+            ns.ReadPlace()
         elseif event == "PLAYER_REGEN_ENABLED" then
             if ns.state.placeAfterCombat then
                 ns.state.placeAfterCombat = nil

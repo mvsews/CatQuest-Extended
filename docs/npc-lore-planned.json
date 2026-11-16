@@ -1,0 +1,12 @@
+[
+  {"npc_id":18398,"name":"Хромоног","zone":"Награнд","quest_id":9962,"group":"Кольцо Крови","priority":"P1","source":"https://www.wowhead.com/wotlk/npc=18398","quest_source":"https://www.wowhead.com/wotlk/quest=9962"},
+  {"npc_id":18399,"name":"Близнецы из племени Темной Крови (братья Блю)","zone":"Награнд","quest_id":9967,"group":"Кольцо Крови","priority":"P1","source":"https://www.wowhead.com/wotlk/npc=18399","quest_source":"https://www.wowhead.com/wotlk/quest=9967"},
+  {"npc_id":18400,"name":"Камнедар Выщербленный Повелитель","zone":"Награнд","quest_id":9970,"group":"Кольцо Крови","priority":"P1","source":"https://www.wowhead.com/wotlk/npc=18400","quest_source":"https://www.wowhead.com/wotlk/quest=9970"},
+  {"npc_id":18401,"name":"Скрагат","zone":"Награнд","quest_id":9972,"group":"Кольцо Крови","priority":"P1","source":"https://www.wowhead.com/wotlk/npc=18401","quest_source":"https://www.wowhead.com/wotlk/quest=9972"},
+  {"npc_id":18402,"name":"Чемпион клана Боевого Молота","zone":"Награнд","quest_id":9973,"group":"Кольцо Крови","priority":"P1","source":"https://www.wowhead.com/wotlk/npc=18402","quest_source":"https://www.wowhead.com/wotlk/quest=9973"},
+  {"npc_id":18069,"name":"Могор","zone":"Награнд","quest_id":9977,"group":"Кольцо Крови","priority":"P1","source":"https://www.wowhead.com/wotlk/npc=18069","quest_source":"https://www.wowhead.com/wotlk/quest=9977"},
+  {"npc_id":729,"name":"Син'Далл","zone":"Тернистая долина","quest_id":188,"group":"Охота Эрнестуэя","priority":"P2","source":"https://www.wowhead.com/wotlk/npc=729","quest_source":"https://www.wowhead.com/wotlk/quest=188"},
+  {"npc_id":728,"name":"Баг'тира","zone":"Тернистая долина","quest_id":193,"group":"Охота Эрнестуэя","priority":"P2","source":"https://www.wowhead.com/wotlk/npc=728","quest_source":"https://www.wowhead.com/wotlk/quest=193"},
+  {"npc_id":730,"name":"Тетис","zone":"Тернистая долина","quest_id":197,"group":"Охота Эрнестуэя","priority":"P2","source":"https://www.wowhead.com/wotlk/npc=730","quest_source":"https://www.wowhead.com/wotlk/quest=197"},
+  {"npc_id":731,"name":"Король Бангалаш","zone":"Тернистая долина","quest_id":208,"group":"Охота Эрнестуэя","priority":"P2","source":"https://www.wowhead.com/wotlk/npc=731","quest_source":"https://www.wowhead.com/wotlk/quest=208"}
+]

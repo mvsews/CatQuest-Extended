@@ -7,8 +7,44 @@ local head = CreateFrame("Frame", "CatQuest335TalkingHead", UIParent)
 head:SetWidth(520)
 head:SetHeight(136)
 head:SetPoint("CENTER", UIParent, "CENTER", 0, -180)
--- Above the world map: quests can be voiced from the map.
-head:SetFrameStrata("FULLSCREEN_DIALOG")
+
+local FRAME_STRATA = { "BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "FULLSCREEN", "FULLSCREEN_DIALOG" }
+local FRAME_STRATA_INDEX = {}
+for i = 1, #FRAME_STRATA do
+    FRAME_STRATA_INDEX[FRAME_STRATA[i]] = i
+end
+
+local function BagStrata()
+    local highest
+    local count = tonumber(NUM_CONTAINER_FRAMES) or 13
+    for i = 1, count do
+        local frame = _G["ContainerFrame" .. i]
+        if frame and frame.GetFrameStrata then
+            local strata = frame:GetFrameStrata()
+            if FRAME_STRATA_INDEX[strata]
+                and (not highest or FRAME_STRATA_INDEX[strata] > FRAME_STRATA_INDEX[highest]) then
+                highest = strata
+            end
+        end
+    end
+    -- Blizzard bags normally use HIGH/DIALOG depending on the client skin.
+    return highest or "DIALOG"
+end
+
+local function ResolveFrameStrata(choice)
+    if choice ~= "below-bags" then
+        return FRAME_STRATA_INDEX[choice] and choice or "HIGH"
+    end
+    local bagIndex = FRAME_STRATA_INDEX[BagStrata()] or FRAME_STRATA_INDEX.DIALOG
+    return FRAME_STRATA[math.max(1, bagIndex - 1)]
+end
+
+function ns.ApplyWindowStrata()
+    head:SetFrameStrata(ResolveFrameStrata(ns.db.headStrata or "below-bags"))
+end
+
+-- Default: under bag windows, while remaining above the game world.
+ns.ApplyWindowStrata()
 head:SetMovable(true)
 head:EnableMouse(true)
 head:RegisterForDrag("LeftButton")
@@ -42,6 +78,9 @@ local function SaveWindowPosition(frame)
         x = x,
         y = y,
     }
+    if ns.AnnouncePosition then
+        ns.AnnouncePosition()
+    end
 end
 
 head:SetScript("OnDragStop", function(frame)
@@ -59,7 +98,7 @@ head.portrait:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
 
 head.title = head:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 head.title:SetPoint("TOPLEFT", head.portrait, "TOPRIGHT", 12, -2)
-head.title:SetWidth(418) -- room for the bug button (Feedback.lua)
+head.title:SetWidth(322) -- room for the report button (Feedback.lua)
 head.title:SetHeight(24)
 head.title:SetJustifyH("LEFT")
 head.title:SetTextColor(1, 0.82, 0)
@@ -96,7 +135,7 @@ head.timeText:SetJustifyH("RIGHT")
 head.timeText:SetTextColor(0.7, 0.7, 0.7)
 
 head.stopButton = CreateFrame("Button", nil, head, "UIPanelButtonTemplate")
-head.stopButton:SetWidth(44)
+head.stopButton:SetWidth(70)
 head.stopButton:SetHeight(22)
 head.stopButton:SetPoint("BOTTOMRIGHT", head, "BOTTOMRIGHT", -64, 7)
 head.stopButton:SetText(L.BTN_STOP)
@@ -113,11 +152,58 @@ head.nextButton:SetScript("OnClick", function()
     ns.Skip()
 end)
 
+local function RefreshStopButton(item)
+    if not head.stopButton then return end
+    item = item or head.item
+    local channel = item and item.playChannel or ns.db.volumeChannel
+    head.stopButton:SetText(channel == "Music" and L.BTN_STOP or L.BTN_CLEAR)
+end
+
+local function IsNarration(item)
+    return item and (item.kind == "npcLore" or item.kind == "dungeon")
+end
+
+local function NarrationUnit(item)
+    local npc = item and item.npc
+    if not npc or not ns.CreatureIDFromUnit then return end
+    local function Matches(unit)
+        if not UnitExists or not UnitExists(unit) then return false end
+        if npc.guid then return UnitGUID and UnitGUID(unit) == npc.guid end
+        local id = ns.CreatureIDFromUnit(unit)
+        if not id then return false end
+        if id == tonumber(npc.id) then return true end
+        for _, candidate in ipairs(npc.ids or {}) do
+            if id == candidate then return true end
+        end
+        return false
+    end
+    for _, unit in ipairs({"target", "focus", "mouseover", "npc"}) do
+        if Matches(unit) then return unit end
+    end
+    local raid = GetNumRaidMembers and GetNumRaidMembers() or 0
+    local count = raid > 0 and raid or (GetNumPartyMembers and GetNumPartyMembers() or 0)
+    local prefix = raid > 0 and "raid" or "party"
+    for i = 1, count do
+        local unit = prefix .. i .. "target"
+        if Matches(unit) then return unit end
+    end
+end
+
 -- The quest giver's face while the quest dialog with that NPC is open
 -- (the "npc" unit, as the game's own quest frame uses). Otherwise a quest
 -- icon: the current target is unrelated to the quest being read.
 local function SetPortrait(item)
     head.portrait:SetTexCoord(0, 1, 0, 1)
+    if IsNarration(item) then
+        local unit = NarrationUnit(item)
+        if unit then
+            local name = UnitName and UnitName(unit)
+            if name and name ~= "" then item.npc.name = name end
+            if SetPortraitTexture and pcall(SetPortraitTexture, head.portrait, unit) then return end
+        end
+        head.portrait:SetTexture("Interface\\Icons\\INV_Misc_Head_Dragon_01")
+        return
+    end
     if item and item.dialog
         and ((item.kind == "gossip" and ns.state.dialogGossip)
             or (item.kind ~= "gossip" and ns.state.dialogQuest == item.questID))
@@ -127,15 +213,9 @@ local function SetPortrait(item)
             return
         end
     end
-    if item and item.kind == "npcLore" and UnitExists and UnitExists("target") then
-        local ok = pcall(SetPortraitTexture, head.portrait, "target")
-        if ok then
-            return
-        end
-    end
     if item and item.kind == "book" then
         head.portrait:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
-    elseif item and item.kind == "place" then
+    elseif item and (item.kind == "place" or item.kind == "dungeon") then
         head.portrait:SetTexture("Interface\\Icons\\INV_Misc_Map_01")
     elseif item and item.kind == "turnin" then
         head.portrait:SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
@@ -153,7 +233,7 @@ local function WaitingLabel(kind)
     if kind == "book" then
         return L.KIND_BOOK
     end
-    if kind == "place" then
+    if kind == "place" or kind == "dungeon" then
         return L.KIND_PLACE
     end
     if kind == "gossip" then
@@ -167,7 +247,7 @@ end
 
 local function QuestInfoLine(item, state)
     local identity
-    if item.kind == "book" or item.kind == "place" or item.kind == "gossip" or item.kind == "npcLore" then
+    if item.kind == "book" or item.kind == "place" or item.kind == "gossip" or item.kind == "npcLore" or item.kind == "dungeon" then
         identity = item.title or (item.kind == "place" and L.KIND_PLACE or L.BOOK_UNTITLED)
     else
         identity = "ID " .. tostring(item.questID)
@@ -176,13 +256,21 @@ local function QuestInfoLine(item, state)
 end
 
 local function Title(item)
+    if IsNarration(item) and item.npc and item.npc.name then return item.npc.name end
     return item.title or string.format(L.QUEST_N, tostring(item.questID))
 end
 
-function ns.ShowHead(item)
+local function PrepareWindow(item)
     head.item = item
+    ns.ApplyWindowSettings()
+    SetPortrait(item)
     head.title:SetText(Title(item))
-    head.subtitle:SetText("")
+end
+
+function ns.ShowHead(item)
+    PrepareWindow(item)
+    RefreshStopButton(item)
+    ns.SetSubtitle(item.pages and item.pages[1] or item.text or "")
     head.queueText:SetText("")
     head.bar:Show()
     head.timeText:Show()
@@ -190,20 +278,29 @@ function ns.ShowHead(item)
     head.bar:SetValue(0)
     head.bar:SetStatusBarColor(0.25, 0.68, 0.95, 0.9)
     head.timeText:SetText("0:00")
-    SetPortrait(item)
-    if ns.db.head ~= false then
+    if ns.db.head ~= false or IsNarration(item) then
         head:Show()
     end
     ns.ShowQueueStatus(#ns.state.queue)
 end
 
+-- A pending remote line can be skipped and the next queued line can start on
+-- the same frame.  Keep the visible title/portrait attached to the item that
+-- is actually playing instead of leaving the previous waiting window on
+-- screen for one or more frames.
+function ns.SyncHead(item)
+    if item and head.item ~= item then
+        ns.ShowHead(item)
+    end
+end
+
 -- The window opens at once with the quest text; audio arrives later.
 function ns.ShowWaiting(item)
-    head.item = item
-    head.title:SetText(Title(item))
+    PrepareWindow(item)
+    RefreshStopButton(item)
     head.bar:Show()
     head.timeText:Show()
-    if ns.db.showSubtitle and item.pages and item.pages[1] then
+    if (ns.db.showSubtitle or IsNarration(item)) and item.pages and item.pages[1] then
         head.subtitle:SetText(item.pages[1])
     else
         head.subtitle:SetText(L.LOADING_VOICE)
@@ -212,8 +309,7 @@ function ns.ShowWaiting(item)
     head.bar:SetValue(0)
     head.bar:SetStatusBarColor(0.95, 0.78, 0.25, 0.9)
     head.timeText:SetText(L.LOADING)
-    SetPortrait(item)
-    if ns.db.head ~= false then
+    if ns.db.head ~= false or IsNarration(item) then
         head:Show()
     end
     head.queueText:SetText(QuestInfoLine(item, L.LOADING_SOUND))
@@ -231,9 +327,9 @@ end
 -- it, and the addon does not learn when. The window shows the quest from the
 -- request on, without a running bar.
 function ns.ShowDemand(item)
-    head.item = item
-    head.title:SetText(Title(item))
-    if ns.db.showSubtitle and item.pages and item.pages[1] then
+    PrepareWindow(item)
+    RefreshStopButton(item)
+    if (ns.db.showSubtitle or IsNarration(item)) and item.pages and item.pages[1] then
         head.subtitle:SetText(item.pages[1])
     else
         head.subtitle:SetText(L.DEMAND_INFO)
@@ -242,8 +338,7 @@ function ns.ShowDemand(item)
     -- bar would look frozen while the server is still preparing the audio.
     head.bar:Hide()
     head.timeText:Hide()
-    SetPortrait(item)
-    if ns.db.head ~= false then
+    if ns.db.head ~= false or IsNarration(item) then
         head:Show()
     end
     head.queueText:SetText(QuestInfoLine(item, L.DEMAND_INFO))
@@ -251,8 +346,8 @@ end
 
 -- Final state of a remote item that never became playable.
 function ns.ShowNotice(item, text)
-    head.item = item
-    head.title:SetText(Title(item))
+    PrepareWindow(item)
+    RefreshStopButton(item)
     head.bar:Show()
     head.timeText:Show()
     head.subtitle:SetText(text or "")
@@ -261,7 +356,7 @@ function ns.ShowNotice(item, text)
     head.bar:SetStatusBarColor(0.85, 0.3, 0.25, 0.9)
     head.timeText:SetText(L.NO_SOUND)
     head.queueText:SetText(QuestInfoLine(item, L.REPLAY_LATER))
-    if ns.db.head ~= false then
+    if ns.db.head ~= false or IsNarration(item) then
         head:Show()
     end
 end
@@ -282,13 +377,17 @@ end
 local FULL_HEIGHT, COMPACT_HEIGHT = 136, 76
 local DEFAULT_HEAD_POINT = "CENTER"
 local DEFAULT_HEAD_X, DEFAULT_HEAD_Y = 0, -180
+local VALID_POINTS = {
+    CENTER = true, TOP = true, BOTTOM = true, LEFT = true, RIGHT = true,
+    TOPLEFT = true, TOPRIGHT = true, BOTTOMLEFT = true, BOTTOMRIGHT = true,
+}
 
 function ns.ApplyWindowPosition()
     local saved = ns.db.headPosition
     head:ClearAllPoints()
     if type(saved) == "table"
-        and type(saved.point) == "string"
-        and type(saved.relativePoint) == "string"
+        and VALID_POINTS[saved.point]
+        and VALID_POINTS[saved.relativePoint]
         and tonumber(saved.x)
         and tonumber(saved.y) then
         head:SetPoint(saved.point, UIParent, saved.relativePoint, tonumber(saved.x), tonumber(saved.y))
@@ -298,12 +397,16 @@ function ns.ApplyWindowPosition()
 end
 
 function ns.ApplyWindowSettings()
+    if ns.ApplyWindowStrata then
+        ns.ApplyWindowStrata()
+    end
     local scale = tonumber(ns.db.scale) or 1
     scale = math.max(0.6, math.min(1.5, scale))
     ns.db.scale = tonumber(string.format("%.2f", scale))
     head:SetScale(ns.db.scale)
-    head:SetHeight(ns.db.compact and COMPACT_HEIGHT or FULL_HEIGHT)
-    if ns.db.compact then
+    local compact = ns.db.compact and not IsNarration(head.item)
+    head:SetHeight(compact and COMPACT_HEIGHT or FULL_HEIGHT)
+    if compact then
         head.subtitle:Hide()
         head.queueText:Hide()
     else
@@ -318,10 +421,13 @@ function ns.ResetWindowPosition()
     if head.SetUserPlaced then
         head:SetUserPlaced(false)
     end
+    if ns.AnnouncePosition then
+        ns.AnnouncePosition()
+    end
 end
 
 function ns.SetSubtitle(text)
-    if ns.db.showSubtitle and not ns.db.compact then
+    if IsNarration(head.item) or (ns.db.showSubtitle and not ns.db.compact) then
         head.subtitle:SetText(text or "")
     else
         head.subtitle:SetText("")
@@ -338,6 +444,8 @@ end
 
 function ns.HideHead()
     head:Hide()
+    head.item = nil
+    ns.ApplyWindowSettings()
     ns.ShowQueueStatus(0)
 end
 
@@ -478,7 +586,8 @@ ns.InstallGossipButton()
 
 -- Interface language switched in game: buttons made at load follow it.
 function ns.RefreshTexts()
-    head.stopButton:SetText(L.BTN_STOP)
+    if head.bugButton then head.bugButton:SetText(L.FB_REPORT) end
+    RefreshStopButton()
     head.nextButton:SetText(L.BTN_NEXT)
     if head.questButton then
         head.questButton:SetText(L.BTN_VOICE)
