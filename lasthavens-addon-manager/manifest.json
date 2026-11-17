@@ -3,7 +3,7 @@
   "name": "Lasthavens Addon Manager",
   "version": "0.6.74",
   "description": "__MSG_description__",
-  "minimum_chrome_version": "120",
+  "minimum_chrome_version": "121",
   "permissions": [
     "storage",
     "unlimitedStorage",
@@ -30,6 +30,9 @@
     "128": "icons/icon128.png"
   },
   "background": {
+    "scripts": [
+      "background.js"
+    ],
     "service_worker": "background.js",
     "type": "module"
   },
