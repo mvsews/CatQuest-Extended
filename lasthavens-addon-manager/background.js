@@ -27,7 +27,19 @@ const VOICE_LOCALES = new Set([
 // Keep diagnostics useful without letting a noisy game read stream turn into
 // a large session-storage rewrite on every frame.
 const PROBE_LIMIT = 300;
-const PLAY_PAGE = "https://lasthavens.com/play";
+const PLAY_ORIGINS = new Set([
+  "https://lasthavens.com",
+  "https://alt.lasthavens.com",
+]);
+
+function isPlayPage(raw) {
+  try {
+    const url = new URL(String(raw));
+    return PLAY_ORIGINS.has(url.origin) && (url.pathname === "/play" || url.pathname === "/play/");
+  } catch {
+    return false;
+  }
+}
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
 
@@ -189,7 +201,7 @@ const statusSeen = new Map();
 
 chrome.runtime.onMessage.addListener((m, sender, sendResponse) => {
   const senderUrl = sender.tab?.url || sender.url || "";
-  const fromGame = senderUrl.startsWith(PLAY_PAGE);
+  const fromGame = isPlayPage(senderUrl);
   if (m.kind === "contact-part" && fromGame) {
     receiveContactPart(m).then((ok) => sendResponse({ ok })).catch(() => sendResponse({ ok: false }));
     return true;

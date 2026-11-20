@@ -20,12 +20,18 @@ const $ = (s) => document.querySelector(s),
     if (className) n.className = className;
     return n;
   };
+const GAME_PAGES = Object.freeze({
+  main: "https://lasthavens.com/play",
+  alt: "https://alt.lasthavens.com/play",
+});
 let library = await readLibrary(),
   busy = false,
   messageKey = "",
   details = "";
 const pref = await chrome.storage.local.get(["language"]);
 await setLocale(pref.language || chrome.i18n.getUILanguage());
+const gamePagePref = await chrome.storage.local.get({ gamePage: "main" });
+let gamePage = gamePagePref.gamePage === "alt" ? "alt" : "main";
 for (const [code, name] of Object.entries(languages)) {
   const option = el("option", name);
   option.value = code;
@@ -78,6 +84,7 @@ function render() {
     node.textContent = t(node.dataset.i18n);
   for (const node of document.querySelectorAll("[data-i18n-placeholder]"))
     node.placeholder = t(node.dataset.i18nPlaceholder);
+  $("#game-page").value = gamePage;
   $("#import").disabled = busy;
   $("#count").textContent =
     `${library.addons.length} ${t("addons")} · ${library.addons.filter((a) => a.enabled).length} ${t("active")} · ${formatSize(library.addons.reduce((s, a) => s + a.size, 0))}`;
@@ -331,8 +338,12 @@ async function renderCapacity() {
 }
 renderCapacity();
 setInterval(renderCapacity, 15000);
-$("#play").onclick = () =>
-  chrome.tabs.create({ url: "https://lasthavens.com/play" });
+$("#game-page").onchange = async (event) => {
+  gamePage = event.target.value === "alt" ? "alt" : "main";
+  await chrome.storage.local.set({ gamePage });
+  showMessage("gamePageSaved");
+};
+$("#play").onclick = () => chrome.tabs.create({ url: GAME_PAGES[gamePage] });
 // Updates: CatQuest comes from the voice server and is updated by the
 // service worker; a newer extension is offered as a download.
 async function renderUpdates() {

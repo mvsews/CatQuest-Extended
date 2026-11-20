@@ -11,6 +11,21 @@
   "play": {
     "message": "Abrir jogo"
   },
+  "gamePageLabel": {
+    "message": "Abrir o jogo em"
+  },
+  "gamePageMain": {
+    "message": "Domínio principal"
+  },
+  "gamePageAlt": {
+    "message": "Domínio alternativo"
+  },
+  "gamePageHint": {
+    "message": "A escolha é salva e usada pelo botão Abrir jogo."
+  },
+  "gamePageSaved": {
+    "message": "Página de inicialização salva."
+  },
   "hint": {
     "message": "As alterações são aplicadas após recarregar a página do jogo."
   },

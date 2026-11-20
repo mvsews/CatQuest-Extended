@@ -11,6 +11,21 @@
   "play": {
     "message": "Open game"
   },
+  "gamePageLabel": {
+    "message": "Launch the game on"
+  },
+  "gamePageMain": {
+    "message": "Main domain"
+  },
+  "gamePageAlt": {
+    "message": "Alternative domain"
+  },
+  "gamePageHint": {
+    "message": "This choice is saved and used by the Open game button."
+  },
+  "gamePageSaved": {
+    "message": "Launch page saved."
+  },
   "hint": {
     "message": "Changes apply after reloading the game page."
   },

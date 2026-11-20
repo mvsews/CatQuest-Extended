@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lasthavens Addon Manager",
-  "version": "0.6.74",
+  "version": "0.6.75",
   "description": "__MSG_description__",
   "minimum_chrome_version": "121",
   "permissions": [
@@ -11,6 +11,7 @@
   ],
   "host_permissions": [
     "https://lasthavens.com/*",
+    "https://alt.lasthavens.com/*",
     "https://quester.mvse.ws/*"
   ],
   "action": {
@@ -40,7 +41,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://lasthavens.com/play*"
+        "https://lasthavens.com/play*",
+        "https://alt.lasthavens.com/play*"
       ],
       "js": [
         "runtime-core.js",
@@ -51,7 +53,8 @@
     },
     {
       "matches": [
-        "https://lasthavens.com/play*"
+        "https://lasthavens.com/play*",
+        "https://alt.lasthavens.com/play*"
       ],
       "js": [
         "bridge.js"
@@ -71,7 +74,8 @@
         "vendor/catquest-ready.json"
       ],
       "matches": [
-        "https://lasthavens.com/*"
+        "https://lasthavens.com/*",
+        "https://alt.lasthavens.com/*"
       ]
     }
   ]
