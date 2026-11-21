@@ -237,6 +237,26 @@ end
 -- A text button remains visible without relying on a client-specific icon.
 local head = CatQuest335TalkingHead
 if head then
+    local mark = CreateFrame("Button", "CatQuest335VoiceMarkButton", head, "UIPanelButtonTemplate")
+    mark:SetWidth(24)
+    mark:SetHeight(22)
+    mark:SetPoint("TOPRIGHT", head, "TOPRIGHT", -130, -16)
+    mark:SetText(L.FB_MARK)
+    mark:SetFrameLevel((head:GetFrameLevel() or 0) + 20)
+    mark:SetScript("OnClick", function()
+        if ns.MarkCurrentVoice then ns.MarkCurrentVoice() end
+    end)
+    mark:SetScript("OnEnter", function(self)
+        if GameTooltip then
+            GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+            GameTooltip:SetText(L.HELP_MARK)
+            GameTooltip:Show()
+        end
+    end)
+    mark:SetScript("OnLeave", function()
+        if GameTooltip then GameTooltip:Hide() end
+    end)
+    head.markButton = mark
     local bug = CreateFrame("Button", "CatQuest335FeedbackButton", head, "UIPanelButtonTemplate")
     bug:SetWidth(112)
     bug:SetHeight(22)

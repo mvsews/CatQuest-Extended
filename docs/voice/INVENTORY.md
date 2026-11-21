@@ -1,9 +1,9 @@
 # Voice track inventory
 
-Generated: `2026-11-12T08:05:22+00:00`
+Generated: `2026-11-18T11:04:11+00:00`
 Content profile: `3.3.5a`
-Archive: `CatQuestExtended_Voices-1.3.0-full-with-community.zip`
-SHA-256: `36b3df45659a40f898b75f5b63aa51c1eb7f25ec87c4660ac8340d2cd91530fe`
+Archive: `CatQuestExtended_Voices-2.0.0-extended.1.zip`
+SHA-256: `cb9dca5a49f9430524d5ec2a565b91e27a271b7bbe46daa7fe492ca9854f4b8d`
 
 ## Physical voice-pack coverage
 
@@ -13,19 +13,19 @@ SHA-256: `36b3df45659a40f898b75f5b63aa51c1eb7f25ec87c4660ac8340d2cd91530fe`
 - Turn-in tracks: **6,594**
 - Gender variants: **6,148**
 - NPC-specific variants: **120**
-- Archive size: **1,491,328,329 bytes**
+- Archive size: **1,491,567,017 bytes**
 
 ## Upstream CatQuest Voices check
 
-- Release: **1.3.0**
-- CurseForge file ID: `9559250`
-- Upstream archive: `CatQuest_Voices-1.3.0.zip`
-- Upstream size: **1,424,266,180 bytes**
-- Upstream OGG files: **12,830**
-- Upstream quest IDs: **5,574**
-- Upstream-only track signatures: **0**
-- Upstream-only quest IDs: **0**
-- Published-only track signatures (including community tracks): **263**
+- Release: **2.0.0**
+- CurseForge file ID: `9667108`
+- Upstream archive: `CatQuest_Voices-2.0.0.zip`
+- Upstream size: **1,448,466,205 bytes**
+- Upstream OGG files: **12,946**
+- Upstream quest IDs: **5,575**
+- Upstream-only track signatures: **118**
+- Upstream-only quest IDs: **1**
+- Published-only track signatures (including community tracks): **265**
 
 ## Sync with the quest catalog
 

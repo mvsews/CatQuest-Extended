@@ -2,7 +2,7 @@
 ## Title: CatQuest Extended Voices
 ## Notes: Integration metadata for the CatQuest Extended Russian voice pack
 ## Author: daniilcathey; CatQuest Extended community
-## Version: 1.3.0-extended.2
+## Version: 2.0.0-extended.1
 ## Dependencies: CatQuest
 
 Index.lua

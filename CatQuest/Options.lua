@@ -157,7 +157,25 @@ local enabled = AddCheck("enabled", L.OPT_ENABLED, what, function(on)
     end
 end)
 local auto = AddCheck("auto", L.OPT_AUTO, enabled)
-local gossipAuto = AddCheck("gossipAuto", L.OPT_GOSSIP_AUTO, auto)
+local playbackValues = {
+    { value = "always", text = L.OPT_MODE_ALWAYS },
+    { value = "once", text = L.OPT_MODE_ONCE },
+    { value = "never", text = L.OPT_MODE_NEVER },
+}
+local function PlaybackDropdown(name, label, kind, anchor)
+    return AddDropDown(name, label, anchor, playbackValues,
+        function() return ns.GetPlaybackMode(kind) end,
+        function(value) ns.SetPlaybackMode(kind, value) end)
+end
+local playbackHeader = Header(L.OPT_PLAYBACK_MODE, auto, 0, -8)
+local questPlayback = PlaybackDropdown("CatQuest335QuestPlaybackDropDown", L.OPT_MODE_QUEST, "quest", playbackHeader)
+local turninPlayback = PlaybackDropdown("CatQuest335TurninPlaybackDropDown", L.OPT_MODE_TURNIN, "turnin", questPlayback)
+local bookPlayback = PlaybackDropdown("CatQuest335BookPlaybackDropDown", L.OPT_MODE_BOOK, "book", turninPlayback)
+local placePlayback = PlaybackDropdown("CatQuest335PlacePlaybackDropDown", L.OPT_MODE_PLACE, "place", bookPlayback)
+local dungeonPlayback = PlaybackDropdown("CatQuest335DungeonPlaybackDropDown", L.OPT_MODE_DUNGEON, "dungeon", placePlayback)
+local gossipPlayback = PlaybackDropdown("CatQuest335GossipPlaybackDropDown", L.OPT_MODE_GOSSIP, "gossip", dungeonPlayback)
+local npcLorePlayback = PlaybackDropdown("CatQuest335NpcLorePlaybackDropDown", L.OPT_MODE_NPC_LORE, "npcLore", gossipPlayback)
+local gossipAuto = AddCheck("gossipAuto", L.OPT_GOSSIP_AUTO, npcLorePlayback)
 local npcLore = AddCheck("npcLore", L.OPT_NPC_LORE, gossipAuto)
 local npcTriggers = {
     { value = "target", text = L.OPT_NPC_TRIGGER_TARGET },
@@ -185,6 +203,9 @@ local stopOnClose = AddCheck("stopOnClose", L.OPT_STOP_ON_CLOSE, greetDelay)
 local readButton = AddCheck("readButton", L.OPT_READ_BUTTON, stopOnClose, function()
     if ns.UpdateQuestFrameButton then
         ns.UpdateQuestFrameButton()
+    end
+    if ns.UpdateBookButton then
+        ns.UpdateBookButton()
     end
 end)
 

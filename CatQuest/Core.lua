@@ -1,7 +1,7 @@
 local addonName = ...
 local ns = CatQuest335 or {}
 CatQuest335 = ns
-ns.VERSION = "0.10.112"
+ns.VERSION = "2.1.2"
 local L = ns.L
 
 local eventFrame = CreateFrame("Frame", "CatQuest335Events", UIParent)
@@ -64,6 +64,20 @@ local defaults = {
     gossipMarkerSlot = 0, -- rotating marker slots used to send gossip text
     npcLoreHeard = {}, -- NPCID:locale -> true; source-backed history is heard once
     gossipHeard = {}, -- NPC + locale + universal paragraph; completed playback only
+    -- Playback policy ported from original CatQuest 2.0.  Automatic lines can
+    -- be played always, once per account, or disabled; explicit Read/replay
+    -- actions still remain available.
+    playbackModes = {
+        quest = "always",
+        turnin = "always",
+        book = "always",
+        place = "always",
+        dungeon = "always",
+        gossip = "always",
+        npcLore = "always",
+    },
+    played = {}, -- playback key -> first/last playback timestamp
+    marks = {}, -- live voice marks made with /cq mark or the ! button
 }
 
 local function MergeDefaults(target, source)
@@ -154,6 +168,13 @@ if (CatQuest335DB.schema or 0) < 8 then
     CatQuest335DB.remoteAutoRetry = true
     CatQuest335DB.schema = 8
 end
+-- 2.1.1: playback policies and non-interrupting live voice marks.
+if (CatQuest335DB.schema or 0) < 9 then
+    CatQuest335DB.playbackModes = CatQuest335DB.playbackModes or {}
+    CatQuest335DB.played = CatQuest335DB.played or {}
+    CatQuest335DB.marks = CatQuest335DB.marks or {}
+    CatQuest335DB.schema = 9
+end
 ns.db = CatQuest335DB
 if type(CatQuest335_BridgeGossipHeard) == "table" then
     for key, value in pairs(CatQuest335_BridgeGossipHeard) do
@@ -184,8 +205,98 @@ end
 
 ns.Print = Print
 
+local VoiceLog
+local VALID_PLAYBACK_MODES = { always = true, once = true, never = true }
+local VALID_PLAYBACK_KINDS = { quest = true, turnin = true, book = true, place = true,
+    dungeon = true, gossip = true, npcLore = true }
+local function PlaybackMode(item)
+    local kind = item and item.kind or "quest"
+    local modes = ns.db.playbackModes
+    local mode = type(modes) == "table" and modes[kind] or nil
+    return VALID_PLAYBACK_MODES[mode] and mode or "always"
+end
+
+function ns.GetPlaybackMode(kind)
+    return PlaybackMode({ kind = kind })
+end
+
+function ns.SetPlaybackMode(kind, mode)
+    if not VALID_PLAYBACK_KINDS[kind] or not VALID_PLAYBACK_MODES[mode] then return false end
+    ns.db.playbackModes = ns.db.playbackModes or {}
+    ns.db.playbackModes[kind] = mode
+    return true
+end
+
+local function PlaybackKey(item)
+    if not item then return nil end
+    if tonumber(item.questID) and tonumber(item.questID) > 0 then
+        return table.concat({ tostring(item.questID), tostring(item.kind or "quest"), ns.VoiceLocale() }, ":")
+    end
+    return tostring(item.key or "")
+end
+
+local function PlaybackWasHeard(item)
+    local key = PlaybackKey(item)
+    return key and type(ns.db.played) == "table" and ns.db.played[key] ~= nil
+end
+
+local function RememberPlayback(item)
+    local key = PlaybackKey(item)
+    if not key then return end
+    ns.db.played = ns.db.played or {}
+    ns.db.played[key] = time and time() or GetTime()
+    -- Keep account data bounded. The original 2.0 also avoids growing the
+    -- SavedVariables file with every line ever heard.
+    local count = 0
+    for _ in pairs(ns.db.played) do count = count + 1 end
+    if count > 5000 then
+        local oldestKey, oldestAt
+        for candidate, at in pairs(ns.db.played) do
+            if not oldestAt or tonumber(at) < oldestAt then
+                oldestKey, oldestAt = candidate, tonumber(at)
+            end
+        end
+        if oldestKey then ns.db.played[oldestKey] = nil end
+    end
+end
+
+function ns.ShouldPlayAutomatically(item, force, replay)
+    if force or replay then return true end
+    local mode = PlaybackMode(item)
+    if mode == "never" then
+        VoiceLog(item, "skipped", "автоматически отключено настройкой")
+        return false
+    end
+    if mode == "once" and PlaybackWasHeard(item) then
+        VoiceLog(item, "skipped", "уже звучало раньше (режим: один раз)")
+        return false
+    end
+    return true
+end
+
+function ns.MarkCurrentVoice()
+    local item = ns.state.active or ns.state.lastItem or ns.state.pending[1]
+    if not item then
+        Print(L.FB_NOTHING)
+        return false
+    end
+    ns.db.marks = ns.db.marks or {}
+    ns.db.marks[#ns.db.marks + 1] = {
+        key = item.key,
+        questID = item.questID,
+        kind = item.kind,
+        title = item.title,
+        at = time and time() or 0,
+        elapsed = ns.state.active and math.max(0, GetTime() - (ns.state.active.startedAt or GetTime())) or 0,
+    }
+    while #ns.db.marks > 100 do table.remove(ns.db.marks, 1) end
+    VoiceLog(item, "marked", "помечено во время воспроизведения")
+    if ns.OpenFeedback then ns.OpenFeedback(item, true) end
+    return true
+end
+
 local VOICE_LOG_LIMIT = 300
-local function VoiceLog(item, status, detail)
+VoiceLog = function(item, status, detail)
     if not item then return end
     local log = ns.db.voiceLog
     if type(log) ~= "table" then
@@ -820,6 +931,7 @@ local function BeginPlaying(item)
     ns.state.lastPlayedKey = item.key
     ns.state.lastPlayedAt = item.startedAt
     VoiceLog(item, "playing", item.bridgeVerified and "server-ready" or item.companion and "companion" or "local/manifest")
+    RememberPlayback(item)
     Remember(item)
     ApplySoundTweaks()
 
@@ -1380,10 +1492,18 @@ local function StartItem(item)
         end
         ns.state.manualRemoteRequests = ns.state.manualRemoteRequests or {}
         local requestedBefore = ns.state.manualRemoteRequests[item.key]
+        local requestSent
         if item.gossipAudioSlot then
-            ns.RequestGossipPrefetch(item)
+            requestSent = ns.RequestGossipPrefetch(item)
         else
-            ns.RequestVoicePrefetch(item)
+            requestSent = ns.RequestVoicePrefetch(item)
+        end
+        if not requestSent then
+            ns.state.lastItem = item
+            ns.state.manualRemoteBlocked = true
+            VoiceLog(item, "error", "запрос не отправлен: расширение не готово")
+            Print(L.REQUEST_NOT_SENT or "Не удалось отправить запрос на озвучку. Обновите игровую вкладку (F5) и попробуйте ещё раз.")
+            return false
         end
         -- On-demand audio is deliberately manual now. The first click only
         -- requests it. A later click may start playback only after the
@@ -1402,7 +1522,7 @@ local function StartItem(item)
         ns.state.lastItem = item
         ns.state.lastPlayedKey = item.key
         ns.state.lastPlayedAt = GetTime()
-        if CatQuest335_BridgeReady.budgetOut then
+        if type(CatQuest335_BridgeReady) == "table" and CatQuest335_BridgeReady.budgetOut then
             -- The server would not voice it now. The request above still goes
             -- out, so a topped-up budget voices it after all.
             if not ns.state.budgetHinted then
@@ -1725,6 +1845,9 @@ end
 -- pause between tracks, one Stop for all of them.
 function ns.PlayItem(item, force, replay, sequence)
     local now = GetTime()
+    if not ns.ShouldPlayAutomatically(item, force, replay) then
+        return false
+    end
     -- A double click on a manual "Voice/Read" button used to pass force=true
     -- and bypass the active/queue duplicate checks below. Keep a tiny input
     -- debounce as a final guard, including when a very short track just ended.
@@ -2247,6 +2370,7 @@ local function OnQuestEvent(event, manual)
     -- party member is shown in this window but is not that quest.
     local title = GetTitleText and GetTitleText()
     local questID = CurrentQuestID()
+        or (manual and ns.state.dialogQuest)
         or QuestIDFromTitle(title)
         or QuestIDFromKnownTitles(title)
     if not questID then
@@ -3593,6 +3717,17 @@ local function HandleSlash(message)
         if ns.OpenFeedback then
             ns.OpenFeedback()
         end
+    elseif command == "mark" then
+        -- Original CatQuest 2.0: mark the current line without interrupting
+        -- audio, then optionally fill in the details in the report window.
+        ns.MarkCurrentVoice()
+    elseif command == "sounds" then
+        local kind, mode = (argument or ""):match("^(%S+)%s+(%S+)$")
+        if kind and mode and ns.SetPlaybackMode(kind, mode) then
+            Print(string.format("%s: %s", kind, mode))
+        else
+            Print(L.HELP_SOUNDS)
+        end
     elseif command == "ui" then
         if argument ~= "" then
             ns.SetUILanguage(argument)
@@ -3683,6 +3818,8 @@ local function HandleSlash(message)
         Print(L.HELP_BOOKS)
         Print(L.HELP_LORE)
         Print(L.HELP_NPC_LORE)
+        Print(L.HELP_MARK)
+        Print(L.HELP_SOUNDS)
         Print(L.HELP_PROBE)
     end
 end

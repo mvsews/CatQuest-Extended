@@ -5,4 +5,7 @@
     <Binding name="CATQUEST335_NEXT">
         CatQuest335.Skip()
     </Binding>
+    <Binding name="CATQUEST335_MARK">
+        CatQuest335.MarkCurrentVoice()
+    </Binding>
 </Bindings>

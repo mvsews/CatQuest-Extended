@@ -15,10 +15,24 @@ local ITEM_KEYS = {"key","questID","kind","prefetchSlot","file","duration","play
     "readyFontObserved","readyFontUnit","readyFontMetrics","readyFontWidths","readySignalError","nextReadySignalAt","requestedAt","startedAt"}
 function ns.BuildDebugReport()
     local state, db, bridge = ns.state or {}, ns.db or {}, CatQuest335_BridgeReady or {}
+    local function countMap(map)
+        local n = 0
+        if type(map) == "table" then for _ in pairs(map) do n = n + 1 end end
+        return n
+    end
     local out = {"CatQuest diagnostic report v1", "generated=" .. (date and date("%Y-%m-%d %H:%M:%S") or "?") ..
         " uptime=" .. value(GetTime()) .. " addon=" .. value(ns.VERSION),
         "client=" .. (GetBuildInfo and value(GetBuildInfo()) or "?") .. " locale=" .. value(ns.VoiceLocale()),
         "settings " .. fields(db, {"enabled","auto","remoteEnabled","volumeChannel","head","pendingTimeout"}),
+        "playbackModes quest=" .. value(db.playbackModes and db.playbackModes.quest)
+            .. " turnin=" .. value(db.playbackModes and db.playbackModes.turnin)
+            .. " book=" .. value(db.playbackModes and db.playbackModes.book)
+            .. " place=" .. value(db.playbackModes and db.playbackModes.place)
+            .. " dungeon=" .. value(db.playbackModes and db.playbackModes.dungeon)
+            .. " gossip=" .. value(db.playbackModes and db.playbackModes.gossip)
+            .. " npcLore=" .. value(db.playbackModes and db.playbackModes.npcLore)
+            .. " played=" .. tostring(countMap(db.played))
+            .. " marks=" .. tostring(type(db.marks) == "table" and #db.marks or 0),
         "bridge " .. fields(bridge, {"mode","fontReady","prefetchSignal","readyMetrics","waitingFont","clientTrace","contactPage","extVersion"}),
         "state=" .. (state.active and "playing" or state.pending and state.pending[1] and "waiting" or "idle") ..
             " queue=" .. #(state.queue or {}) .. " pending=" .. #(state.pending or {}),
@@ -38,6 +52,17 @@ function ns.BuildDebugReport()
         local list = state[name] or {}
         for i = 1, math.min(#list, 30) do item(name .. "[" .. i .. "]", list[i]) end
         if #list > 30 then out[#out+1] = name .. " truncated=" .. (#list-30) end
+    end
+    local marks = db.marks or {}
+    if #marks > 0 then
+        out[#out+1] = "\nMARKS newest first:"
+        for i = #marks, math.max(1, #marks - 19), -1 do
+            local mark = marks[i]
+            out[#out+1] = (date and date("%Y-%m-%d %H:%M:%S", tonumber(mark.at) or 0) or value(mark.at))
+                .. " key=" .. value(mark.key) .. " questID=" .. value(mark.questID)
+                .. " kind=" .. value(mark.kind) .. " title=" .. value(mark.title)
+                .. " elapsed=" .. value(mark.elapsed)
+        end
     end
     out[#out+1] = "\nEVENTS oldest first (bounded to 300; previous sessions include addon version):"
     local log = db.voiceLog or {}

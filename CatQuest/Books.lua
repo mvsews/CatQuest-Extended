@@ -485,6 +485,7 @@ end
 -- "Voice" button in the book window: replay the page, or read it when
 -- automatic reading is off. Shown only for pages that have a track.
 local button
+local hookedFrame
 local function OpenPageHash()
     return ns.FindBook(
         ItemTextGetItem and ItemTextGetItem(),
@@ -497,14 +498,30 @@ local function UpdateButton()
     if not ItemTextFrame then
         return
     end
+    if hookedFrame ~= ItemTextFrame and ItemTextFrame.HookScript then
+        hookedFrame = ItemTextFrame
+        ItemTextFrame:HookScript("OnShow", function()
+            -- Some 3.3.5 clients show the frame one frame after
+            -- ITEM_TEXT_READY.  Recalculate once after the frame has its
+            -- final size instead of polling on every frame.
+            if C_Timer and C_Timer.After then
+                C_Timer.After(0, UpdateButton)
+            else
+                UpdateButton()
+            end
+        end)
+    end
     if not button then
         button = CreateFrame("Button", "CatQuest335BookButton", ItemTextFrame, "UIPanelButtonTemplate")
         button:SetWidth(96)
         button:SetHeight(22)
-        if ItemTextScrollFrame then
-            button:SetPoint("TOPRIGHT", ItemTextScrollFrame, "BOTTOMRIGHT", 0, -6)
-        else
-            button:SetPoint("BOTTOMRIGHT", ItemTextFrame, "BOTTOMRIGHT", -40, 80)
+        -- Do not anchor below ItemTextScrollFrame: custom 3.3.5 clients can
+        -- stretch that scroll frame to the bottom of the screen, putting the
+        -- button outside ItemTextFrame.  The frame itself is stable across
+        -- the stock and skinned book windows.
+        button:SetPoint("BOTTOMLEFT", ItemTextFrame, "BOTTOMLEFT", 52, 20)
+        if button.SetFrameLevel and ItemTextFrame.GetFrameLevel then
+            button:SetFrameLevel(ItemTextFrame:GetFrameLevel() + 10)
         end
         button:SetText(L.BTN_READ)
         button:SetScript("OnClick", function()
@@ -513,6 +530,7 @@ local function UpdateButton()
     end
     if ns.db.readButton ~= false and OpenPageHash() then button:Show() else button:Hide() end
 end
+ns.UpdateBookButton = UpdateButton
 
 local events = CreateFrame("Frame")
 events:RegisterEvent("ITEM_TEXT_READY")

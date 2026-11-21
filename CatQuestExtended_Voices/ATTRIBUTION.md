@@ -1,7 +1,7 @@
 # CatQuest Extended Voices
 
 This directory contains the integration metadata for the full Russian voice pack
-derived from **CatQuest Voices 1.3.0** by daniilcathey. The downloadable archive
+derived from **CatQuest Voices 2.0.0** by daniilcathey. The downloadable archive
 also includes the CatQuest Extended community supplement: ready server-generated
 tracks for 3.3.5a quest IDs that are not present in the original pack. Audio
 files are not redistributed in this Git repository; the complete archive is
@@ -16,5 +16,7 @@ keeps the same license and attribution.
 
 The tracked `Index.lua` contains metadata only. The release archive also contains
 the OGG files and may include tracks for quests outside a particular client
-catalog; CatQuest ignores tracks it does not use. Existing original recordings
-are not overwritten when the community supplement is built.
+catalog; CatQuest ignores tracks it does not use. The 2.0.0 update was imported
+selectively: only tracks whose quest IDs and cue text match the CatQuest
+Extended 3.3.5a index were added, and existing recordings were not overwritten.
+The remaining Forever-only or text-mismatched tracks are intentionally excluded.

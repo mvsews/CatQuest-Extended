@@ -2,7 +2,7 @@
 ## Title: CatQuest Extended
 ## Notes: Quest voice-over port and extension for classic WoW clients
 ## Author: CatQuest contributors
-## Version: 0.10.112
+## Version: 2.1.4
 ## SavedVariables: CatQuest335DB
 ## OptionalDeps: CatQuestExtended_Voices
 

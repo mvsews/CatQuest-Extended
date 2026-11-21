@@ -713,6 +713,10 @@
       status: Number(response?.status) || 0,
       contentType: String(response?.contentType || ""),
       body64: typeof response?.body64 === "string" ? response.body64 : "",
+      terminal: response?.terminal === true,
+      retryAfter: Number.isFinite(Number(response?.retryAfter))
+        ? Math.max(0, Math.min(3600, Number(response.retryAfter)))
+        : 0,
       error: String(response?.error || ""),
     });
   };
@@ -839,10 +843,11 @@
   // server's voicing budget was used up when the page loaded.
   const readyLua = (locale, tracks, durations, books, budgetOut, readinessFont) => {
     if (!VOICE_LOCALES.includes(locale)) return "";
-    // Use only the small gossip-marker transport for a manual request. The
-    // previous readiness-font transport generated hundreds of thousands of
-    // virtual paths and synchronously probed them from the game client.
-    let out = `CatQuest335_BridgeReady = { contact = true, contactContext = true, voteContext = true, gossipOnce = true, clientTrace = 1, prefetchSignal = 1, ${readinessFont?.body64 ? "fontReady = 1, readyMetrics = 2, waitingFont = 1, " : ""} extVersion = "${chrome.runtime.getManifest().version}", contactPage = "${diagnosticSession}", locale = "${locale}", ` +
+    // Signal 2 uses the dedicated prefetch marker paths. Signal 1 remains a
+    // compatibility fallback for sessions where the readiness-font manifest
+    // is unavailable, because those sessions do not contain /prefetch/*.
+    const prefetchSignal = readinessFont?.body64 ? 2 : 1;
+    let out = `CatQuest335_BridgeReady = { contact = true, contactContext = true, voteContext = true, gossipOnce = true, clientTrace = 1, prefetchSignal = ${prefetchSignal}, ${readinessFont?.body64 ? "fontReady = 1, readyMetrics = 2, waitingFont = 1, " : ""} extVersion = "${chrome.runtime.getManifest().version}", contactPage = "${diagnosticSession}", locale = "${locale}", ` +
       (budgetOut ? "budgetOut = true, " : "") +
       readyBody(tracks?.[locale], durations?.[locale]) + ", " + readyBooks(books) + ", others = {\n";
     for (const other of VOICE_LOCALES)

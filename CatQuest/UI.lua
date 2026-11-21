@@ -474,11 +474,36 @@ function ns.InstallQuestFrameButton()
     button:SetWidth(80)
     button:SetHeight(20)
     button:SetPoint("TOPRIGHT", QuestFrame, "TOPRIGHT", -40, -46)
+    if button.SetFrameStrata and QuestFrame.GetFrameStrata then
+        button:SetFrameStrata(QuestFrame:GetFrameStrata())
+    end
+    if button.SetFrameLevel and QuestFrame.GetFrameLevel then
+        button:SetFrameLevel(QuestFrame:GetFrameLevel() + 10)
+    end
     button:SetText(L.BTN_READ)
     button:SetScript("OnClick", function()
         ns.ReadOpenQuest()
     end)
     head.questFrameButton = button
+    if QuestFrame.HookScript and not head.questFrameHooked then
+        head.questFrameHooked = true
+        QuestFrame:HookScript("OnShow", function()
+            -- Custom 3.3.5 clients can rebuild/re-anchor QuestFrame after
+            -- QUEST_DETAIL. Re-apply the button position after that layout
+            -- pass so the manual Read action remains clickable.
+            ns.After(0, function()
+                if not head.questFrameButton then
+                    return
+                end
+                head.questFrameButton:ClearAllPoints()
+                head.questFrameButton:SetPoint("TOPRIGHT", QuestFrame, "TOPRIGHT", -40, -46)
+                if head.questFrameButton.SetFrameLevel and QuestFrame.GetFrameLevel then
+                    head.questFrameButton:SetFrameLevel(QuestFrame:GetFrameLevel() + 10)
+                end
+                ns.UpdateQuestFrameButton()
+            end)
+        end)
+    end
     ns.UpdateQuestFrameButton()
 end
 

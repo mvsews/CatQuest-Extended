@@ -57,6 +57,10 @@ globalThis.LHInstallOverlay = function (
     // A failed/unfinished request is retried only by the player's next click.
     // Never keep a browser timer alive for a voice track.
     MISS_BACKOFF_MS = 5000,
+    // Automatic retry remains available when the player enabled it, but a
+    // missing/generated track must not create an endless browser timer or a
+    // request storm while several quest events arrive together.
+    MAX_AUTO_RETRIES = 5,
     AUDIO_CACHE_LIMIT = 32,
     AUDIO_CACHE_BYTES = 8 * 1024 * 1024,
     READY_CACHE_BYTES = 8 * 1024 * 1024,
@@ -94,6 +98,7 @@ globalThis.LHInstallOverlay = function (
   const PREFETCH_NIBBLES = 22; // largest frame: kind + length + 8 bytes + checksum
   const GOSSIP_MARKER_NIBBLES = 144;
   const gossipNibbles = new Map(), gossipParts = new Map(), gossipTexts = new Map(), gossipHeardKeys = new Map();
+  const pendingGossipPrefetch = new Map();
   const contactNibbles = new Map();
   // A prefetch marker is decoded in the game worker itself. This lets the
   // async fetch fill the worker cache and signal readiness without making
@@ -239,7 +244,21 @@ globalThis.LHInstallOverlay = function (
     waiting.resolve(data);
   };
   if (voiceChannel)
-    voiceChannel.addEventListener("message", (event) => onResponse(event.data));
+    voiceChannel.addEventListener("message", (event) => {
+      const data = event.data;
+      onResponse(data);
+      // Gossip text may be reconstructed in the page context while the
+      // dedicated kind-10 prefetch marker is decoded by the worker. Keep the
+      // text in both contexts and resume the waiting prefetch when it arrives.
+      if (data?.kind === "gossip-text" && Number.isInteger(data.id) && typeof data.text === "string") {
+        gossipTexts.set(data.id, data.text);
+        const signal = pendingGossipPrefetch.get(data.id);
+        if (Number.isInteger(signal)) {
+          pendingGossipPrefetch.delete(data.id);
+          prefetchGossip(signal, data.id);
+        }
+      }
+    });
   // Which track poll.ogg stands for now (page side, from the game worker).
   const pagePolls = new Map(); // poll file n -> remote picked by the worker
   const pageReadySignals = new Map();
@@ -255,8 +274,14 @@ globalThis.LHInstallOverlay = function (
         pagePolls.set(event.data.n, remoteFor("/game/" + event.data.path));
         if (pagePolls.size > 64) pagePolls.delete(pagePolls.keys().next().value);
       }
-      if (event.data?.kind === "gossip-text" && Number.isInteger(event.data.id) && typeof event.data.text === "string")
+      if (event.data?.kind === "gossip-text" && Number.isInteger(event.data.id) && typeof event.data.text === "string") {
         gossipTexts.set(event.data.id, event.data.text);
+        const signal = pendingGossipPrefetch.get(event.data.id);
+        if (Number.isInteger(signal)) {
+          pendingGossipPrefetch.delete(event.data.id);
+          prefetchGossip(signal, event.data.id);
+        }
+      }
       if (event.data?.kind === "ready-signal" && Number.isInteger(event.data.slot) &&
           Number.isFinite(event.data.seconds) && event.data.seconds > 0) {
         pageReadySignals.set(event.data.slot, event.data.seconds);
@@ -585,7 +610,7 @@ globalThis.LHInstallOverlay = function (
           probe({ type: "prefetch", ...meta, slot, status: 200, bytes: bytes.length, ok: true });
           return;
         }
-        if (AUTO_RETRY && attempt < 120) {
+        if (AUTO_RETRY && attempt < MAX_AUTO_RETRIES) {
           probe({type:"prefetch-retry",...meta,slot,attempt:attempt+1,ms:5000});
           setTimeout(() => retry(attempt + 1), Math.max(5000,
             (retryAt.get(remote.key) || Date.now()) - Date.now()));
@@ -594,7 +619,7 @@ globalThis.LHInstallOverlay = function (
           probe({ type: "prefetch", ...meta, slot, status: 202, ok: false, error: "not ready; retry on next click" });
         }
       }).catch((error) => {
-        if (AUTO_RETRY && attempt < 120)
+        if (AUTO_RETRY && attempt < MAX_AUTO_RETRIES)
           setTimeout(() => retry(attempt + 1), Math.max(5000,
             (retryAt.get(remote.key) || Date.now()) - Date.now()));
         else {
@@ -610,9 +635,21 @@ globalThis.LHInstallOverlay = function (
     prefetchTrack(slot, prefetchRemote(quest, type, locale), { quest, kind: type, locale });
   const prefetchBook = (slot, hash, variant) =>
     prefetchTrack(slot, prefetchBookRemote(hash, variant), { quest: 0, kind: "BOOK", locale: "ruRU", hash });
-  const prefetchGossip = (slot, audioSlot) =>
-    prefetchTrack(slot, remoteFor(`${REMOTE_FOLDER}/gossip/${audioSlot}.ogg`),
+  const prefetchGossip = (slot, audioSlot) => {
+    const path = `${REMOTE_FOLDER}/gossip/${audioSlot}.ogg`;
+    const remote = remoteFor(path);
+    if (!remote) {
+      // The kind-10 prefetch marker can arrive before the kind-4 text frames
+      // have been reconstructed in the other overlay context. Do not turn
+      // that harmless ordering race into a permanent waiting item.
+      pendingGossipPrefetch.set(audioSlot, slot);
+      probe({ type: "gossip-waiting-text", quest: 0, kind: "GOSSIP", locale: GOSSIP_LOCALE,
+        slot, gossipSlot: audioSlot, ok: false, error: "text not reconstructed yet" });
+      return;
+    }
+    prefetchTrack(slot, remote,
       { quest: 0, kind: "GOSSIP", locale: GOSSIP_LOCALE, gossipSlot: audioSlot });
+  };
 
   const slice = (bytes, remote, rangeHeader) => {
     // Delivering a normal file consumes its pending demand too. A previous
@@ -1078,6 +1115,11 @@ globalThis.LHInstallOverlay = function (
       const text = new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array(joined));
       if (text) {
         gossipTexts.set(id, text);
+        const signal = pendingGossipPrefetch.get(id);
+        if (Number.isInteger(signal)) {
+          pendingGossipPrefetch.delete(id);
+          prefetchGossip(signal, id);
+        }
         if (!pageContext && voiceChannel)
           voiceChannel.postMessage({ kind: "gossip-text", id, text });
       }
