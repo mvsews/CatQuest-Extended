@@ -16,17 +16,17 @@
   ],
   "production_check": {
     "checked_at": "2026-11-14",
-    "ready_area_count": 68,
+    "ready_area_count": 69,
     "note": "Включен area_id 4165 (Молот Агмара): он есть в source JSON и production, но отсутствует в текущем places.csv."
   },
   "summary": {
     "zone_id_count": 17,
     "unique_zone_name_count": 16,
     "place_count": 549,
-    "voiced": 68,
-    "not_voiced": 481,
-    "text_present": 68,
-    "text_missing": 481
+    "voiced": 69,
+    "not_voiced": 480,
+    "text_present": 69,
+    "text_missing": 480
   },
   "zones": [
     {
@@ -2665,8 +2665,8 @@
           "status_source": "production place_tracks (status=ready)",
           "text_status": "text_present",
           "audio_file": "08342fae.ogg",
-          "tts_model": "google/gemini-3.1-flash-tts-preview",
-          "generated_at": "2026-11-10"
+          "tts_model": "elevenlabs/eleven-v4",
+          "generated_at": "2026-11-16 14:29:22"
         },
         {
           "zone_id": 4395,
@@ -2784,8 +2784,8 @@
           "status_source": "production place_tracks (status=ready)",
           "text_status": "text_present",
           "audio_file": "1ba3da02.ogg",
-          "tts_model": "google/gemini-3.1-flash-tts-preview",
-          "generated_at": "2026-11-14"
+          "tts_model": "elevenlabs/eleven-v4",
+          "generated_at": "2026-11-16 14:29:30"
         },
         {
           "zone_id": 4395,
@@ -3015,8 +3015,8 @@
       "zone": "Драконий Погост",
       "zone_en": "Dragonblight",
       "total": 64,
-      "voiced": 9,
-      "not_voiced": 55,
+      "voiced": 10,
+      "not_voiced": 54,
       "entries": [
         {
           "zone_id": 65,
@@ -3875,15 +3875,15 @@
           "area_id": 4164,
           "subzone": "Провал Наржуна",
           "subzone_en": "The Pit of Narjun",
-          "text_present": false,
+          "text_present": true,
           "source": "docs/places/places.csv",
           "scope": "subzone",
-          "status": "not_voiced",
-          "status_source": "production place_tracks: no ready track",
-          "text_status": "text_missing",
-          "audio_file": null,
-          "tts_model": null,
-          "generated_at": null
+          "status": "voiced",
+          "status_source": "production place_tracks (status=ready)",
+          "text_status": "text_present",
+          "audio_file": "0ae0331c.ogg",
+          "tts_model": "elevenlabs/eleven-v4",
+          "generated_at": "2026-11-22 03:25:25"
         },
         {
           "zone_id": 65,
